@@ -1,0 +1,23 @@
+---
+layout: default
+---
+
+<section class="mod-posts">
+<h2>Recent Entris</h2>
+{% assign posts = site.posts %}
+{% assign limit = 10 %}
+{% include entry-list.html %}
+</section>
+
+<section class="mod-tags">
+<h2>Tags</h2>
+<div class="tagCloud">
+{{ site | tag_cloud }}
+</div>
+</section>
+
+<section class="mod-about">
+<h2>About Site</h2>
+
+<p>Web系の技術に関するブログ。最近はJavaScriptの話が多めかも。</p>
+</section>

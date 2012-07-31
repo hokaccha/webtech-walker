@@ -1,0 +1,15 @@
+# site info
+url: http://webtech-walker.com
+title: Webtech Walker
+author: Kazuhito Hokamura
+
+# jekyll config
+source: src
+destination: _site
+plugins: plugin
+pygments: true
+tag_page_layout: tag_page
+tag_page_dir: tags
+scss:
+  source: src/_scss
+  destination: css
