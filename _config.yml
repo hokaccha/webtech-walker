@@ -4,10 +4,12 @@ title: Webtech Walker
 author: Kazuhito Hokamura
 
 # jekyll config
+permalink: /archive/:year/:month/:title.html
 source: src
 destination: _site
 plugins: plugin
 pygments: true
+markdown: kramdown
 tag_page_layout: tag_page
 tag_page_dir: tags
 scss:

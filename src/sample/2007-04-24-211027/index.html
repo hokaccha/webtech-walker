@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="ja" xml:lang="ja" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<title>「CSSの隣接セレクタを使ってMacのDock風インターフェースを作成する」サンプルページ - Webtech Walker</title>
+<style type="text/css">
+img{
+	border:none;
+}
+
+li {
+	float:left;
+	list-style:none;
+}
+
+li img {
+	width:64px;
+	height:64px;
+}
+
+li:hover img {
+	width:128px;
+	height:128px;
+}
+
+li:hover +li img {
+	width:96px;
+	height:96px;
+}
+
+li:hover +li +li img {
+	width:80px;
+	height:80px;
+}
+
+
+</style>
+</head>
+<body>
+<ul>
+	<li><img src="icon1.png" alt="icon1"/></li>
+	<li><img src="icon2.png" alt="icon2"/></li>
+	<li><img src="icon3.png" alt="icon3"/></li>
+	<li><img src="icon4.png" alt="icon4"/></li>
+	<li><img src="icon5.png" alt="icon5"/></li>
+	<li><img src="icon6.png" alt="icon6"/></li>
+</ul>
+</body>
+</html>

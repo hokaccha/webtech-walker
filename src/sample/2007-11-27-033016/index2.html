@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="content-style-type" content="text/css" />
+<title>hasLayoutプロパティがtrueで発生するバグのサンプルページ「IE7の拡大/縮小で文字が重なる」- Webtech Walker</title>
+<style type="text/css">
+
+body{font-family: "ＭＳ Ｐゴシック"}
+strong{color: #C00}
+h2 {font-size:120%;}
+h3 {padding: 10px;background: #EFEFEF;font-size: 120%;}
+
+
+
+</style>
+</head>
+<body>
+
+<h1>Webtech Walker</h1>
+
+<h2><a href="http://webtech-walker.com/archive/2007/11/27033016.html">hasLayoutプロパティがtrueで発生するバグ</a>のサンプルページ「IE7の拡大/縮小で文字が重なる」</h2>
+
+<p><strong>IE7のズーム機能で拡大/縮小して</strong>見るとバグを確認できると思います。</p>
+
+<h3>画像が重なる</h3>
+<p>あいうえお<img src="sample5.gif" alt="sampleの小さい画像" />かきくけこ</p>
+
+<h3>「かきくけこ」にspan要素でzoom:1を指定すると重ならなくなる</h3>
+<p>あいうえお<img src="sample5.gif" alt="sampleの小さい画像" /><span style="zoom:1">かきくけこ</span></p>
+
+<h3>em要素は通常重ならない</h3>
+<p>あいうえお<em>em</em>かきくけこ</p>
+
+<h3>em要素にzoom:1を指定すると重なる</h3>
+<p>あいうえお<em style="zoom:1">em</em>かきくけこ</p>
+
+<h3>em要素にzoom:1を指定し、「かきくけこ」にspanでzoom:1を指定すると重ならなくなる</h3>
+<p>あいうえお<em style="zoom:1">em</em><span style="zoom:1">かきくけこ</span></p>
+
+
+</body>
+
+</html>
