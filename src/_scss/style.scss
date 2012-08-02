@@ -146,6 +146,10 @@ body {
     padding-bottom: 20px;
     margin-bottom: 10px;
 
+    img {
+      max-width: 100%;
+    }
+
     h2 {
       font-size: 20px;
       margin: 40px 0 15px;
@@ -203,7 +207,7 @@ body {
     }
 
     blockquote {
-      margin: 20px 0;
+      margin: 20px 0 0 30px;
       background: #F5F5F5;
       border-left: 2px solid $base_color;
       padding: 1px 20px;
@@ -252,6 +256,10 @@ body {
       background: #EFEFEF;
     }
 
+    td {
+      background: #FFF;
+    }
+
     dl {
       margin: 15px 0;
     }
@@ -264,6 +272,12 @@ body {
     dd {
       padding-left: 15px;
       margin-bottom: 10px;
+    }
+
+    .caption {
+      font-size: 13px;
+      color: #666;
+      display: block;
     }
   }
 
