@@ -1,43 +1,20 @@
-desc 'generate new posts'
-task :post do
-  print 'url: '
-  url = STDIN.gets.strip
-
-  print 'title: '
-  title = STDIN.gets.strip
-
-  print 'tags: '
-  tags = STDIN.gets.strip
-
-  tags = tags.split(',').map { |t| t.strip }
-  if tags.size > 1
-    tags = "\n" + tags.map{|t| "  - #{t}"}.join("\n")
-  else
-    tags = tags.pop
+desc 'setup'
+task :setup do
+  sh 'rm -rf  _deploy'
+  sh 'git clone git@github.com:hokaccha/webtech-walker.git _deploy'
+  cd '_deploy' do
+    sh 'git checkout gh-pages'
   end
-
-  str = <<EOF
----
-layout: posts
-title: #{title}
-tags: #{tags}
----
-
-EOF
-
-  filename = url.gsub(/(\d{4})\/(\d{2})\/(\d{2})(\d{6})/, '\1-\2-\3-\3\4')
-  post_path = "src/_posts/#{filename}.md"
-
-  raise "#{post_path} is exists" if File.exist?(post_path)
-
-  File.write(post_path, str)
-  puts "create #{post_path}"
 end
 
-task :asset do
-  print 'url: '
-  url = STDIN.gets.strip
-  filename = url.gsub(/(\d{4})\/(\d{2})\/(\d{2})(\d{6})/, '\1-\2-\3-\3\4')
-  sh "mkdir src/img/posts/#{filename}"
-  sh "mkdir src/sample/#{filename}"
+desc 'deploy to production'
+task :deploy do
+  sh 'jekyll'
+  sh 'rm -rf _deploy/*'
+  sh 'cp -R _site/* _deploy'
+  cd '_deploy' do
+    sh 'git add -A'
+    sh 'git commit -m "deploy"'
+    sh 'git push origin gh-pages'
+  end
 end
