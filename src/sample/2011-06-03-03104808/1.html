@@ -1,0 +1,79 @@
+<!DOCTYPE html> 
+<html lang="ja"> 
+<head> 
+<meta charset="utf-8"> 
+<meta name="viewport" content="width=device-width"> 
+<title>font size</title> 
+<style> 
+.fs14 .a { font-size: 14px; }
+.fs13 .a { font-size: 13px; }
+.fs12 .a { font-size: 12px; }
+.fs11 .a { font-size: 11px; }
+.fs10 .a { font-size: 10px; }
+.fs9  .a { font-size: 9px; }
+.fs8  .a { font-size: 8px; }
+
+table {
+	font-size: inherit;
+	border-collapse: collapse;
+}
+td,th {
+	border: 1px solid #999;
+	padding: 5px;
+}
+</style> 
+</head> 
+<body> 
+<table>
+<tr>
+	<th>font-size</th>
+	<th>あ</th>
+	<th>offsetWidth</th>
+</tr>
+<tr class="fs14">
+	<th>14px</th>
+	<td><span class="a">あ</span></td>
+	<td></td>
+</tr>
+<tr class="fs13">
+	<th>13px</th>
+	<td><span class="a">あ</span></td>
+	<td></td>
+</tr>
+<tr class="fs12">
+	<th>12px</th>
+	<td><span class="a">あ</span></td>
+	<td></td>
+</tr>
+<tr class="fs11">
+	<th>11px</th>
+	<td><span class="a">あ</span></td>
+	<td></td>
+</tr>
+<tr class="fs10">
+	<th>10px</th>
+	<td><span class="a">あ</span></td>
+	<td></td>
+</tr>
+<tr class="fs9">
+	<th>9px</th>
+	<td><span class="a">あ</span></td>
+	<td></td>
+</tr>
+<tr class="fs8">
+	<th>8px</th>
+	<td><span class="a">あ</span></td>
+	<td></td>
+</tr>
+</table>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+<script>
+$("tr").each(function() {
+	var $tr = $(this);
+	var w = $tr.find(".a").width();
+	$tr.find("td").last().text(w + "px");
+});
+</script>
+</body> 
+</html> 

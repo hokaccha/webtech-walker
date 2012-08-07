@@ -33,9 +33,15 @@ body {
 .mod-all {
 }
 
-.mod-header h1 {
-  padding: 65px 0;
-  text-align: center;
+.mod-header {
+  position: relative;
+  width: $site_width;
+  margin: 0 auto;
+
+  h1 {
+    padding: 65px 0;
+    text-align: center;
+  }
 }
 
 .mod-footer {
@@ -46,7 +52,7 @@ body {
   text-align: center;
 
   & > div {
-    width: 720px;
+    width: $site_width;
     margin: 0 auto;
   }
 
@@ -72,7 +78,7 @@ body {
 }
 
 .mod-main {
-  width: 720px;
+  width: $site_width;
   padding: 0 10px;
   margin: 0 auto;
 }
@@ -82,6 +88,27 @@ body {
 
   ul {
     @extend %entryList;
+  }
+}
+
+.mod-search {
+  @extend %topSection;
+
+  form {
+    input {
+      vertical-align: middle;
+    }
+
+    input[type=text] {
+      outline: none;
+      display: inline-block;
+      margin-right: 5px;
+      width: 200px;
+      font-size: 15px;
+      padding: 5px 10px;
+      border: 1px solid #999;
+      border-radius: 20px;
+    }
   }
 }
 
@@ -222,6 +249,16 @@ body {
       background: #F8F8F8;
     }
 
+    p code,
+    li code {
+      background: #FCFCFC;
+      display: inline-block;
+      padding: 0 2px;
+      margin: 0 3px;
+      border: 1px solid #CCC;
+      vertical-align: top;
+    }
+
 /*
     pre code {
       display: block;
@@ -306,5 +343,9 @@ body {
         font-family: serif;
       }
     }
+  }
+
+  #disqus_thread {
+    margin: 40px 0 20px;
   }
 }

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>HTML5 innerHTML IE bug demo</title>
+<style>
+    section {
+        display: block;
+        background: #0F0;
+        padding: 10px;
+    }
+    pre {
+        padding: 10px;
+        background: #CCC;
+    }
+    div.box {
+        border-top: 2px solid #000;
+        margin-top: 20px;
+        padding-top: 20px;
+    }
+</style>
+<!--[if lte IE 8]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+<body>
+
+<pre><code>section {
+    display: block;
+    background: #0F0;
+    padding: 10px;
+}</code></pre>
+
+<div class="box">
+    <h1>box1</h1>
+    <p>定義されてない要素をinnerHTMLしてappendChildするとIEで失敗する。section, section1, /section という3つのノードに別れて追加されてスタイルが効かないなど。</p>
+    <pre><code>var div1 = document.createElement('div');
+div1.innerHTML = '&lt;section&gt;section1&lt;/section&gt;';
+document.getElementById('box1').appendChild(div1);</code></pre>
+
+    <div id="box1"></div>
+</div>
+
+<div class="box">
+    <h1>box2</h1>
+    <p>createElementしてappendChildすれば大丈夫みたい</p>
+
+    <pre><code>var box2 = document.getElementById('box2');
+var section2 = document.createElement('section');
+section2.innerHTML = 'section2';
+box2.appendChild(section2);</code></pre>
+
+    <div id="box2"></div>
+</div>
+
+<div class="box">
+    <h1>box3</h1>
+    <p>jQueryのappendもダメっぽい。</p>
+
+    <pre><code>$('#box3').append('&lt;section&gt;section3&lt;/section&gt;');</code></pre>
+
+    <div id="box3"></div>
+</div>
+
+<div class="box">
+    <h1>box4</h1>
+    <p>htmlはいける。</p>
+
+    <pre><code>$('#box4').html('&lt;section&gt;section4&lt;/section&gt;');</code></pre>
+
+    <div id="box4"></div>
+</div>
+
+<div class="box">
+    <h1>box5</h1>
+    <p>これだといける。createElement使ってるからかな。</p>
+
+    <pre><code>$('#box5').append( $('&lt;section&gt;').text('section5') );</code></pre>
+
+    <div id="box5"></div>
+</div>
+
+<div class="box">
+    <h1>box6</h1>
+    <p>これもいける。とにかくinnerHTMLとappendChildのコンボがダメみたい。</p>
+    <section id="section_dummy"></section>
+
+    <pre><code>&lt;section id="section_dummy"&gt;&lt;/section&gt;</code></pre>
+
+    <pre><code>$('#box6').append( $('#section_dummy').text('section6') );</code></pre>
+
+    <div id="box6"></div>
+</div>
+
+<div class="box">
+    <h1>box7</h1>
+    <p>innershiv.jsというの使えばこれでいけるらしい。<br />
+    <a href="http://jdbartlett.github.com/innershiv/">HTML 5 innerShiv</a>
+    </p>
+    <pre><code>var div7 = document.createElement('div');
+div7.appendChild( innerShiv('&lt;section&gt;section7&lt;/section&gt;') );
+document.getElementById('box7').appendChild(div7);</code></pre>
+
+    <div id="box7"></div>
+</div>
+
+<div class="box">
+    <h1>box8</h1>
+    <p>jQueryのappendもいけちゃう。</p>
+    <pre><code>$('#box8').append( innerShiv('&lt;section&gt;section8&lt;/section&gt;') );</code></pre>
+
+    <div id="box8"></div>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+<script src="js/innershiv.js"></script>
+<script>
+
+// box1
+var div1 = document.createElement('div');
+div1.innerHTML = '<section>section1</section>';
+document.getElementById('box1').appendChild(div1);
+
+// box2
+var div2 = document.createElement('div');
+var section2 = document.createElement('section');
+section2.innerHTML = 'section2';
+document.getElementById('box2').appendChild(section2);
+
+// box3
+$('#box3').append('<section>section3</section>');
+
+// box4
+$('#box4').html('<section>section4</section>');
+
+// box5
+$('#box5').append( $('<section>').text('section5') );
+
+// box6
+$('#box6').append( $('#section_dummy').text('section6') );
+
+// box7
+var div7 = document.createElement('div');
+div7.appendChild( innerShiv('<section>section7</section>') );
+document.getElementById('box7').appendChild(div7);
+
+// box8
+$('#box8').append( innerShiv('<section>section8</section>') );
+</script>
+</body>
+</html>

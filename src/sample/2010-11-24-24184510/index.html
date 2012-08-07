@@ -1,0 +1,64 @@
+<!DOCTYPE html> 
+<html lang="ja"> 
+<head> 
+<meta charset="utf-8"> 
+<title>Acceleration  demo for iOS</title> 
+<style> 
+pre {
+    border: 1px solid #999;
+    background: #EFEFEF;
+    padding: 10px;
+}
+canvas {
+    border: 1px solid #000;
+}
+</style> 
+</head> 
+<body> 
+<h1>Acceleration demo for iOS</h1>
+<p>x: <span id='x'></span></p> 
+<p>y: <span id='y'></span></p> 
+<p>z: <span id='z'></span></p> 
+ 
+<canvas id='canvas' width='400' height='400'></canvas> 
+ 
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script> 
+<script> 
+var x = $('#x');
+var y = $('#y');
+var z = $('#z');
+ 
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+var current = {
+    x: 185,
+    y: 185
+};
+ 
+var draw = function(x, y){
+    var cx = (x || 0) + current.x;
+    var cy = (y || 0) + current.y;
+    if (cx < 0) cx = 0;
+    if (cx > 400) cx = 400;
+    if (cy < 0) cy = 0;
+    if (cy > 400) cy = 400;
+ 
+    ctx.clearRect(0,0,400,400);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 30, 0, Math.PI*2, false);
+    ctx.fillStyle = "rgb(0,120,0)";
+    ctx.fill();
+    current = { x: cx, y: cy };
+};
+draw();
+ 
+window.addEventListener('devicemotion', function(evt) {
+    var acc = evt.accelerationIncludingGravity;
+    x.text(acc.x);
+    y.text(acc.y);
+    z.text(acc.z);
+    draw(acc.x*2, -acc.y*2);
+});
+</script> 
+</body> 
+</html> 

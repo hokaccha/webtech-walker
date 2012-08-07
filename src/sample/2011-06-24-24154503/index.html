@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>CSS Animation Demo</title>
+<style>
+/* クオートあり */
+.sample1 {
+	width: 100px;
+	height: 100px;
+	background: red;
+	margin: 10px 0;
+	position: relative;
+	-webkit-animation: 'sample1' 1s infinite alternate;
+	-moz-animation: 'sample1' 1s infinite alternate;
+}
+@-webkit-keyframes 'sample1' {
+	from { left: 0 }
+	to { left: 500px }
+}
+@-moz-keyframes 'sample1' {
+	from { left: 0 }
+	to { left: 500px }
+}
+
+/* クオートなし */
+.sample2 {
+	width: 100px;
+	height: 100px;
+	background: red;
+	position: relative;
+	-webkit-animation: sample2 1s infinite alternate;
+	-moz-animation: sample2 1s infinite alternate;
+}
+@-webkit-keyframes sample2 {
+	from { left: 0 }
+	to { left: 500px }
+}
+@-moz-keyframes sample2 {
+	from { left: 0 }
+	to { left: 500px }
+}
+
+pre {
+	margin: 30px 0;
+	background: #EFEFEF;
+	border: 1px solid #999;
+	padding: 10px;
+}
+</style>
+</head>
+<body>
+<div>クオートあり</div>
+<div class="sample1"></div>
+<br>
+<div>クオートなし</div>
+<div class="sample2"></div>
+
+<pre><code>/* クオートあり */
+.sample1 {
+    width: 100px;
+    height: 100px;
+    background: red;
+    margin: 10px 0;
+    position: relative;
+    -webkit-animation: 'sample1' 1s infinite alternate;
+    -moz-animation: 'sample1' 1s infinite alternate;
+}
+@-webkit-keyframes 'sample1' {
+    from { left: 0 }
+    to { left: 500px }
+}
+@-moz-keyframes 'sample1' {
+    from { left: 0 }
+    to { left: 500px }
+}
+
+/* クオートなし */
+.sample2 {
+    width: 100px;
+    height: 100px;
+    background: red;
+    position: relative;
+    -webkit-animation: sample2 1s infinite alternate;
+    -moz-animation: sample2 1s infinite alternate;
+}
+@-webkit-keyframes sample2 {
+    from { left: 0 }
+    to { left: 500px }
+}
+@-moz-keyframes sample2 {
+    from { left: 0 }
+    to { left: 500px }
+}</code></pre>
+
+</body>
+</html>
