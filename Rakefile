@@ -9,7 +9,7 @@ end
 
 desc 'deploy to production'
 task :deploy do
-  sh 'jekyll'
+  sh 'bundle exec jekyll'
   sh 'rm -rf _deploy/*'
   sh 'cp -R _site/* _deploy'
   cd '_deploy' do
@@ -38,4 +38,9 @@ EOF
 
   File.write(filepath, content)
   puts "create #{filepath}"
+end
+
+desc 'run dev server'
+task 'server' do
+  sh 'bundle exec jekyll --auto --server --limit_posts 3'
 end
