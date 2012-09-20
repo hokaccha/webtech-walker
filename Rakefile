@@ -14,7 +14,7 @@ task :deploy do
   sh 'cp -R _site/* _deploy'
   cd '_deploy' do
     sh 'git add -A'
-    sh 'git commit -m "deploy"'
+    sh 'git commit -v'
     sh 'git push origin gh-pages'
   end
 end
