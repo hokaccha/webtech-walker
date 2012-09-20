@@ -1,0 +1,26 @@
+// 日付の背景文字とかぶるのでborderにする
+@media screen and (max-width: 720px) {
+  .mod-main {
+    time {
+      background-image: none;
+      border-top: 1px solid #CCC;
+      border-bottom: 1px solid #CCC;
+      padding-top: 5px;
+      padding-bottom: 5px;
+    }
+  }
+}
+
+// 画像切れちゃうので縮める
+@media screen and (max-width: 480px) {
+  .mod-header {
+    h1 {
+      padding: 20px 0;
+    }
+
+    img {
+      width: 320px;
+      height: 45px;
+    }
+  }
+}
