@@ -45,4 +45,4 @@ end
 
 [pygmentsが原因でjekyllが重くなってた - hokaccha.hamalog v2](http://d.hatena.ne.jp/hokaccha/20120808/1344436656)
 
-というわけでJkeyllおすすめ。
+というわけでJekyllおすすめ。
