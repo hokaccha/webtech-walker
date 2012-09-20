@@ -1,7 +1,9 @@
 ---
 layout: posts
 title: 俺の最強ブログシステムも火を噴いてたぜ
-tags: blog
+tags:
+  - jekyll
+  - blog
 ---
 
 [俺の最強ブログ システムが火を噴くぜ - てっく煮ブログ](http://tech.nitoyon.com/ja/blog/2012/09/20/moved-completed/)
