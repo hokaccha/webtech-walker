@@ -26,11 +26,11 @@ Ruby製のジョブキューサーバーである[Resque](https://github.com/def
 
 で、それがResqueの1.22.0で解決されたみたい。
 
-1.22.0では`TERM_CHILD=1`というのを環境変数で設定すれば`SIGTERM`を受け取ったときに起動している子プロセスに対して`SIGTERM`を送り、子プロセスが`RESQUE_TERM_TIMEOUT`で設定秒数の間に終了しなかったら子プロセスに`SIGKILL`を送って強制終了させるという機能が実装された。これによって
+1.22.0では`TERM_CHILD=1`というのを環境変数で設定すればマスタプロセスが`SIGTERM`を受け取ったときに、起動している子プロセスに対して`SIGTERM`を送り、子プロセスが`RESQUE_TERM_TIMEOUT`で設定された秒数の間に終了しなかったら子プロセスに`SIGKILL`を送って強制終了させるという機能が実装された。これによって
 
     $ TERM_CHILD=1 RESQUE_TERM_TIMEOUT=10 QUEUES=* rake resque:work
 
-のようにすれば各workerで`SIGTERM`をハンドリングすることで安全に再起動できるようになる。
+のように起動し、worker側で`SIGTERM`をハンドリングすることで安全に再起動できるようになる。
 
 ## 試してみる
 
