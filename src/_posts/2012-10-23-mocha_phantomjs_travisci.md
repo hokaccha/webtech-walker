@@ -79,6 +79,20 @@ mocha-phantomjsをnpmでインストールするようにしてもいいんで�
 
 [mocha-phantom-travis-test/test/lib](https://github.com/hokaccha/mocha-phantom-travis-test/tree/master/test/lib)
 
+そして`mocha.run()`を実行するところを次のように書きます。
+
+{% highlight javascript %}
+window.onload = function() {
+  if (window.mochaPhantomJS) {
+    mochaPhantomJS.run();
+  } else {
+    mocha.run();
+  }
+};
+{% endhighlight %}
+
+phantomJSから呼ぶ場合は`mochaPhantomJS.run()`で実行、そうでない場合は通常の`mocha.run()`でテストを実行するようにしています。
+
 これで以下のようにするとmochaのテストをコマンドラインから実行できます。
 
     $ phantomjs test/lib/mocha-phantomjs.coffee test/index.html
