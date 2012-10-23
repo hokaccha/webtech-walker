@@ -175,6 +175,7 @@ body {
 
     img {
       max-width: 100%;
+      height: auto;
     }
 
     a {
@@ -313,6 +314,15 @@ body {
     dd {
       padding-left: 15px;
       margin-bottom: 10px;
+    }
+
+    figure {
+      display: block;
+      text-align: center;
+    }
+
+    figcaption {
+      display: block;
     }
 
     .caption {
