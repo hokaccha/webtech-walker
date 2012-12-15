@@ -8,7 +8,7 @@ tags:
 
 [Backbone.js Advent Calendar](http://www.adventar.org/calendars/15)の15日目です。軽めにいきます。
 
-Backbone.Modelの`attributes`にオブジェクトを設定するときの注意点など。`attributes`は`set`とかでインスタンスごとに設定される属性のことですね。内部では`attributes`っていうオブジェクトで持ってます。
+Backbone.Modelの`attributes`にオブジェクトを設定するときの注意点など。`attributes`は`set`とかで設定される値をオブジェクトして持っているやつです。
 
 まず次のように`set`で`attributes`を設定します。
 
