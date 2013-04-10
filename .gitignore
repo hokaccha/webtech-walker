@@ -1,7 +1,6 @@
 /.bundle
 /vendor/bundle
 .sass-cache
-/Gemfile.lock
 /_site
 /_deploy
 /src/_posts/*-draft.md
