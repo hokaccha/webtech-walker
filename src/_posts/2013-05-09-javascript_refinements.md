@@ -91,7 +91,9 @@ Refinements.using('TestRefine', 'TestRefine2', function() {
 });
 {% endhighlight %}
 
-（致命的な）欠点は`using`の中で非同期処理があった場合、非同期処理の中では拡張が使えないということ。
+これで基本的によくないとされているネイティブオブジェクトのprototype拡張も比較的安全に行うことができるようになる。
+
+ただし（致命的な）欠点に`using`の中で非同期処理があった場合、非同期処理の中では拡張が使えないというのがある。
 
 {% highlight javascript %}
 Refinements.using('TestRefine', function() {
