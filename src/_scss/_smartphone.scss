@@ -22,6 +22,16 @@
     }
   }
 }
+@media screen and (max-width: 320px) {
+  .mod-entry {
+    .body {
+      .mod-ads {
+        position: relative;
+        right: 10px;
+      }
+    }
+  }
+}
 
 @media screen and (max-width: 500px) {
   // 画像切れちゃうので縮める
