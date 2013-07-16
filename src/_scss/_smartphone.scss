@@ -8,28 +8,6 @@
       padding-top: 5px;
       padding-bottom: 5px;
     }
-
-    .body {
-      .mod-ads {
-        .big {
-          display: none;
-        }
-
-        .mobile {
-          display: block;
-        }
-      }
-    }
-  }
-}
-@media screen and (max-width: 320px) {
-  .mod-entry {
-    .body {
-      .mod-ads {
-        position: relative;
-        right: 10px;
-      }
-    }
   }
 }
 
