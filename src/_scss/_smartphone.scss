@@ -1,5 +1,5 @@
-// 日付の背景文字とかぶるのでborderにする
 @media screen and (max-width: 720px) {
+  // 日付の背景文字とかぶるのでborderにする
   .mod-entry {
     time {
       background-image: none;
@@ -8,11 +8,23 @@
       padding-top: 5px;
       padding-bottom: 5px;
     }
+
+    .body {
+      .mod-ads {
+        .big {
+          display: none;
+        }
+
+        .mobile {
+          display: block;
+        }
+      }
+    }
   }
 }
 
-// 画像切れちゃうので縮める
 @media screen and (max-width: 500px) {
+  // 画像切れちゃうので縮める
   .mod-header {
     h1 {
       padding: 30px 0;
