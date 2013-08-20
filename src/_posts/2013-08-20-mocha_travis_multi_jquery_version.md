@@ -1,6 +1,6 @@
 ---
 layout: posts
-title: Travis CIで複数のjQueryのバージョンでテストを実行する
+title: jQueryプラグインのテストを複数のjQueryのバージョンで実行する
 tags:
   - JavaScript
   - test
