@@ -22,7 +22,9 @@ Travis CIは
 
 jQueryのバージョンはmocha-phantomjsに環境変数で渡したいんだけど、mocha-phantomjsは環境変数をブラウザに渡せるようになってなかったので、パッチ書いたのでひとまずそっちを使う。（Pull Requestは送っといたので取り込まれたらそっち使いましょう）
 
-    $ npm install git://github.com/hokaccha/mocha-phantomjs.git#topic/set-env
+（追記：取り込まれた）
+
+    $ npm install mocha-phantomjs
 
 そしたらjQueryを環境変数からバージョンを切り替えて読めるようにする。こんな感じ。
 
