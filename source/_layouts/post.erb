@@ -1,0 +1,92 @@
+<% wrap_layout :layout do %>
+
+<div class="mod-entry">
+ 
+<article>
+
+<%= time_tag current_article.date %>
+
+<ul class="tags">
+  <% current_article.tags.each do |tag| %>
+    <li><%= link_to tag, tag_path(tag) %></li>
+  <% end %>
+</ul>
+
+<h1><%= current_article.title %></h1>
+
+<div class="body">
+
+<%= yield %>
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+<% if prev_article = current_article.previous_article %>
+  <li class="prev"><span>Prev Entry:</span><%= link_to prev_article.title, prev_article %></li>
+<% end %>
+<% if next_article = current_article.next_article %>
+  <li class="next"><span>Next Entry:</span><%= link_to next_article.title, next_article %></li>
+<% end %>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+<% end %>

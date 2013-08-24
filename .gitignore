@@ -1,6 +1,5 @@
 /.bundle
+/build
 /vendor/bundle
-.sass-cache
-/_site
-/_deploy
-/src/_posts/*-draft.md
+/.sass-cache
+/.assets_cache

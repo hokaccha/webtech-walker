@@ -1,8 +1,0 @@
-<ul>
-{% for post in posts limit: limit %}
-  <li>
-    <a href="{{ post.url }}">{{ post.title }}</a>
-    <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y月%m月%d日" }}</time>
-  </li>
-{% endfor %}
-</ul>

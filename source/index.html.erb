@@ -1,0 +1,19 @@
+<section class="mod-posts">
+<h2>Recent Entries</h2>
+<%= partial 'article_list', locals: { articles: blog.articles[0...10] } %>
+</section>
+
+<section class="mod-tags">
+<h2>Tags</h2>
+<ol>
+  <% blog.tags.each do |tag, articles| %>
+    <li><%= link_to tag, tag_path(tag) %></a></li>
+  <% end %>
+</ol>
+</section>
+
+<section class="mod-about">
+<h2>About Site</h2>
+
+<p>Web系の技術に関するブログ。最近はJavaScriptの話が多めかも。</p>
+</section>

@@ -1,6 +1,9 @@
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
-gem 'jekyll', :git => 'https://github.com/hokaccha/jekyll.git', :branch => 'fix_pygments_opt'
-gem 'jekyll-tagging'
-gem 'sass', '~> 3.2.0.alpha.274'
-gem 'kramdown'
+ruby '2.0.0'
+
+gem 'middleman'
+gem 'middleman-blog'
+gem 'middleman-syntax'
+gem 'redcarpet'
+gem "builder"

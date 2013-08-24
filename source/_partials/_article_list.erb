@@ -1,0 +1,8 @@
+<ul>
+<% articles.each do |article| %>
+  <li>
+    <%= link_to article.title, article %>
+    <%= time_tag article.date %>
+  </li>
+<% end %>
+</ul>
