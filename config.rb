@@ -22,7 +22,7 @@ set :partials_dir, '_partials'
 set :css_dir, 'css'
 set :js_dir, 'js'
 set :markdown_engine, :redcarpet
-set :markdown, :fenced_code_blocks => true, :smartypants => true
+set :markdown, :fenced_code_blocks => true
 
 configure :development do
   sprockets.cache = ::Sprockets::Cache::FileStore.new("#{root}/.assets_cache")
