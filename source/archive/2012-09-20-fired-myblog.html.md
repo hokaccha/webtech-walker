@@ -23,6 +23,7 @@ tags:
 ってやるとJekyllのビルドが走って生成したファイルコピーしてgh-pagesにコミットしてGithubにpushするところまで自動でできるようにしてる。ビルドタスクはこんな感じ。
 
 [webtech-walker/Rakefile at f2b178baa3bb00776f089f50b7b3e2954c83694c · hokaccha/webtech-walker](https://github.com/hokaccha/webtech-walker/blob/f2b178baa3bb00776f089f50b7b3e2954c83694c/Rakefile#L10-20)
+
 ```ruby
 desc 'deploy to production'
 task :deploy do
