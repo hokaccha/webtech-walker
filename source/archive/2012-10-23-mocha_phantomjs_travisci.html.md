@@ -1,6 +1,6 @@
 ---
 title: mochaとphantomJSとtravis-ciでフロントエンドJavaScriptのテスト
-date: 2010-10-23T00:00:01+09:00
+date: 2012-10-23T00:00:01+09:00
 tags: 
  - JavaScript
  - test

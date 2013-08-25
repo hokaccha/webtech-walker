@@ -6,7 +6,7 @@
 <section class="mod-tags">
 <h2>Tags</h2>
 <ol>
-  <% blog.tags.each do |tag, articles| %>
+  <% sorted_tags.each do |tag, articles| %>
     <li><%= link_to tag, tag_path(tag) %></a></li>
   <% end %>
 </ol>
