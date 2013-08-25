@@ -30,4 +30,5 @@ configure :development do
 end
 
 configure :build do
+  set :sass, style: :compact, line_comments: false
 end
