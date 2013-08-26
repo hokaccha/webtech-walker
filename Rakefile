@@ -1,6 +1,6 @@
 REPOSITORY = 'hokaccha/webtech-walker'
 MASTER_REPOSITORY = if ENV['GH_TOKEN']
-    "https://#{ENV['GH_TOKEN']}@github.com/#{REPOSITORY}"
+    "https://$GH_TOKEN@github.com/#{REPOSITORY}"
   else
     "git@github.com:#{REPOSITORY}.git"
   end
@@ -12,8 +12,7 @@ def initialize_repository(repository, branch)
 
   if Dir["#{DEST_DIR}/.git"].empty?
     FileUtils.rm_rf DEST_DIR
-    puts 'git clone ...'
-    system "git clone #{repository} #{DEST_DIR}"
+    sh "git clone #{repository} #{DEST_DIR}"
   end
 
   Dir.chdir DEST_DIR do
@@ -39,8 +38,7 @@ def push_to_gh_pages(repository, branch)
   Dir.chdir DEST_DIR do
     sh 'git add -A'
     sh "git commit -m 'Update with #{sha1}'"
-    puts 'git push ...'
-    system "git push #{repository} #{branch}"
+    sh "git push --quiet #{repository} #{branch}"
   end
 end
 
