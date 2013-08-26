@@ -5,7 +5,8 @@ module Helpers
 
   def sorted_tags
     blog.tags.sort_by do |tag, articles|
-      articles.sort_by { |article| article.date }.first.date
+      date = articles.sort_by { |a| a.date }.first.date
+      [date, tag]
     end
   end
 end
