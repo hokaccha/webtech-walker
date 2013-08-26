@@ -1,5 +1,5 @@
 ---
-title: ブログをJekyllからmiddlemanに移行してTravis CIでデプロイするようにした
+title: ブログをJekyllからmiddlemanに移行してTravis CIでGitHub Pagesにデプロイするようにした
 tags:
   - middleman
   - jekyll
@@ -26,11 +26,13 @@ RailsのViewまわりの機能をそのまま持ってきたような感じな�
 
 ## Travis CI でデプロイ
 
-あと今回、gitでソースをmasterにpushしたらTravis CIがビルドしてビルド結果をgithub pagesにデプロイしてくれるという仕組みにしてみた。masterにpushするとこんな感じでビルドが走る。
+あと今回、gitでソースをmasterにpushしたらTravis CIがビルドしてビルド結果をGitHub Pagesにデプロイしてくれるという仕組みにしてみた。masterにpushするとこんな感じでビルドが走る。
 
 [hokaccha/webtech-walker - Travis CI](https://travis-ci.org/hokaccha/webtech-walker/builds/10609434)
 
-Jekyllのときはビルドしてデプロイするrakeのタスクを書いて手元でやってたんだけど（プラグイン使ってたのでgithub pages側でビルドできなかったので）、こういうのをCIサーバーにやってもらうのはやはり楽。
+Jekyllのときはビルドしてデプロイするrakeのタスクを書いて手元でやってたんだけど（プラグイン使ってたのでGitHub Pages側でビルドできなかったので）、こういうのをCIサーバーにやってもらうのはやはり楽。
+
+ただ、pushしてから反映されるまでに少し時間がかかる（数十秒から数分くらい）ので頻繁に更新とか修正がない個人ブログ程度でないとけっこうつらい感じはする。
 
 ちなみにこれはtricknotes先生の手法の丸パクリで、`Rakefile`とか`.travis.yml`もほぼそのまま使わせていただきました。詳しくは以下を参考のこと。
 
