@@ -12,7 +12,7 @@ def initialize_repository(repository, branch)
 
   if Dir["#{DEST_DIR}/.git"].empty?
     FileUtils.rm_rf DEST_DIR
-    sh "git clone #{repository} #{DEST_DIR}"
+    sh "git clone --quiet #{repository} #{DEST_DIR} 2> /dev/null"
   end
 
   Dir.chdir DEST_DIR do
@@ -38,7 +38,7 @@ def push_to_gh_pages(repository, branch)
   Dir.chdir DEST_DIR do
     sh 'git add -A'
     sh "git commit -m 'Update with #{sha1}'"
-    sh "git push --quiet #{repository} #{branch}"
+    sh "git push --quiet #{repository} #{branch} 2> /dev/null"
   end
 end
 
