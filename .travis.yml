@@ -12,4 +12,4 @@ env:
     - GIT_COMMITTER_EMAIL="k.hokamura@gmail.com"
     - GIT_AUTHOR_NAME="Kazuhito Hokamura"
     - GIT_AUTHOR_EMAIL="k.hokamura@gmail.com"
-    - secure: "i6jZzEMxjPhPusZSQRH6Wzlnxe+mtMEIPYHHuLXJ3Irg0W8FTQN6mRMSw2Kw0YIPEGJSwyGBdsMEmn7Hc8oFg9PVPzt5ucT3t9I+xUoam7/hv9Q+J/pfSfVE+67d1ruQ5BWZFAJ++Qrh+xLEWB5R/oKznK/nlnUQds/P3NWsk7w="
+    - secure: "ktBrNKgGgj2t4EStEswoY09jTQ9rh3t0z3cgmprtte6Yr6+5IBhwRl0MeOI6sLEyw/aiUK6FFsMbmRFU+Ad1TqD6PYDlGN+PljTDNWgGMcRTh1NGUYu3rJQYtJOeOLVWLaph553lUwUjS4SuYDvmidUZ3rIaU5ggRgyafmbgtjA="
