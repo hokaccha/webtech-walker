@@ -6,7 +6,11 @@ tags:
   - blog
 ---
 
-ちょうど一年くらい前にWordPressからJekyllに移行したんだけど、今回[middleman](http://middlemanapp.com/)で作りなおしてみた。特にJekyllに不満があったわけでもなく単に技術的興味によるもの。
+ちょうど一年くらい前にWordPressからJekyllに移行したんだけど、今回middlemanで作りなおしてみた。
+
+[hokaccha/webtech-walker - GitHub](https://github.com/hokaccha/webtech-walker)
+
+特にJekyllに不満があったわけでもなく単に技術的興味によるもの。
 
 ## middleman
 
@@ -24,7 +28,7 @@ RailsのViewまわりの機能をそのまま持ってきたような感じな�
 
 あと今回、gitでソースをmasterにpushしたらTravis CIがビルドしてビルド結果をgithub pagesにデプロイしてくれるという仕組みにしてみた。masterにpushするとこんな感じでビルドが走る。
 
-[hokaccha/webtech-walker - Travis CI](https://travis-ci.org/hokaccha/webtech-walker/builds/10608485)
+[hokaccha/webtech-walker - Travis CI](https://travis-ci.org/hokaccha/webtech-walker/builds/10609434)
 
 Jekyllのときはビルドしてデプロイするrakeのタスクを書いて手元でやってたんだけど（プラグイン使ってたのでgithub pages側でビルドできなかったので）、こういうのをCIサーバーにやってもらうのはやはり楽。
 
