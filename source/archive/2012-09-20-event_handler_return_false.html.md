@@ -10,7 +10,7 @@ tags:
 ```javascript
 $(function() {
   $('a[href*=#]').click(function() {
-    // スムーズスクロースの処理
+    // スムーズスクローズの処理
     ...
 
     return false;
@@ -26,7 +26,7 @@ $(function() {
     ev.preventDefault();
     ev.stopPropagation();
 
-    // スムーズスクロースの処理
+    // スムーズスクローズの処理
     ...
   });
 });
@@ -41,7 +41,7 @@ $(function() {
 ```javascript
 $(function() {
   $('a[href*=#]').click(function() {
-    // スムーズスクロースの処理
+    // スムーズスクローズの処理
     ...
 
     return false;
