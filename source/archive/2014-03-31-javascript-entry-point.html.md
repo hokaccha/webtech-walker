@@ -10,7 +10,7 @@ Backbone.Routerは基本的にhistory APIやhashchangeを使ったSPAのため�
 
 方法は色々だと思うけど、自分の場合はそういうケースでは次のような簡易的なURL Dispatcherを書いて対応することが多い。
 
-[dispacher.js](https://gist.github.com/hokaccha/9885783)
+[dispatcher.js](https://gist.github.com/hokaccha/9885783)
 
 これをこんな感じで使う。
 
@@ -45,4 +45,4 @@ MyApp.Actions.User = function(path, id) {
 
 単に正規表現でURLをディスパッチしてるだけなので、そんなにかっこよくは書けないけど、わりと柔軟に書けるし実装も小さくて手を入れやすいのである程度の規模ならこれでなんとかなることは多い。
 
-あと、SPAとSPAじゃないページが混じってるアプリケーションもわりと多いので、その場合はこのDispathcerでルーティングした先でBackbone.Routerを初期化するとかいうケースもあったりする。
+あと、SPAとSPAじゃないページが混じってるアプリケーションもわりと多いので、その場合はこのDispatcherでルーティングした先でBackbone.Routerを初期化するとかいうケースもあったりする。
