@@ -11,7 +11,7 @@ Ruby製のジョブキューサーバーである[Resque](https://github.com/def
 
 そのようなHerokuの挙動は以下に書いてある。
 
-[Managing Heroku Processes \| Heroku Dev Center](https://devcenter.heroku.com/articles/ps#graceful-shutdown-with-sigterm)
+[Managing Heroku Processes \| Heroku Dev Center](https://devcenter.heroku.com/articles/dynos#graceful-shutdown-with-sigterm)
 
 一方で、Resqueのシグナルハンドリングがどうなっているかというと、`SIGTERM`で強制終了するようになってる。
 
