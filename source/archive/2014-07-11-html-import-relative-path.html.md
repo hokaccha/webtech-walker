@@ -18,7 +18,7 @@ tags: WebComponents
 <x-sushiyuki type="uni">うに</x-sushiyuki>
 ```
 
-このようなコンポーネントをbowerなどで配布することを考えると、sushiyukiの画像はこのコンポーネントに含めたい。そうすると当然画像のパスは x-sushiyuki.html からの相対パスで解決したい。
+このようなコンポーネントをbowerなどで配布することを考えると、sushiyukiの画像はこのコンポーネントに含めたい。そうすると当然画像のパスは x-sushiyuki.html からの相対パスで解決したい。（1、2個くらいの画像だったらbase64で埋め込んでもいいけどsushiyukiは数が多いのでつらい）
 
 普通に書くとこれが解決できない。例えば x-sushiyuki.html のほうで`img/uni.png`を`src`にした`img`要素をつくって`<x-sushiyuki>`のShadowDOMにappendしたとする。しかしこのShadowDOMが展開されるのは index.html のほうなので index.html からの相対パスで解決される。
 
