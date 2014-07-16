@@ -8,6 +8,10 @@
 <%= stylesheet_link_tag "app.css" %>
 <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 <link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+<script src="/js/platform.js"></script>
+<script src="/js/custom-element.js"></script>
+<link rel="import" href="/components/header.html">
+<link rel="import" href="/components/paginate.html">
 
 <script type="text/javascript">
   var _gaq = _gaq || [];
@@ -42,9 +46,7 @@
 
 <div class="mod-content">
 
-<header class="mod-header">
-<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
-<!-- /header.mod-header --></header>
+<ww-header></ww-header>
 
 <div class="mod-main">
 <%= yield %>

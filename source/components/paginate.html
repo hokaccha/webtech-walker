@@ -1,0 +1,43 @@
+<template id="tmpl-ww-paginate">
+<style>
+:host {
+  display: block;
+}
+.paginate > div {
+  margin: 10px 0;
+}
+span {
+  display: inline-block;
+  margin-right: 10px;
+  font-weight: bold;
+  font-size: 20px;
+  color: #999;
+  font-style: italic;
+  font-family: serif;
+}
+</style>
+
+<div class="paginate">
+  <div class="prev"><span>Prev Entry:</span><a></a></div>
+  <div class="next"><span>Next Entry:</span><a></a></div>
+</div>
+
+</template>
+
+<script>
+CustomElement.register('ww-paginate', {
+  onCreate: function(shadow) {
+    var shadowPrev = shadow.querySelector('.prev a');
+    var shadowNext = shadow.querySelector('.next a');
+
+    var prev = this.querySelector('ww-paginate-prev');
+    var next = this.querySelector('ww-paginate-next');
+
+    shadowPrev.setAttribute('href', prev.getAttribute('href'));
+    shadowNext.setAttribute('href', next.getAttribute('href'));
+
+    shadowPrev.innerHTML = prev.innerHTML;
+    shadowNext.innerHTML = next.innerHTML;
+  }
+});
+</script>

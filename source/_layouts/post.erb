@@ -68,14 +68,14 @@
   </div>
 </div>
 
-<ul class="paginate">
+<ww-paginate>
 <% if prev_article = current_article.previous_article %>
-  <li class="prev"><span>Prev Entry:</span><%= link_to prev_article.title, prev_article %></li>
+  <ww-paginate-prev href="<%= prev_article.url %>"><%= prev_article.title %></ww-paginate-prev>
 <% end %>
 <% if next_article = current_article.next_article %>
-  <li class="next"><span>Next Entry:</span><%= link_to next_article.title, next_article %></li>
+  <ww-paginate-next href="<%= next_article.url %>"><%= next_article.title %></ww-paginate-next>
 <% end %>
-</ul>
+</ww-paginate>
 
 <div id="disqus_thread"></div>
 <script type="text/javascript">
