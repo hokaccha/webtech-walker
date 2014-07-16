@@ -33,11 +33,21 @@ CustomElement.register('ww-paginate', {
     var prev = this.querySelector('ww-paginate-prev');
     var next = this.querySelector('ww-paginate-next');
 
-    shadowPrev.setAttribute('href', prev.getAttribute('href'));
-    shadowNext.setAttribute('href', next.getAttribute('href'));
+    if (prev) {
+      shadowPrev.setAttribute('href', prev.getAttribute('href'));
+      shadowPrev.innerHTML = prev.innerHTML;
+    }
+    else {
+      shadowPrev.parentNode.parentNode.removeChild(shadowPrev.parentNode);
+    }
 
-    shadowPrev.innerHTML = prev.innerHTML;
-    shadowNext.innerHTML = next.innerHTML;
+    if (next) {
+      shadowNext.setAttribute('href', next.getAttribute('href'));
+      shadowNext.innerHTML = next.innerHTML;
+    }
+    else {
+      shadowNext.parentNode.parentNode.removeChild(shadowNext.parentNode);
+    }
   }
 });
 </script>
