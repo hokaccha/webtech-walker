@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>静的サイト開発ツールとしてのMiddlemanとGrunt - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2013-09-03T12:09:00+09:00">2013年09月03日</time>
+
+<ul class="tags">
+    <li><a href="/tags/middleman.html">middleman</a></li>
+    <li><a href="/tags/grunt.html">grunt</a></li>
+</ul>
+
+<h1>静的サイト開発ツールとしてのMiddlemanとGrunt</h1>
+
+<div class="body">
+
+<p>最近自分の周りを見ると、フロントエンドの開発ツールといえばGruntをみんな使ってるんだけど、Middlemanを使うのもけっこういいんじゃないかと思ったので比較してみる。</p>
+
+<h2>実現したいこと</h2>
+
+<p>例えば次のようなものをつくりたいとする。</p>
+
+<ul>
+<li>HTMLは数ページ〜十数ページくらい（ヘッダ・フッタくらいは共通化したい）</li>
+<li>JSはconcatしてminifyしたい</li>
+<li>CSSはSassを使いたい</li>
+<li>開発時はwatchしたり動的サーバーなりでJSやCSSは動的にビルドしたい</li>
+<li>最終的には成果物として静的ファイルを出力したい</li>
+</ul>
+
+<p>まあ、フロントエンドの開発ではいたって普通な要件だと思う。普段サーバーサイドの開発してたり、サーバーサイドと一緒にフロントエンドも開発してる人にとっては、静的ファイルだけ成果物としてあればいいとかあるの？と思うかもしれないけど自分の周りではけっこうよくある。</p>
+
+<h2>Gruntとの比較について</h2>
+
+<p>このようなものを作りたいときにGruntとMiddlemanだったらどっちがいいかな？というのが今回の趣旨だけど、GruntとMiddlemanはアーキテクチャも思想もまったく違っていて、そもそも比較対象にならないのではというのは当然ある。</p>
+
+<p>ただ今回のようなケースにおいてはどちらのツールを使っても実現できるため、どっちがいいかを比較てみようという感じ。</p>
+
+<p>最終的にはMiddlemanがいいんじゃないかというのが自分の意見なんだけど、「それは今回のようなケースでは」という前提であって、Gruntのほうが柔軟で、できることは多いのでもっと複雑なことをしたい場合や、静的サイト開発以外の目的であればMiddlemanでは対応が難しいケースも多いと思う。</p>
+
+<p>例えばjQueryで使わているみたいに、JavaScriptのライブラリをビルドするための使うのであればGruntが最適だろうと思う。</p>
+
+<p>あとJekyllあたりも比較対象にはなるんだけど今回は割愛。</p>
+
+<h2>Gruntの場合</h2>
+
+<p>それぞれでほぼ同じような挙動になるようにして設定したのをGitHubに上げた。まずGruntはこんな感じ。</p>
+
+<p><a href="https://github.com/hokaccha/frontend-dev-env/tree/master/grunt">hokaccha/frontend-dev-env/grunt - GitHub</a></p>
+
+<p>Gruntfile.jsは次のようになっている。</p>
+<pre class="highlight javascript"><code><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">grunt</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="nx">BUILD_DIR</span> <span class="o">=</span> <span class="s1">'build'</span><span class="p">;</span>
+  <span class="nx">SRC_DIR</span> <span class="o">=</span> <span class="s1">'source'</span><span class="p">;</span>
+
+  <span class="nx">grunt</span><span class="p">.</span><span class="nx">task</span><span class="p">.</span><span class="nx">loadNpmTasks</span><span class="p">(</span><span class="s1">'assemble'</span><span class="p">);</span>
+  <span class="nx">grunt</span><span class="p">.</span><span class="nx">task</span><span class="p">.</span><span class="nx">loadNpmTasks</span><span class="p">(</span><span class="s1">'grunt-contrib-sass'</span><span class="p">);</span>
+  <span class="nx">grunt</span><span class="p">.</span><span class="nx">task</span><span class="p">.</span><span class="nx">loadNpmTasks</span><span class="p">(</span><span class="s1">'grunt-contrib-concat'</span><span class="p">);</span>
+  <span class="nx">grunt</span><span class="p">.</span><span class="nx">task</span><span class="p">.</span><span class="nx">loadNpmTasks</span><span class="p">(</span><span class="s1">'grunt-contrib-uglify'</span><span class="p">);</span>
+  <span class="nx">grunt</span><span class="p">.</span><span class="nx">task</span><span class="p">.</span><span class="nx">loadNpmTasks</span><span class="p">(</span><span class="s1">'grunt-contrib-copy'</span><span class="p">);</span>
+  <span class="nx">grunt</span><span class="p">.</span><span class="nx">task</span><span class="p">.</span><span class="nx">loadNpmTasks</span><span class="p">(</span><span class="s1">'grunt-contrib-clean'</span><span class="p">);</span>
+  <span class="nx">grunt</span><span class="p">.</span><span class="nx">task</span><span class="p">.</span><span class="nx">loadNpmTasks</span><span class="p">(</span><span class="s1">'grunt-contrib-connect'</span><span class="p">);</span>
+  <span class="nx">grunt</span><span class="p">.</span><span class="nx">task</span><span class="p">.</span><span class="nx">loadNpmTasks</span><span class="p">(</span><span class="s1">'grunt-contrib-watch'</span><span class="p">);</span>
+
+  <span class="nx">grunt</span><span class="p">.</span><span class="nx">initConfig</span><span class="p">({</span>
+    <span class="na">assemble</span><span class="p">:</span> <span class="p">{</span>
+      <span class="na">options</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">layout</span><span class="p">:</span> <span class="nx">SRC_DIR</span> <span class="o">+</span> <span class="s1">'/layouts/layout.hbs'</span>
+      <span class="p">},</span>
+      <span class="na">dist</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">expand</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="na">cwd</span><span class="p">:</span> <span class="nx">SRC_DIR</span><span class="p">,</span>
+        <span class="na">src</span><span class="p">:</span> <span class="s1">'*.hbs'</span><span class="p">,</span>
+        <span class="na">dest</span><span class="p">:</span> <span class="nx">BUILD_DIR</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="na">sass</span><span class="p">:</span> <span class="p">{</span>
+      <span class="na">options</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">bundleExec</span><span class="p">:</span> <span class="kc">true</span>
+      <span class="p">},</span>
+      <span class="na">dist</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">files</span><span class="p">:</span> <span class="p">[</span>
+          <span class="p">{</span>
+            <span class="na">src</span><span class="p">:</span> <span class="nx">SRC_DIR</span> <span class="o">+</span> <span class="s1">'/css/app.scss'</span><span class="p">,</span>
+            <span class="na">dest</span><span class="p">:</span> <span class="nx">BUILD_DIR</span> <span class="o">+</span> <span class="s1">'/css/app.css'</span>
+          <span class="p">}</span>
+        <span class="p">]</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="na">concat</span><span class="p">:</span> <span class="p">{</span>
+      <span class="na">dist</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">src</span><span class="p">:</span> <span class="p">[</span>
+          <span class="nx">SRC_DIR</span> <span class="o">+</span> <span class="s1">'/js/lib/jquery.js'</span><span class="p">,</span>
+          <span class="nx">SRC_DIR</span> <span class="o">+</span> <span class="s1">'/js/lib/underscore.js'</span><span class="p">,</span>
+          <span class="nx">SRC_DIR</span> <span class="o">+</span> <span class="s1">'/js/lib/backbone.js'</span><span class="p">,</span>
+          <span class="nx">SRC_DIR</span> <span class="o">+</span> <span class="s1">'/js/app/main.js'</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="na">dest</span><span class="p">:</span> <span class="nx">BUILD_DIR</span> <span class="o">+</span> <span class="s1">'/js/app.js'</span><span class="p">,</span>
+      <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="na">uglify</span><span class="p">:</span> <span class="p">{</span>
+      <span class="na">dist</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">files</span><span class="p">:</span> <span class="p">{</span>
+          <span class="s1">'build/js/app.js'</span><span class="p">:</span> <span class="nx">BUILD_DIR</span> <span class="o">+</span> <span class="s1">'/js/app.js'</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="na">copy</span><span class="p">:</span> <span class="p">{</span>
+      <span class="na">dist</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">expand</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="na">cwd</span><span class="p">:</span> <span class="nx">SRC_DIR</span> <span class="o">+</span> <span class="s1">'/img'</span><span class="p">,</span>
+        <span class="na">src</span><span class="p">:</span> <span class="s1">'**/*'</span><span class="p">,</span>
+        <span class="na">dest</span><span class="p">:</span> <span class="nx">BUILD_DIR</span> <span class="o">+</span> <span class="s1">'/img'</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="na">clean</span><span class="p">:</span> <span class="p">[</span><span class="nx">BUILD_DIR</span><span class="p">],</span>
+    <span class="na">connect</span><span class="p">:</span> <span class="p">{</span>
+      <span class="na">server</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">options</span><span class="p">:</span> <span class="p">{</span>
+          <span class="na">port</span><span class="p">:</span> <span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">PORT</span> <span class="o">||</span> <span class="mi">3000</span><span class="p">,</span>
+          <span class="na">base</span><span class="p">:</span> <span class="nx">BUILD_DIR</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="na">watch</span><span class="p">:</span> <span class="p">{</span>
+      <span class="na">assemble</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">files</span><span class="p">:</span> <span class="p">[</span><span class="nx">SRC_DIR</span> <span class="o">+</span> <span class="s1">'/*.hsb'</span><span class="p">,</span> <span class="nx">SRC_DIR</span> <span class="o">+</span> <span class="s1">'/layouts/*'</span><span class="p">],</span>
+        <span class="na">tasks</span><span class="p">:</span> <span class="s1">'assemble'</span>
+      <span class="p">},</span>
+      <span class="na">sass</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">files</span><span class="p">:</span> <span class="nx">SRC_DIR</span> <span class="o">+</span> <span class="s1">'/css/*'</span><span class="p">,</span>
+        <span class="na">tasks</span><span class="p">:</span> <span class="s1">'sass'</span>
+      <span class="p">},</span>
+      <span class="na">js</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">files</span><span class="p">:</span> <span class="nx">SRC_DIR</span> <span class="o">+</span> <span class="s1">'/js/**/*'</span><span class="p">,</span>
+        <span class="na">tasks</span><span class="p">:</span> <span class="s1">'concat'</span>
+      <span class="p">},</span>
+      <span class="na">copy</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">files</span><span class="p">:</span> <span class="nx">SRC_DIR</span> <span class="o">+</span> <span class="s1">'/img/**/*'</span><span class="p">,</span>
+        <span class="na">tasks</span><span class="p">:</span> <span class="s1">'copy'</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+
+  <span class="nx">grunt</span><span class="p">.</span><span class="nx">registerTask</span><span class="p">(</span><span class="s1">'build'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'clean'</span><span class="p">,</span> <span class="s1">'concat'</span><span class="p">,</span> <span class="s1">'uglify'</span><span class="p">,</span> <span class="s1">'sass'</span><span class="p">,</span> <span class="s1">'assemble'</span><span class="p">,</span> <span class="s1">'copy'</span><span class="p">]);</span>
+  <span class="nx">grunt</span><span class="p">.</span><span class="nx">registerTask</span><span class="p">(</span><span class="s1">'server'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'clean'</span><span class="p">,</span> <span class="s1">'concat'</span><span class="p">,</span> <span class="s1">'sass'</span><span class="p">,</span> <span class="s1">'assemble'</span><span class="p">,</span> <span class="s1">'copy'</span><span class="p">,</span> <span class="s1">'connect'</span><span class="p">,</span> <span class="s1">'watch'</span><span class="p">]);</span>
+  <span class="nx">grunt</span><span class="p">.</span><span class="nx">registerTask</span><span class="p">(</span><span class="s1">'default'</span><span class="p">,</span> <span class="p">[</span><span class="s1">'build'</span><span class="p">]);</span>
+<span class="p">};</span>
+</code></pre>
+
+<p>お、おう、これはすごい。力作。正直このエントリ書くのにこのGruntfile書くのが一番時間かかった。やはりGruntは色々なものを組みわせて柔軟に書ける反面、自分でプラグインを選んで手動で設定行わなければいけないというのが難点だと思う。長くなるし複雑になる。</p>
+
+<p>Grunt力は正直あんまり高くないほうだと思うのでもっとうまく書けるのかもしれないけど。あとGrunefileをCoffeeで書けば多少は短くなるだろうけど本質は変わらないね。</p>
+
+<p>ちなみに少しだけ中の解説をすると、テンプレートエンジンからHTMLにレンダリングしたりlayout的な機能を提供する<a href="http://assemble.io/">Assemble</a>というのを使ってる。これはこれで便利。他はほとんど<code>grunt-contrib-*</code>なのでほぼGruntのベーシックな機能しか使ってない。</p>
+
+<h2>Middleman</h2>
+
+<p>一方Middleman。</p>
+
+<p><a href="https://github.com/hokaccha/frontend-dev-env/tree/master/middleman">hokaccha/frontend-dev-env/middleman - GitHub</a></p>
+
+<p>設定ファイルであるconfig.rbはこんな感じ。</p>
+<pre class="highlight ruby"><code><span class="n">set</span> <span class="ss">:css_dir</span><span class="p">,</span> <span class="s1">'css'</span>
+<span class="n">set</span> <span class="ss">:js_dir</span><span class="p">,</span> <span class="s1">'js'</span>
+
+<span class="n">configure</span> <span class="ss">:development</span> <span class="k">do</span>
+  <span class="n">set</span> <span class="ss">:debug_assets</span><span class="p">,</span> <span class="kp">true</span>
+<span class="k">end</span>
+
+<span class="n">configure</span> <span class="ss">:build</span> <span class="k">do</span>
+  <span class="n">activate</span> <span class="ss">:minify_javascript</span>
+<span class="k">end</span>
+</code></pre>
+
+<p>Gruntに比べると超シンプル。プラグインも一個も入れてない。</p>
+
+<p>Middlemanがいいと思うところをいくつか紹介してみる。</p>
+
+<h3>Asset Pipeline</h3>
+
+<p>なんといってもこれが一番大きい。Asset Pipeline。</p>
+
+<p>例えば以下のようにJavaScript内で<code>require</code>と書くことができ、</p>
+<pre class="highlight javascript"><code><span class="c1">//= require _lib/jquery</span>
+<span class="c1">//= require _lib/underscore</span>
+<span class="c1">//= require _lib/backbone</span>
+<span class="c1">//= require _app/main.js</span>
+</code></pre>
+
+<p>これが開発時にはHTMLで次のように展開される。（?body=1というのはrequireを無視するというクエリ）</p>
+<pre class="highlight html"><code><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"/js/_lib/jquery.js?body=1"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"/js/_lib/underscore.js?body=1"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"/js/_lib/backbone.js?body=1"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"/js/_app/main.js?body=1"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"/js/app.js?body=1"</span><span class="nt">&gt;&lt;/script&gt;</span> 
+</code></pre>
+
+<p>本番環境（というか静的ファイル出力時）には次のようになって、concatされてminifyされた状態のapp.jsが出力される。</p>
+<pre class="highlight html"><code><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"/js/app.js"</span><span class="nt">&gt;&lt;/script&gt;</span> 
+</code></pre>
+
+<p>これは開発時にはすごく便利で、開発時だけminifyされてないしconcatもされてないので、かなり開発しやすい。Source Mapで将来的には解決する問題だとは思うけど現時点ではかなり現実的でよい方法だと思う。</p>
+
+<p>SassもこのAsset Pipelineという機能がコンパイルしてる。あとCoffeeScriptなんかもプラグイン入れたり設定変えたりしなくても、拡張子を<code>.coffee</code>にするだけでコンパイルできる。</p>
+
+<h3>relative links</h3>
+
+<p>他にも静的ファイルをつくる上で嬉しい機能がいくつかある。例えば<code>link_to</code>。layoutに</p>
+<pre class="highlight erb"><code><span class="nt">&lt;li&gt;</span><span class="cp">&lt;%=</span> <span class="n">link_to</span> <span class="s1">'About'</span><span class="p">,</span> <span class="s1">'/about.html'</span> <span class="cp">%&gt;</span><span class="nt">&lt;/li&gt;</span>
+</code></pre>
+
+<p>と書いてる場合、リンクは通常絶対パスになるが、要件によってはファイルを設置するパスが決まっておらず相対パスのほうが都合がいいような場合もあるけど、HTMLが階層をまたぐときにめんどくさい。</p>
+
+<p>そんなとき、<code>link_to</code>ヘルパーを使っていると、設定で<code>set :relative_links, true</code>とすれば、自動的にHTMLの階層を見て相対パスに書き換えてくれたりする。</p>
+
+<p>例えば、<code>/index.html</code>ではリンク先が<code>about.html</code>になるけど、<code>/dir/page.html</code>からは<code>../about.html</code>になるような感じ。</p>
+
+<p>リンクだけじゃなくてscript要素やlink要素の参照先も設定すれば相対パスになる。これは地味にうれしい機能。</p>
+
+<h3>動的サーバー</h3>
+
+<p>Gruntはどうしてもその性質からwatchしてコンパイルという手順を踏まないといけないので、ラグがでて、編集してリロードするとまだファイルができてないとかあってイライラすることがある。</p>
+
+<p>一方、Middlemanは開発時は動的サーバーなのでそれがない。しかもRackのMiddlewareを差し込めるため既存の資産が使えて嬉しかったりする。</p>
+
+<p>まあこの辺はLiveReloadとかGlowlの通知とか使えばどうにかなるのかもしれないけどちょっとそこまでは試してない。（ちなみにLiveReloadのプラグインはMiddlemanの公式にある）</p>
+
+<h2>まとめ</h2>
+
+<p>Middleman推しまくりになってしまったけど、別にGruntをdisってるわけじゃないというのは最後に付け加えておく。むしろGruntは素晴らしいツールだと思うし今後もっと使われるようになると思う。</p>
+
+<p>だけど、今回のような特定のケースではそれに特化したツールがあればそっちを使う方が色々と便利なことが多いんじゃないだろうか、という一つの提案でした。</p>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2013/08/jekyll_to_middleman.html">ブログをJekyllからmiddlemanに移行してTravis CIでGitHub Pagesにデプロイするようにした</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2013/10/isucon3_qualifier.html">ISUCON3 予選の記録</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

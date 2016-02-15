@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>IE6のバグのまとめ - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2007-05-21T00:00:00+09:00">2007年05月21日</time>
+
+<ul class="tags">
+    <li><a href="/tags/ie.html">IE</a></li>
+</ul>
+
+<h1>IE6のバグのまとめ</h1>
+
+<div class="body">
+
+<p>XHTML+CSSでコーディングするときにブラウザのバグを知っているか知らないかでは大きく違いますよね。とりわけ他のブラウザよりバグが多いIE6さんのバグをまとめてみることにしました。そろそろIE7の自動配布が始まるころなので忘れないうちにということで。</p>
+
+<p>とは言ったもののIE6のバグを改めて見てみると多い･･･多すぎるよ！逆にこれだけのブラウザがあるからこそコーダーという職種がある気さえしてきます。</p>
+
+<p>今回は『CSSバグ辞典スレッド』の要約のWinIE CSSバグリストからIE6のバグを抜き出して自分でわかりやすいように種類わけしてみました。これで全てではないですがこれだけ知ってればかなりのケースで対応できると思います。</p>
+
+<ins>2012/07/31 追記: リンク先がなくなったのでリンクを外して一覧だけ残しときます。</ins>
+
+<p>ちなみにこの種類分けも厳密ではないのであしからず。</p>
+
+<h2>ボックスモデル</h2>
+
+<h3>maring,padding,border,width,heigthの複合</h3>
+
+<ul>
+<li>ボックスの幅や高さを算出するときにpaddingやborderのサイズを含めてしまう</li>
+<li>左右borderとpaddingを設置した要素に後続する部分がずれる</li>
+<li>マージンに負数が指定された要素でボーダーがずれてゆく </li>
+<li>親要素からはみ出した子孫要素の一部が消える</li>
+<li>インライン要素に指定したパディングやボーダーの上下が消える</li>
+<li>幅や高さを指定した要素でdoubleボーダー領域に背景が描画されない</li>
+<li>ボックスサイズが内容物に合わせた大きさへ強制的に調整される</li>
+<li>親にボーダーを設置した要素を持つ要素のマージン設置が正しくない</li>
+<li>幅や高さを指定した要素の子孫要素でデフォルト指定のマージンが消える</li>
+</ul>
+
+<h3>width,height</h3>
+
+<ul>
+<li>初期コンテナブロックを生成する要素の幅を指定できない</li>
+<li>ボックスの高さを特定の値より小さくできない</li>
+</ul>
+
+<h3>border</h3>
+
+<ul>
+<li>一部のボーダーはcolorの値を引き継がない</li>
+<li>border-colorにtransparentを指定すると前景色で表示される</li>
+</ul>
+
+<h2>視覚整形モデル</h2>
+
+<h3>float</h3>
+
+<ul>
+<li>背景色が指定された要素内にfloatがあるときに要素内の文字が消える</li>
+<li>幅や高さを指定した要素ではボックスサイズの算出時にfloatを除外しない</li>
+<li>floatに後続するボックスの幅がfloatに合わせて短縮される</li>
+<li>先行するfloatの上方に後続のfloatが置かれる</li>
+<li>幅や高さを指定した要素内にあるfloatの下マージンが無視される</li>
+<li>floatの左右マージンが指定値より大きくなる</li>
+<li>インライン要素に挟まれているfloatが下にずれて置かれる</li>
+<li>floatの上部に祖先要素の上ボーダーを表示する</li>
+<li>clearを指定した要素ではfloatに対して上マージンを設置する</li>
+<li>clearを指定したfloatの上下に空行ができる</li>
+<li>floatを含むボックスのマージンが無視される</li>
+<li>floatの左右にある行の端がずれる</li>
+<li>親要素のボックスからはみ出すボックスがfloatの下に置かれる</li>
+<li>コメントがfloatの位置をずらす</li>
+<li>p要素などをfloatにすると上マージンが消える</li>
+<li>floatに隣接する要素は親要素との間で上下マージンが相殺されない</li>
+</ul>
+
+<h3>clear</h3>
+
+<ul>
+<li>clearを指定したボックスの内側上部に隙間が空く</li>
+<li>clearの指定が親要素にも影響する</li>
+</ul>
+
+<h3>position</h3>
+
+<ul>
+<li>left, topが指定された要素ではright, bottomを認識しない</li>
+<li>line-heightが指定された相対配置要素の上ボーダー上端が消える</li>
+<li>相対配置した要素へ向かうリンクのジャンプ先が移動前の位置になる</li>
+<li>直後に背景色つきのhr要素がある絶対配置要素の初期位置がずれている</li>
+</ul>
+
+<h3>display</h3>
+
+<ul>
+<li>ブロック化したアンカーの範囲が内容物の部分のみになる</li>
+<li>head要素と子孫要素のdisplayプロパティを変更できない</li>
+<li>ルビ関連要素のdisplayプロパティを変更できない</li>
+</ul>
+
+<h2>フォント、テキスト</h2>
+
+<h3>line-height</h3>
+
+<ul>
+<li>全体にline-heightが指定されたページの最上部が消える</li>
+<li>line-heightで算出した行高を超える部分が表示されない</li>
+<li>非置換インライン要素に対するline-heightの指定を無視する</li>
+</ul>
+
+<h3>letter-spacing</h3>
+
+<ul>
+<li>letter-spacingを指定した要素内で連続したbr要素が無視される</li>
+</ul>
+
+<h3>font</h3>
+
+<ul>
+<li>font-familyを指定した要素で文字化けする</li>
+<li>em単位で指定した値が文字サイズ変更後に正しく反映されない</li>
+<li>見出し要素でfont-sizeを算出する際に親要素の値を参照しない</li>
+<li>em単位で指定した字間をbody要素の文字サイズを基準に算出する</li>
+<li>OpenTypeフォントを用いて2バイト文字を表示することができない</li>
+</ul>
+
+<h3>vertical-align</h3>
+
+<ul>
+<li>line-heightが指定された要素内でvertical-alignの%値指定が正しく反映されない</li>
+<li>擬似要素にvertical-alignプロパティが効かない</li>
+<li>vertical-alignが指定された要素を含む行が前後の行に重なる</li>
+<li>vertical-align:middle;の状態では置換インライン要素だけの行の高さ算出が不正</li>
+<li>最も高さが大きい要素にvertical-align:bottom;を指定すると配置が狂う</li>
+</ul>
+
+<h3>white-space</h3>
+
+<ul>
+<li>white-space:nowrap;を指定した要素の内部が表示されない</li>
+</ul>
+
+<h3>text-decoration</h3>
+
+<ul>
+<li>親要素のtext-decorationの効果を子要素で解除できる</li>
+</ul>
+
+<h3>background</h3>
+
+<ul>
+<li>インライン要素のrepeat-x背景画像が1行目にしか表示されない</li>
+</ul>
+
+<h2>リスト、表</h2>
+
+<h3>li</h3>
+
+<ul>
+<li>ブロックボックス化した要素を含むリストアイテムの後ろに空行が入る</li>
+<li>幅が指定されたリスト要素のマージンが正しく反映されない</li>
+<li>絶対配置／float状態のリストアイテム要素のリストマーカーが消える</li>
+<li>先頭にfloatがあるリストアイテム要素でリストマーカーが要素内に入り込む</li>
+<li>パディング・幅・高さを指定したリストでリストマーカーが壊れる</li>
+<li>リストマーカーの番号が途中から振られる</li>
+<li>li要素でvertical-alignがテキストの配置に影響を与える</li>
+</ul>
+
+<h3>table</h3>
+
+<ul>
+<li>表の行グループ要素に指定したheightプロパティがセル要素に継承する</li>
+<li>幅を指定していないテーブルでも固定レイアウトが有効</li>
+<li>collapseボーダーをvisibilityで非表示にできない</li>
+<li>相対配置要素内のテーブル行グループ要素のスタイルが外部にはみ出す</li>
+<li>固定レイアウト表で列の幅が小さくなる</li>
+<li>table要素の上マージンがcaption要素の上に設置される</li>
+</ul>
+
+<h2>その他</h2>
+
+<h3>overflow</h3>
+
+<ul>
+<li>幅と高さが明示されていない要素へのoverflow:hidden;指定が完全に反映されない</li>
+<li>overflow:scroll;等が指定された要素の背景画像が閲覧領域に対して固定されない</li>
+<li>overflowでスクロールバーが出るときの高さ計算が正しくない</li>
+<li>overflowへの対応が不完全な要素</li>
+</ul>
+
+<h3>z-index</h3>
+
+<ul>
+<li>bodyにz-indexを指定すると子孫要素の背景指定が無視される</li>
+<li>z-indexを負の数にしたリンクを選択できない</li>
+</ul>
+
+<h3>form</h3>
+
+<ul>
+<li>テキスト入力フォームの幅が文字入力時に変化する</li>
+<li>fieldset要素の上パディングがボーダー領域の外側に設置される</li>
+<li>終了タグを省略したoption要素に続くoptgroup要素を無視する</li>
+<li>背景を指定したフォーム部品で視覚スタイルが無効になる</li>
+</ul>
+
+<h3>hr</h3>
+
+<ul>
+<li>hr要素に指定した下マージンが親要素の下マージンとして反映される</li>
+</ul>
+
+<h3>セレクタ、擬似要素、擬似クラス</h3>
+
+<ul>
+<li>アンカーを:hover状態にすると%値指定のマージンやパディングの量が変化する</li>
+<li>擬似要素名称の直後に空白類文字を置かないと擬似要素が認識されない</li>
+<li>「#」だけをセレクタとして指定すると全称セレクタのように扱われる</li>
+<li>擬似要素を含む要素に後続する要素の内容物が左右にはみ出る</li>
+<li>visited擬似クラスの宣言が詳細度を無視してカスケード処理される</li>
+<li>アンカーを:hover状態にすると親ブロックの高さが変化する</li>
+<li>アンカーを:hover状態にすると後続するfloatの一部が消える</li>
+<li>アンカーを:hover状態にするとbody要素のサイズが縮む</li>
+<li>アンカーを:hover状態にするとiframe要素のサイズが変化する</li>
+</ul>
+
+<h3>未分類</h3>
+
+<ul>
+<li>閲覧領域からはみ出す要素がない状態でもスクロールバーが表示されることがある</li>
+<li>body要素の内容領域をはみ出す部分がレンダリングされない</li>
+<li>行の高さを正しく算出しない</li>
+<li>代替スタイルシート内の指定をprintメディアに反映しない</li>
+<li>インライン要素内のブロック要素がインライン要素のスタイルを継承する</li>
+<li>同一ブロック内では!importantが無視される</li>
+</ul>
+
+<p>主要なバグだけ書き出そうと思ったら、結局こんなにいっぱい書き出してしまった・・・今度時間があったらこのバグたちがIE7でどれだけ直っているか検証しようかな。</p>
+
+<p>ちなみにIE6のバグの回避方法については下記サイトがかなり参考になります。</p>
+
+<p><a href="http://mb.blog7.fc2.com/blog-entry-83.html">CSSレイアウトの定石　WinIE6バグ回避法</a></p>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2007/05/17130450.html">MySQLの小技メモ</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2007/06/08195703.html">PHPでBasic認証</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Backbone.jsでNode.jsとクライアントサイドのロジックをイケてる感じで共通化する - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2012-12-11T00:00:00+09:00">2012年12月11日</time>
+
+<ul class="tags">
+    <li><a href="/tags/javascript.html">JavaScript</a></li>
+    <li><a href="/tags/backbone-js.html">Backbone.js</a></li>
+    <li><a href="/tags/node-js.html">Node.js</a></li>
+</ul>
+
+<h1>Backbone.jsでNode.jsとクライアントサイドのロジックをイケてる感じで共通化する</h1>
+
+<div class="body">
+
+<p><a href="http://www.adventar.org/calendars/15">Backbone.js Advent Calendar</a>の12日目です。</p>
+
+<p>Backbone.jsを使ってNode.jsとクライアントサイドのJavaScriptでロジックを共有する方法について書いてみます。</p>
+
+<p>Node.jsといえばチャット。チャットといえばSocket.IOということでSocket.IOを使ったチャットを例にしてみます。</p>
+
+<p>例えばチャットの一回の文字列の上限を140文字にしたいとします。その場合クライアント側でもサーバー側でも同じバリデーションのロジックを実装するのは面倒ですし、上限値が変更になったときに2箇所変更するのはイケてないですね。そこでBackbone.jsを使ってその部分のロジックを共通化する方法を考えてみます。</p>
+
+<p>Backbone.jsはnpmでインストールできるのでまずはBackbone.jsとSocket.IOをインストールします。</p>
+<pre class="highlight plaintext"><code>$ npm install backbone socket.io
+</code></pre>
+
+<p>次に、サーバーサイドとクライアントサイドの共通のロジックを記述するmodelBase.jsというモデルを作ります。</p>
+<pre class="highlight javascript"><code><span class="c1">// modelBase.js</span>
+
+<span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">Backbone</span> <span class="o">=</span> <span class="nx">root</span><span class="p">.</span><span class="nx">Backbone</span> <span class="o">||</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'backbone'</span><span class="p">);</span>
+
+  <span class="kd">var</span> <span class="nx">TEXT_LIMIT</span> <span class="o">=</span> <span class="mi">140</span><span class="p">;</span>
+
+  <span class="kd">var</span> <span class="nx">MessageBase</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="na">validate</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">attrs</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">attrs</span><span class="p">.</span><span class="nx">text</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;=</span> <span class="nx">TEXT_LIMIT</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s1">'text is too long'</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">},</span>
+
+    <span class="c1">// その他共通のロジック</span>
+  <span class="p">});</span>
+
+  <span class="kd">var</span> <span class="nx">MessagesBase</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="c1">// 共通のロジック</span>
+  <span class="p">});</span>
+
+  <span class="cm">/**
+   * Expose
+   */</span>
+  <span class="nx">root</span><span class="p">.</span><span class="nx">MessagesBase</span> <span class="o">=</span> <span class="nx">MessagesBase</span><span class="p">;</span>
+  <span class="nx">root</span><span class="p">.</span><span class="nx">MessageBase</span> <span class="o">=</span> <span class="nx">MessageBase</span><span class="p">;</span>
+<span class="p">})(</span><span class="k">this</span><span class="p">);</span>
+</code></pre>
+
+<p>イケてるポイントはここや</p>
+<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">Backbone</span> <span class="o">=</span> <span class="nx">root</span><span class="p">.</span><span class="nx">Backbone</span> <span class="o">||</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'backbone'</span><span class="p">);</span>
+</code></pre>
+
+<p>ここでサーバーサイド、クライアントサイドのどちらでも使えるようにしてるところです。</p>
+<pre class="highlight javascript"><code><span class="nx">root</span><span class="p">.</span><span class="nx">MessagesBase</span> <span class="o">=</span> <span class="nx">MessagesBase</span><span class="p">;</span>
+<span class="nx">root</span><span class="p">.</span><span class="nx">MessageBase</span> <span class="o">=</span> <span class="nx">MessageBase</span><span class="p">;</span>
+</code></pre>
+
+<p>次にNode.js側でこのmodelBase.jsを継承したmodel.jsをつくります。</p>
+<pre class="highlight javascript"><code><span class="c1">// server: model.js</span>
+<span class="kd">var</span> <span class="nx">modelBase</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'./modelBase'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">Message</span> <span class="o">=</span> <span class="nx">modelBase</span><span class="p">.</span><span class="nx">MessageBase</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="c1">// サーバー側のロジック</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">Messages</span> <span class="o">=</span> <span class="nx">modelBase</span><span class="p">.</span><span class="nx">MessagesBase</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="na">model</span><span class="p">:</span> <span class="nx">Message</span>
+
+  <span class="c1">// サーバー側のロジック</span>
+<span class="p">});</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">Messages</span> <span class="o">=</span> <span class="nx">Messages</span><span class="p">;</span>
+</code></pre>
+
+<p>そしてイケてるチャットアプリのapp.jsでmodel.jsで定義した<code>Messages</code>を使ってチャットのメッセージを管理します。</p>
+<pre class="highlight javascript"><code><span class="c1">// server: app.js</span>
+
+<span class="kd">var</span> <span class="nx">io</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'socket.io'</span><span class="p">).</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3030</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">Messages</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'./model'</span><span class="p">).</span><span class="nx">Messages</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">messages</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Messages</span><span class="p">();</span>
+
+<span class="c1">// modelBaseを静的ファイルとして配信</span>
+<span class="nx">io</span><span class="p">.</span><span class="kr">static</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">'/modelBase.js'</span><span class="p">,</span> <span class="p">{</span> <span class="na">file</span><span class="p">:</span> <span class="nx">__dirname</span> <span class="o">+</span> <span class="s1">'/modelBase.js'</span> <span class="p">});</span>
+
+<span class="nx">io</span><span class="p">.</span><span class="nx">sockets</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'connection'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">socket</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// なんかチャットのロジック</span>
+
+  <span class="nx">socket</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">'create'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// バリデーションが通ったらbroadcast（pushはバリデーションが通らなかったらfalseを返す）</span>
+    <span class="kd">var</span> <span class="nx">model</span> <span class="o">=</span> <span class="nx">messages</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="na">text</span><span class="p">:</span> <span class="nx">text</span> <span class="p">};</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">socket</span><span class="p">.</span><span class="nx">broadcast</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="s1">'update'</span><span class="p">,</span> <span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">());</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</code></pre>
+
+<p>ここでのイケてるポイントはこんな感じでmodelBase.jsを配信してることですね。</p>
+<pre class="highlight javascript"><code><span class="c1">// modelBaseを静的ファイルとして配信</span>
+<span class="nx">io</span><span class="p">.</span><span class="kr">static</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">'/modelBase.js'</span><span class="p">,</span> <span class="p">{</span> <span class="na">file</span><span class="p">:</span> <span class="nx">__dirname</span> <span class="o">+</span> <span class="s1">'/modelBase.js'</span> <span class="p">});</span>
+</code></pre>
+
+<p>expressと併用してる場合などはそっちで配信してもいいと思います。</p>
+
+<p>そうするとクライアント側では、次のようにmodelBase.jsを読み込むことができます。（Backbone.jsとかUnderscore.jsとかはこの前に読み込んでる前提）</p>
+<pre class="highlight html"><code><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"http://localhost:3030/socket.io/socket.io.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"http://localhost:3030/socket.io/modelBase.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</code></pre>
+
+<p>そうしたらクライアント側も同じようにmodelBaseを継承してモデルを実装することができます。</p>
+<pre class="highlight javascript"><code><span class="c1">// client: model.js</span>
+<span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">root</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">Message</span> <span class="o">=</span> <span class="nx">root</span><span class="p">.</span><span class="nx">MessageBase</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="c1">// クライアント側のロジック</span>
+  <span class="p">});</span>
+
+  <span class="kd">var</span> <span class="nx">Messages</span> <span class="o">=</span> <span class="nx">root</span><span class="p">.</span><span class="nx">MessagesBase</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="na">model</span><span class="p">:</span> <span class="nx">Message</span><span class="p">,</span>
+
+    <span class="c1">// クライアント側のロジック</span>
+  <span class="p">});</span>
+
+  <span class="nx">root</span><span class="p">.</span><span class="nx">Messages</span> <span class="o">=</span> <span class="nx">Messages</span><span class="p">;</span>
+<span class="p">})(</span><span class="k">this</span><span class="p">);</span>
+</code></pre>
+<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">messages</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Messages</span><span class="p">();</span>
+
+<span class="nx">$</span><span class="p">(</span><span class="s1">'form'</span><span class="p">).</span><span class="nx">submit</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+
+  <span class="c1">// createしたらイケてる感じでsocket.emitするようにしとく</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">messages</span><span class="p">.</span><span class="nx">create</span><span class="p">({</span> <span class="na">text</span><span class="p">:</span> <span class="nx">$</span><span class="p">(</span><span class="s1">'input[type="text"]'</span><span class="p">).</span><span class="nx">val</span><span class="p">()</span> <span class="p">}))</span> <span class="p">{</span>
+    <span class="nx">alert</span><span class="p">(</span><span class="s1">'バリデーションエラー！'</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre>
+
+<p>このように簡単にロジックを共通化することができます。イケてますね。</p>
+
+<p>また、Backbone.Syncをサーバー側ではRedisやmongodb、クライアント側ではsocketを使った処理に差し替えればさらにイケてるチャットアプリにすることができそうです。</p>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2012/12/nodebrew_update.html">nodebrewでバイナリからインストールできるようにした</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2012/12/backbone_model_object.html">Backbone.Modelのattributesにオブジェクト入れるときの注意</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

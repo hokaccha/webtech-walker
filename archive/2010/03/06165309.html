@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>第三回ライブドアテックセミナーにいってきた - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2010-03-06T00:00:01+09:00">2010年03月06日</time>
+
+<ul class="tags">
+    <li><a href="/tags/event.html">event</a></li>
+</ul>
+
+<h1>第三回ライブドアテックセミナーにいってきた</h1>
+
+<div class="body">
+
+<p>メモとれた部分だけ。malaさんの話しがいろんな意味で面白かった。</p>
+
+<h2>クラウド時代のWebストレージ戦略</h2>
+
+<ul>
+<li><p>クラウドとは</p>
+
+<ul>
+<li>SaaSとかPaaSとかIaaS</li>
+</ul></li>
+<li><p>いいところ</p>
+
+<ul>
+<li>物理的なサーバーとかネットワークを意識しない</li>
+<li>高可用性、柔軟な課金体制</li>
+<li>スケールアウトが用意</li>
+<li>リソースを有効活用できる</li>
+<li>管理運用が容易</li>
+</ul></li>
+<li><p>ライブドア的環境</p>
+
+<ul>
+<li>物理サーバーは既にある</li>
+<li>提供しているサービスはSaaS的なもの</li>
+<li>さらに効率あげたい</li>
+<li>(I|P)ssP的な環境をつくりたい</li>
+</ul></li>
+<li><p>クラウドっぽい環境を作って自分たちで使う。プライベートクラウド的なものを構築したい</p></li>
+<li><p>ライブドアが求めるもの</p>
+
+<ul>
+<li>ライブドアは画像アップのサービスが多い</li>
+<li>webサービスのメディアストレージ（動画とか）</li>
+<li>安価に容量を拡張可能</li>
+<li>実際の構成は「あまり」意識したくない</li>
+</ul></li>
+</ul>
+
+<h3>つくってみた</h3>
+
+<ul>
+<li>名前 STF(STorage Farm)（後付け）</li>
+<li>HTTPを利用した分散ストレージ</li>
+<li>シンプルなkey-value（階層構造とかはストレージのレイヤーでは不要）</li>
+<li>クライアント側からは巨大なストレージプールとして</li>
+<li>レプリケーション</li>
+<li>Apacheモジュールベースなので拡張可能</li>
+<li>ファイルシステムとしてマウントできない</li>
+<li>パーミッション/アクセス制御できない（自分達で使うものなのでまあいいか）</li>
+<li>認証は他のApacheモジュール</li>
+<li><p>REST的APIで操作可能</p>
+
+<ul>
+<li>リソースに対してリクエストを発行</li>
+<li>GET/PUT/DELETEをサポート</li>
+<li>パケットの作成/削除</li>
+<li>オブジェクトの取得/作成/更新/削除</li>
+</ul></li>
+<li><p>Example</p>
+
+<ul>
+<li>http://stf.exsample.com/&lt;bucket&gt;/&lt;key&gt;</li>
+<li>&lt;key&gt;は/を含むことが可能</li>
+</ul></li>
+<li><p>内部の話し</p>
+
+<ul>
+<li>極力コード書きたくないのですでにあるものを作る（バグを入れたくないのでコードを書かない）</li>
+<li>作りながらサービスに投入</li>
+<li>Apache + MySQL + MessageQueue(ActiveMQ|Q4M) + Perl + memcached</li>
+<li>オブジェクトIDはMySQLのauto incrementにしたくなるけどdual
+masterができなくなるのでperlのData::UUIDをCにコピペした</li>
+<li>削除はMySQLでdeleteして即座にレスポンスを返してMessage Queueで実際のファイルを消している</li>
+<li>mod_stf_storagはmod_dav_fileに非常に似ている</li>
+<li>実ファイル名は毎回ユニークになうように生成</li>
+<li>Webでの管理用インターフェースはCatalystでつくった</li>
+<li>MySQLはオーバースペックなのでやめたい（どうせkey/valueなので）</li>
+</ul></li>
+</ul>
+
+<h2>ライブドア流クラウド風サービス</h2>
+
+<ul>
+<li><p>ライブドアの強み</p>
+
+<ul>
+<li>webサービスに強い</li>
+<li>DATAHOTELというデータセンタを運用</li>
+<li>回線、インフラを自社で運用</li>
+</ul></li>
+<li><p>クラウドの利点</p>
+
+<ul>
+<li>短時間でサーバー増設</li>
+<li>動的なリソースの増減</li>
+</ul></li>
+<li><p>Webのフロントをクラウドにするのがいいんじゃないか</p></li>
+<li><p>バックエンドは専用サーバーにする</p></li>
+<li><p>ストレージサーバーは占有</p></li>
+<li><p>仮想化</p>
+
+<ul>
+<li>VMwareはライセンス高い</li>
+<li>KVMはそれぞれのサーバーに専用のプログラムを導入する必要がある</li>
+<li>Parallelsはライブドアのレンタルサーバーとかでも使ってるのでParallelsにした</li>
+</ul></li>
+</ul>
+
+<h3>技術編</h3>
+
+<ul>
+<li>ぽこぽことサーバーを増やすのでぽこぽこクラウド</li>
+<li>ParallelsServer4BareMetal + CentOS 5.4 x86_64</li>
+<li>LVSでロードバランシング</li>
+<li>ネットワークはtag VLAN</li>
+<li>Parallelsのライブマイグレーションは高価なストレージは必ずしも必要ない</li>
+<li>リアルサーバーのリソースがたりなくなったらライブマイグレーションでスケールアップ</li>
+<li>ライブマイグレーションは容量が多いと時間がかかるのでドキドキ</li>
+<li>コントロールパネルを用意してユーザーはそこから色々操作させる</li>
+<li>冗長構成管理とかマイグレーションもユーザーが操作できるようにしたい</li>
+<li>顧客に管理を任せることで人的リソースを割く必要がなくなる</li>
+<li>1インスタンスをとても安い価格でだす予定</li>
+<li>今後はDSR構成、オートスケーリング</li>
+<li>価格はEC2のスモールよりいいスペックで5000~6000円くらいを狙ってる</li>
+<li>トラフィックを課金にするかは検討中</li>
+<li>cactiで監視</li>
+</ul>
+
+<h2>Livedoor Reader Streaming API</h2>
+
+<ul>
+<li>フィードの更新情報をリアルタイムで取得できるAPI</li>
+<li>キーワード検索とかできる</li>
+<li>外部ドメインでも普通に動く</li>
+<li>非公開フィードの記事はでない</li>
+<li>ベータテスト中なので仕様とかかわるかも</li>
+<li>クローラーが動くタイミングなのでエントリーが投稿されるタイミングじゃない</li>
+<li>PubSubHubbub対応サービスは本当にリアルタイム</li>
+<li><p>つかってるもの</p>
+
+<ul>
+<li>Q4M</li>
+<li>TokyoTyrant</li>
+<li>nginx</li>
+<li>InnoDBPlugin</li>
+<li>PSGI/Plack</li>
+<li>Coro</li>
+<li>AnyEventy</li>
+<li>etc..</li>
+</ul></li>
+<li><p>Coroで作られたDosツールとかで負荷試験</p></li>
+<li><p>データサイズ圧縮中で1TBくらい（テキストのみ）</p></li>
+<li><p>クローラーは Broker Fetcher Perser Updaterに分割されてる</p></li>
+<li><p>これらをQ4Mでリレーする</p></li>
+<li><p>ワーカーはdaemontoolsで動かす</p></li>
+<li><p>FetcherはCoroで並列にリクエスト</p></li>
+<li><p>ParserはXML::LibXML + XML::Liberal + 独自</p></li>
+<li><p>Parserは並列にしてもあんま意味なし</p></li>
+<li><p>Updater 記事の振り分けしてMySQLに入れる</p></li>
+<li><p>SKIP、INSERT、UPDATE、SILENT_UPDATEという4つの状態がある</p></li>
+<li><p>フィード毎に既出のフラグを保持してる</p></li>
+<li><p>memcached から TokyoTyrantに</p></li>
+<li><p>複数記事のINSERTはまとめて行う</p></li>
+<li><p>既出フラグはfeedごとにまとめた</p></li>
+<li><p>更新されてないののに使されてないフィード</p></li>
+<li><p>前回のパース結果(Perlのオブジェクト)をTokyoTyrantとかに保存してそれと見比べる</p></li>
+<li><p>Async::Queue</p>
+
+<ul>
+<li>AnyEvent + JSON RPC</li>
+<li>Q4Mで色々問題があったので自作のQueueサーバーつくった</li>
+<li>リクエストとレスポンスはJSON</li>
+<li>キューの先読み</li>
+<li>物理的に遠いケースで有用</li>
+<li>遅延Publich</li>
+<li>先読みバッファがなくなっていない場合は終了しない</li>
+<li>落ちないことより落ちても大丈夫なようにするのが重要</li>
+<li>優先度のサポート</li>
+</ul></li>
+<li><p>MMQ</p>
+
+<ul>
+<li>AnyEvent + JSON RPC（みたいなもの）</li>
+<li>JSONをフィルタするサーバー</li>
+<li>安定してきたら公開する</li>
+</ul></li>
+<li><p>Javascript側</p>
+
+<ul>
+<li>MXHR(Multipart XHR)</li>
+<li>Crossdomain XHR</li>
+<li>window.postMessage(HTML5の仕様に含まれてる)</li>
+<li>IE対応もiframeの入れ子でがんばってる</li>
+<li>window.nameでデータを引き渡す</li>
+<li>できるだけ新しいブラウザでやってください</li>
+</ul></li>
+</ul>
+
+<h2>ニフティクラウド</h2>
+
+<ul>
+<li>ニフティによるクラウド提供</li>
+<li>クラウドプラットフォームになる条件をニフティは満たしてる</li>
+<li>ニフティはクラウド？→条件は満たしてる</li>
+<li>約5分で準備可能</li>
+<li>コントロールパネルの提供</li>
+<li>システム資源のプール化</li>
+<li>選べる料金体系</li>
+<li>サーバーはCentOS 5.3</li>
+<li>RedHat系も準備中</li>
+<li>Mini Small Small4 Medium Large</li>
+<li>ネットワークはniftyのものと共用→巨大なバックボーン</li>
+<li>Miniだけ制限がある</li>
+<li>ヘルプデスクサービス、監視サポート、プレミアムサポートを近いうちに用意する</li>
+<li>利用までは5日と8分</li>
+<li>niftyIDの取得が5日くらいかかる。もってる人は8分で可能</li>
+<li>プライベートLANのオプションを使うとネットワークを自分のところだけ分けれる</li>
+<li>月額課金の選択には注意→月末に申し込むと一ヶ月分かかる</li>
+<li>SSHキーの紛失はやばし</li>
+<li>iptablesの閉じすぎに注意（FW提供予定）</li>
+<li>32bit版はメモリ2BGまで</li>
+<li>VMwareつかってる</li>
+<li>とにかく疎結合</li>
+<li>いい機能であっても大きくなれないなら使わない</li>
+<li>ニフティと一体の基盤</li>
+<li>DRSで均等になるように</li>
+<li>壊れたときに以下に早く復旧させるかが大事</li>
+<li>サーバーはなんでもいい</li>
+<li>VLANが多すぎて大変</li>
+<li>APIサポートするよ</li>
+<li>OSも追加予定(Windows2008, RHEL etx..)</li>
+<li>サポート掲示板の開始</li>
+<li>カード決済対応予定</li>
+</ul>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2010/03/06013431.html">Yokoyama.pm #5にいってきた</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2010/03/15091949.html">HTML5のValidatorのGreasemonkey書いた</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

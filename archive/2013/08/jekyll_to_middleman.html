@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>ブログをJekyllからmiddlemanに移行してTravis CIでGitHub Pagesにデプロイするようにした - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2013-08-26T00:00:00+09:00">2013年08月26日</time>
+
+<ul class="tags">
+    <li><a href="/tags/middleman.html">middleman</a></li>
+    <li><a href="/tags/jekyll.html">jekyll</a></li>
+    <li><a href="/tags/blog.html">blog</a></li>
+</ul>
+
+<h1>ブログをJekyllからmiddlemanに移行してTravis CIでGitHub Pagesにデプロイするようにした</h1>
+
+<div class="body">
+
+<p>ちょうど一年くらい前にWordPressからJekyllに移行したんだけど、今回middlemanで作りなおしてみた。</p>
+
+<p><a href="https://github.com/hokaccha/webtech-walker">hokaccha/webtech-walker - GitHub</a></p>
+
+<p>特にJekyllに不満があったわけでもなく単に技術的興味によるもの。</p>
+
+<h2>middleman</h2>
+
+<p><a href="http://middlemanapp.com/">Middleman: Hand-crafted frontend development</a></p>
+
+<p>middlemanはほぼJekyllのようなものなんだけど、<a href="http://middlemanapp.com/asset-pipeline/">Asset Pipeline</a>が使えたり、<a href="http://middlemanapp.com/templates/">テンプレート</a>がerbとかhaml、Slimなどで書けたり、<a href="http://middlemanapp.com/helpers/">helper</a>が充実してたりする。</p>
+
+<p>RailsのViewまわりの機能をそのまま持ってきたような感じなので、普段Rails使ってる人にとってはJekyllよりも使いやすいかもしれない。個人的にもJekyllよりはmiddlemanのほうが好みだった。</p>
+
+<p>調べた時にでてくる情報量などはJekyllのほうが多いかなという印象だったけど、このへんはもう少し時間が経てば解決するかなと思う。</p>
+
+<p>せっかくAsset PipelineがあるんでAltJSとか使ってかっこいいJavaScriptにしちゃおうかなーと思ってたんだけどよく考えたらこのブログ一行もJSなくてAsset Pipelineがほぼ不発（Sassでちょっと使ってるくらい）に終わったのが残念だった。</p>
+
+<h2>Travis CI でデプロイ</h2>
+
+<p>あと今回、gitでソースをmasterにpushしたらTravis CIがビルドしてビルド結果をGitHub Pagesにデプロイしてくれるという仕組みにしてみた。masterにpushするとこんな感じでビルドが走る。</p>
+
+<p><a href="https://travis-ci.org/hokaccha/webtech-walker/builds/10609434">hokaccha/webtech-walker - Travis CI</a></p>
+
+<p>Jekyllのときはビルドしてデプロイするrakeのタスクを書いて手元でやってたんだけど（プラグイン使ってたのでGitHub Pages側でビルドできなかったので）、こういうのをCIサーバーにやってもらうのはやはり楽。</p>
+
+<p>ただ、pushしてから反映されるまでに少し時間がかかる（数十秒から数分くらい）ので頻繁に更新とか修正がない個人ブログ程度でないとけっこうつらい感じはする。</p>
+
+<p>ちなみにこれはtricknotes先生の手法の丸パクリで、<code>Rakefile</code>とか<code>.travis.yml</code>もほぼそのまま使わせていただきました。詳しくは以下を参考のこと。</p>
+
+<p><a href="http://tricknotes.hateblo.jp/entry/2013/06/17/020229">Middleman で作った web サイトを Travis + GitHub pages でお手軽に運用する - tricknotesのぼうけんのしょ</a></p>
+
+<p>トークンの設定とかがちょっとだけ面倒ではあるけどかなり簡単に設定でた。tricknotes++であります。<ins>（追記: TokenがTravisのログに残る問題があったので直した。もしこの方法でやる場合は気をつけましょう）</ins></p>
+
+<p>手元でビルドしたのとTravis CIでビルドしたのの結果が違うところがけっこうあって、デプロイするときに無駄なdiffがでてたので、それを解決するのにちょっと手間取った。</p>
+
+<p>例えばtag一覧を出すときに、tagのデータをHashで持ってるので順番が保証されずにビルドの環境によって順番が変わるとかそういう感じ。他にもいくつかそういうのがあった。middleman-blogのバグっぽいのが原因のもいくつかあったのでそれについてはパッチ投げようかなと思ってる。</p>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2013/08/mocha_travis_multi_jquery_version.html">jQueryプラグインのテストを複数のjQueryのバージョンで実行する</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2013/09/middleman_vs_grunt.html">静的サイト開発ツールとしてのMiddlemanとGrunt</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

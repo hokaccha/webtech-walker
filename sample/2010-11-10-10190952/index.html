@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>zip2address sample</title>
+<style>
+pre {
+	border: 1px solid #999;
+	background: #EFEFEF;
+	padding: 10px;
+}
+#debug {
+	margin: 20px 0;
+}
+</style>
+</head>
+<body>
+<h1>zip2address sample</h1>
+
+<input type='text' placeholder='150-0001'>
+<button>取得</button>
+<div id='debug'></div>
+
+<pre><code>var input = $('input'),
+    debug = $('#debug');
+
+$('button').click(function() {
+    zip2address(input.val(), function(address) {
+        if (address) {
+            debug.html([
+                '住所: '     + address.all,
+                '都道府県: ' + address.pref,
+                '市町村: '   + address.city
+            ].join('&lt;br&gt;'));
+        }
+        else {
+            debug.html('取得に失敗しました');
+        }
+    });
+});
+</code></pre>
+
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js'></script>
+<script src='zip2address.js'></script>
+<script>
+var input = $('input'),
+	debug = $('#debug');
+
+$('button').click(function() {
+	zip2address(input.val(), function(address) {
+		if (address) {
+			debug.html([
+				'住所: '     + address.all,
+				'都道府県: ' + address.pref,
+				'市町村: '   + address.city
+			].join('<br>'));
+		}
+		else {
+			debug.html('取得に失敗しました');
+		}
+	});
+});
+</script>
+</body>
+</html>

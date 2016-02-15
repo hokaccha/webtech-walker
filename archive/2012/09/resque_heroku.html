@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>HerokuでResqueを使うときに優雅に再起動する - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2012-09-21T00:00:00+09:00">2012年09月21日</time>
+
+<ul class="tags">
+    <li><a href="/tags/ruby.html">Ruby</a></li>
+    <li><a href="/tags/heroku.html">heroku</a></li>
+</ul>
+
+<h1>HerokuでResqueを使うときに優雅に再起動する</h1>
+
+<div class="body">
+
+<p>Ruby製のジョブキューサーバーである<a href="https://github.com/defunkt/resque">Resque</a>はHerokuのWorkerプロセスで動かそうとすると一つ問題があった。</p>
+
+<p>シグナルハンドリングの問題なんだけど、Herokuはworkerプロセスを再起動するときに<code>SIGTERM</code>を送り、プロセスが終了したら再度プロセスを起動する。<code>SIGTERM</code>を送ってworkerが10秒間プロセスが終了しなかったら<code>SIGKILL</code>で強制終了させる。のでworker側は<code>SIGTERM</code>を受け取ったら10秒以内に安全に（今あるジョブを終了するなりなんなりして）プロセスを終了する必要がある。</p>
+
+<p>そのようなHerokuの挙動は以下に書いてある。</p>
+
+<p><a href="https://devcenter.heroku.com/articles/dynos#graceful-shutdown-with-sigterm">Managing Heroku Processes | Heroku Dev Center</a></p>
+
+<p>一方で、Resqueのシグナルハンドリングがどうなっているかというと、<code>SIGTERM</code>で強制終了するようになってる。</p>
+
+<p><a href="https://github.com/defunkt/resque/blob/1-x-stable/README.markdown#signals">resque/README.markdown at 1-x-stable · defunkt/resque</a></p>
+
+<p>なのでHerokuでResqueを使った場合、再起動するときに安全にプロセスが再起動できないという問題があったというわけ。</p>
+
+<p>なのでこんな感じのforkしてシグナルハンドリングの部分だけパッチ当てたやつとかもあった。</p>
+
+<p><a href="https://github.com/mjezzi/resque-cedar">mjezzi/resque-cedar · GitHub</a></p>
+
+<p>で、それがResqueの1.22.0で解決されたみたい。</p>
+
+<p>1.22.0では<code>TERM_CHILD=1</code>というのを環境変数で設定すればマスタプロセスが<code>SIGTERM</code>を受け取ったときに、起動している子プロセスに対して<code>SIGTERM</code>を送り、子プロセスが<code>RESQUE_TERM_TIMEOUT</code>で設定された秒数の間に終了しなかったら子プロセスに<code>SIGKILL</code>を送って強制終了させるという機能が実装された。これによって</p>
+<pre class="highlight plaintext"><code>$ TERM_CHILD=1 RESQUE_TERM_TIMEOUT=10 QUEUES=* rake resque:work
+</code></pre>
+
+<p>のように起動し、worker側で<code>SIGTERM</code>をハンドリングすることで安全に再起動できるようになる。</p>
+
+<h2>試してみる</h2>
+<pre class="highlight ruby"><code><span class="c1"># worker.rb</span>
+
+<span class="nb">require</span> <span class="s1">'resque/errors'</span>
+
+<span class="k">class</span> <span class="nc">SampleWork</span>
+  <span class="vi">@queue</span> <span class="o">=</span> <span class="ss">:test</span>
+
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">perform</span>
+    <span class="nb">sleep</span> <span class="mi">10</span>
+    <span class="nb">puts</span> <span class="s1">'complete job!'</span>
+  <span class="k">rescue</span> <span class="no">Resque</span><span class="o">::</span><span class="no">TermException</span>
+    <span class="nb">sleep</span> <span class="mi">2</span>
+    <span class="nb">puts</span> <span class="s1">'graceful shutdown!'</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+<pre class="highlight ruby"><code><span class="c1"># clinet.rb</span>
+
+<span class="nb">require</span> <span class="s1">'resque'</span>
+<span class="nb">require</span> <span class="s1">'./worker'</span>
+
+<span class="no">Resque</span><span class="p">.</span><span class="nf">enqueue</span> <span class="no">SampleWork</span>
+</code></pre>
+<pre class="highlight ruby"><code><span class="c1"># Rakefile</span>
+
+<span class="nb">require</span> <span class="s1">'resque/tasks'</span>
+<span class="nb">require</span> <span class="s1">'./worker'</span>
+</code></pre>
+
+<p>こんな感じのworkerをつくって試してみる。<code>Resque::TermException</code>という例外でResqueからの<code>SIGTERM</code>をキャッチできるようなのでこのworkerは<code>SIGTERM</code>を受け取ったら2秒待って文字列を出力した後終了することが期待される。</p>
+
+<p>まずは普通にworkerを起動してみる。</p>
+<pre class="highlight plaintext"><code>$ QUEUES=* rake resque:work                       
+</code></pre>
+
+<p>この状態でclinet.rbでジョブを登録して10秒以内にResqueのマスタプロセスに対して<code>SIGTERM</code>を送る。</p>
+<pre class="highlight plaintext"><code>$ kill -TERM {pid}
+</code></pre>
+
+<p>そしたら起動していたワーカープロセスは何も出力されずに終了した。これは<code>SIGTERM</code>を受け取ったら強制終了というResqueのドキュメントに書いてある挙動なので正しい。</p>
+
+<p>次に<code>TERM_CHILD</code>と<code>RESQUE_TERM_TIMEOUT</code>を指定して起動してみる。</p>
+<pre class="highlight plaintext"><code>$ TERM_CHILD=1 RESQUE_TERM_TIMEOUT=10 QUEUES=* rake resque:work
+</code></pre>
+
+<p>同じようにclinet.rbでジョブを登録して10秒以内にResqueのマスタプロセスに対して<code>SIGTERM</code>を送る。そうすると2秒後に</p>
+<pre class="highlight plaintext"><code>$ TERM_CHILD=1 RESQUE_TERM_TIMEOUT=10 QUEUES=* rake resque:work
+graceful shutdown!
+</code></pre>
+
+<p>となってプロセスが終了して期待通り動いた。</p>
+
+<p>次に<code>RESQUE_TERM_TIMEOUT=1</code>としてタイムアウトを1秒に指定する。</p>
+<pre class="highlight plaintext"><code>$ TERM_CHILD=1 RESQUE_TERM_TIMEOUT=1 QUEUES=* rake resque:work
+</code></pre>
+
+<p>これで同じようにジョブを登録して<code>SIGTERM</code>を送ったら何も出力されずに終了した。sleepが2秒でタイムアウトが1秒なので<code>SIGTERM</code>のハンドリングで終了するより先にタイムアウトして終了したことがわかる。</p>
+
+<p>Resque 2.xではこれがデフォルトになるとかなんとか（要確認）。</p>
+
+<h3>参考</h3>
+
+<ul>
+<li><a href="https://devcenter.heroku.com/articles/queuing-ruby-resque">Queuing in Ruby with Redis and Resque | Heroku Dev Center</a></li>
+<li><a href="http://hone.heroku.com/resque/2012/08/21/resque-signals.html">hone.heroku.com | Resque Signals</a></li>
+</ul>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2012/09/fired-myblog.html">俺の最強ブログシステムも火を噴いてたぜ</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2012/09/jquery_animate_callback.html">jQueryでアニメーション終了時のcallback</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

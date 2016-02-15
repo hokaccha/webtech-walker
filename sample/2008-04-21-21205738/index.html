@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="ja" xml:lang="ja" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<title>target疑似クラスを用いて、CSSのみでLightBox風UIを実現する方法のデモページ - Webtech Walker</title>
+<style type="text/css">
+a {
+	color: #00F;
+}
+
+div.lightbox {
+	display: none;
+}
+
+div.lightbox:target {
+	display: block !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	text-align: center;
+	background: url('screen.png');
+	position: fixed;
+	padding: 2em;
+}
+
+</style>
+</head>
+<body>
+
+<div id="thumb01">
+	<a href="#large01"><img src="sample_s.jpg" alt="sample" /></a>
+</div>
+
+<div id="large01" class="lightbox">
+	<a href="#thumb01"><img src="sample_l.jpg" alt="拡大画像 サンプル" /></a>
+</div>
+
+</body>
+</html>

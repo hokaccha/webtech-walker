@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>覚えておくと便利なgitのtipsをいくつか - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2010-01-25T00:00:00+09:00">2010年01月25日</time>
+
+<ul class="tags">
+    <li><a href="/tags/git.html">git</a></li>
+</ul>
+
+<h1>覚えておくと便利なgitのtipsをいくつか</h1>
+
+<div class="body">
+
+<p>頻繁に使うわけではないけど便利なgitのtipsをいくつか紹介。というか自分が忘れるからメモ。</p>
+
+<h2>git stash</h2>
+
+<p>現在作業中のbranchでまだコミットはしたくないけど、trunkで直さないといけないバグとかが見つかったときに、今の変更を横にどけておくコマンド。</p>
+<pre class="highlight plaintext"><code>$ git stash
+</code></pre>
+
+<p>で変更をいったん横にどけておいて、他のbranchに切り替えて作業後、今のbranchに戻ってきて</p>
+<pre class="highlight plaintext"><code>$ git stash pop
+</code></pre>
+
+<p>とすれば横にどけておいた変更が復活する。</p>
+
+<h2>git ignore</h2>
+
+<p>プロジェクトの中で除外する必要があるファイルは.gitignoreに書くけど、自分の環境だけで除外したいファイルがある場合は.git/info/excludeに書くのがよいです。</p>
+
+<p>自分の環境ではいつでも除外したいというときは</p>
+<pre class="highlight plaintext"><code>$ git config --global core.excludesfile $HOME/.gitignore
+</code></pre>
+
+<p>として、$HOME/.gitignoreに除外したいファイルを書いておけばOKです。</p>
+
+<h2>git svn clone -s</h2>
+
+<p>git svnでcloneするときにsvnのbranchとかtagも認識させるには</p>
+<pre class="highlight plaintext"><code>$ git svn clone http://svn.repos/project -T trunk -b branches -t tags
+</code></pre>
+
+<p>とします。もしsvnのリポジトリの構成が上記のように標準的な構成（trunk、branches、tags）であれば下記のようにするだけでOKです。</p>
+<pre class="highlight plaintext"><code>$ git svn clone http://svn.repos/project -s
+</code></pre>
+
+<h2>git reset</h2>
+
+<p>git resetはコミットを取り消すことができます。よく使うのは</p>
+<pre class="highlight plaintext"><code>$ git reset HEAD^
+</code></pre>
+
+<p>で直前のコミットを取り消すとか。</p>
+
+<h2>git commit –amend</h2>
+
+<p>直前のコミットを修正したいときはcommit –amendが便利です。</p>
+<pre class="highlight plaintext"><code>$ git commit（間違ったコミット）
+</code></pre>
+
+<p>間違えを修正して</p>
+<pre class="highlight plaintext"><code>$ git commit --amend（直前のコミットが置き換えられる）
+</code></pre>
+
+<h2>git add -p</h2>
+
+<p>同じファイルだけど一部の変更だけコミットしたいというときはgit add -pを使います。diff形式で変更部分を記録するか聞いてくるので、記録したい部分だけyと応えればOKです。</p>
+<pre class="highlight plaintext"><code>$ git add -p
+diff --git a/Root.pm b/Root.pm
+index 707f4e8..891bd77 100644
+--- a/Root.pm
++++ b/Root.pm
+@@ -6,9 +6,6 @@ has '+namespace' =&gt; default =&gt; '';
+ # default 404 handler
+ sub default :Path :Args {
+     my ($self, $c) = @_;
+-
+-    $c-&gt;res-&gt;status(404);
+-    $c-&gt;res-&gt;body('404 Not Found');
+ }
+
+ sub index :Path :Args(0) {
+Stage this hunk [y,n,q,a,d,/,j,J,g,e,?]? n
+@@ -23,7 +20,8 @@ sub index :Path :Args(0) {
+
+ sub index :Path :Args(0) {
+     my ($self, $c) = @_;
+-    $c-&gt;res-&gt;body('Ark Default Index');
++
++    $c-&gt;stash-&gt;{entries} = models('Entry')-&gt;get_entries;
+ }
+
+ 1;
+Stage this hunk [y,n,q,a,d,/,K,g,e,?]? y
+</code></pre>
+
+<h2>git config alias</h2>
+
+<p>gitのcommitとかcheckoutなどのよく使うコマンドにはalias貼っておくと便利です。checkoutのaliasにcoを設定するには以下のようにします。</p>
+<pre class="highlight plaintext"><code>$ git config --global alias.co checkout
+</code></pre>
+
+<p>僕が設定してるのはこんな感じ</p>
+<pre class="highlight plaintext"><code>$ git config -l
+alias.co=checkout
+alias.ci=commit
+alias.st=status
+alias.br=branch
+</code></pre>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2010/01/22110559.html">jQuery1.4でhtmlとremoveのベンチマーク</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2010/01/26091559.html">perlの置換でeオプション</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

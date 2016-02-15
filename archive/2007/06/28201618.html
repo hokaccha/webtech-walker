@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>XHTMLの非推奨要素、非推奨属性のまとめ - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2007-06-28T00:00:00+09:00">2007年06月28日</time>
+
+<ul class="tags">
+    <li><a href="/tags/html.html">HTML</a></li>
+</ul>
+
+<h1>XHTMLの非推奨要素、非推奨属性のまとめ</h1>
+
+<div class="body">
+
+<p>XHTMLの非推奨要素、非推奨属性をまとめました。</p>
+
+<h2>非推奨要素</h2>
+
+<p>XHTML1.1で廃止となった要素。</p>
+
+<table summary="非推奨要素一覧表">
+  <tr> 
+    <th>要素名</th>
+    <th>代替手段</th>
+  </tr>
+  <tr> 
+    <td>applet</td>
+    <td>object要素</td>
+  </tr>
+  <tr> 
+    <td>basefont</td>
+    <td>font-size(CSS)</td>
+  </tr>
+  <tr> 
+    <td>center</td>
+    <td>text-align,margin(CSS)</td>
+  </tr>
+  <tr> 
+    <td>dir</td>
+    <td>ul要素</td>
+  </tr>
+  <tr> 
+    <td>font</td>
+    <td>font(CSS)</td>
+  </tr>
+  <tr> 
+    <td>frame</td>
+    <td>なし</td>
+  </tr>
+  <tr> 
+    <td>frameset</td>
+    <td>なし</td>
+  </tr>
+  <tr> 
+    <td>noframes</td>
+    <td>なし</td>
+  </tr>
+  <tr> 
+    <td>iframe</td>
+    <td>object要素</td>
+  </tr>
+  <tr> 
+    <td>isindex</td>
+    <td>form要素、input要素</td>
+  </tr>
+  <tr> 
+    <td>menu</td>
+    <td>ul要素</td>
+  </tr>
+  <tr> 
+    <td>u</td>
+    <td>text-decoration(CSS)</td>
+  </tr>
+  <tr>
+    <td>s,strike</td>
+    <td>text-decoration(CSS)</td>
+  </tr>
+</table>
+
+<h2>物理的フォント要素</h2>
+
+<p>廃止ではないがCSSによる指定が推奨されている。論理的意味を持たない要素。</p>
+
+<table summary="物理的フォントタグ一覧表">
+  <tr> 
+    <th>要素名</th>
+    <th>代替手段</th>
+  </tr>
+  <tr> 
+    <td>b</td>
+    <td>font-style(CSS)</td>
+  </tr>
+  <tr> 
+    <td>i</td>
+    <td>font-weight(CSS)</td>
+  </tr>
+  <tr> 
+    <td>big</td>
+    <td>font-size(CSS)</td>
+  </tr>
+  <tr> 
+    <td>small</td>
+    <td>font-size(CSS)</td>
+  </tr>
+  <tr> 
+    <td>tt</td>
+    <td>font-family(CSS)</td>
+  </tr>
+</table>
+
+<h2>非推奨属性</h2>
+
+<p>XHTML1.1で廃止となった属性。</p>
+
+<table summary="非推奨属性一覧表">
+  <tr> 
+    <th>要素名</th>
+    <th>属性名</th>
+    <th>代替手段</th>
+  </tr>
+  <tr> 
+    <td>全て</td>
+    <td>lang</td>
+    <td>xml:lang属性</td>
+  </tr>
+  <tr> 
+    <td>a</td>
+    <td>name</td>
+    <td>id属性</td>
+  </tr>
+  <tr> 
+    <td>a,area</td>
+    <td>target</td>
+    <td>なし</td>
+  </tr>
+  <tr> 
+    <td>base</td>
+    <td>target</td>
+    <td>なし</td>
+  </tr>
+  <tr> 
+    <td rowspan="6">body</td>
+    <td>backfround</td>
+    <td>background-image(CSS)</td>
+  </tr>
+  <tr> 
+    <td>bgcolor</td>
+    <td>background-color(CSS)</td>
+  </tr>
+  <tr> 
+    <td>text</td>
+    <td>color(CSS)</td>
+  </tr>
+  <tr> 
+    <td>link</td>
+    <td>color(CSS)</td>
+  </tr>
+  <tr> 
+    <td> vlink</td>
+    <td>color(CSS)</td>
+  </tr>
+  <tr> 
+    <td>alink </td>
+    <td>color(CSS)</td>
+  </tr>
+  <tr> 
+    <td>br</td>
+    <td>clear</td>
+    <td>clear(CSS)</td>
+  </tr>
+  <tr> 
+    <td>caption</td>
+    <td>align</td>
+    <td>caption-side(CSS)</td>
+  </tr>
+  <tr> 
+    <td>div</td>
+    <td>align</td>
+    <td>text-align,margin(CSS)</td>
+  </tr>
+  <tr> 
+    <td>form</td>
+    <td>target</td>
+    <td>なし</td>
+  </tr>
+  <tr> 
+    <td>h1～h6</td>
+    <td>align</td>
+    <td>text-align,margin(CSS)</td>
+  </tr>
+  <tr> 
+    <td rowspan="4">hr</td>
+    <td>align</td>
+    <td>margin(CSS)</td>
+  </tr>
+  <tr> 
+    <td>no shade</td>
+    <td>border(CSS)</td>
+  </tr>
+  <tr> 
+    <td>size</td>
+    <td>border(CSS)</td>
+  </tr>
+  <tr> 
+    <td>width</td>
+    <td>width(CSS)</td>
+  </tr>
+  <tr> 
+    <td rowspan="4">img</td>
+    <td>align</td>
+    <td>float,vertical-align(CSS)</td>
+  </tr>
+  <tr> 
+    <td>border</td>
+    <td>border(CSS)</td>
+  </tr>
+  <tr> 
+    <td>hspace</td>
+    <td>margin(CSS)</td>
+  </tr>
+  <tr> 
+    <td>vspace</td>
+    <td>margin(CSS)</td>
+  </tr>
+  <tr> 
+    <td>input</td>
+    <td>align</td>
+    <td>float,vertical-align(CSS)</td>
+  </tr>
+  <tr> 
+    <td>legend</td>
+    <td>align</td>
+    <td>float,vertical-align(CSS)</td>
+  </tr>
+  <tr> 
+    <td rowspan="2">li</td>
+    <td>type</td>
+    <td>list-style-type(CSS)</td>
+  </tr>
+  <tr> 
+    <td>value</td>
+    <td>なし</td>
+  </tr>
+  <tr> 
+    <td>link</td>
+    <td>target</td>
+    <td>なし</td>
+  </tr>
+  <tr> 
+    <td>map</td>
+    <td>name</td>
+    <td>id属性 *2</td>
+  </tr>
+  <tr> 
+    <td rowspan="4">object</td>
+    <td>align</td>
+    <td>float,vertical-align(CSS)</td>
+  </tr>
+  <tr> 
+    <td>border</td>
+    <td>border(CSS)</td>
+  </tr>
+  <tr> 
+    <td>hspace</td>
+    <td>margin(CSS)</td>
+  </tr>
+  <tr> 
+    <td>vspace</td>
+    <td>margin(CSS)</td>
+  </tr>
+  <tr> 
+    <td rowspan="3">ol</td>
+    <td>compact</td>
+    <td>なし</td>
+  </tr>
+  <tr> 
+    <td>start</td>
+    <td>なし</td>
+  </tr>
+  <tr> 
+    <td>type</td>
+    <td>list-style-type(CSS)</td>
+  </tr>
+  <tr> 
+    <td>p</td>
+    <td>align</td>
+    <td>text-align,margin(CSS)</td>
+  </tr>
+  <tr> 
+    <td>pre</td>
+    <td>width</td>
+    <td>width(CSS)</td>
+  </tr>
+  <tr> 
+    <td>script</td>
+    <td>langage</td>
+    <td>type属性</td>
+  </tr>
+  <tr> 
+    <td rowspan="2">table</td>
+    <td>align</td>
+    <td>float,text-align(CSS)</td>
+  </tr>
+  <tr> 
+    <td>bgcolor</td>
+    <td>background-color(CSS)</td>
+  </tr>
+  <tr> 
+    <td rowspan="4">th,td</td>
+    <td>bgcolor</td>
+    <td>background-color(CSS)</td>
+  </tr>
+  <tr> 
+    <td>height</td>
+    <td>height(CSS)</td>
+  </tr>
+  <tr> 
+    <td>nowrap</td>
+    <td>white-space</td>
+  </tr>
+  <tr> 
+    <td>width</td>
+    <td>width(CSS)</td>
+  </tr>
+  <tr> 
+    <td>tr</td>
+    <td>bgcolor</td>
+    <td>background-color(CSS)</td>
+  </tr>
+  <tr> 
+    <td rowspan="2">ul</td>
+    <td>compact</td>
+    <td>なし</td>
+  </tr>
+  <tr> 
+    <td>type</td>
+    <td>list-style-type(CSS)</td>
+  </tr>
+</table>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2007/06/20202718.html">CSSの:checked擬似クラス</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2007/07/12123938.html">注記などで改行が入っても文字の頭をそろえる</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

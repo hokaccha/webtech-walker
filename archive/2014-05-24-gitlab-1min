@@ -1,0 +1,27 @@
+<p>元ネタ</p>
+
+<ul>
+<li><a href="http://d.hatena.ne.jp/rela1470/20140520">GitHubクローンのGitBucketを10秒でインストールした - rela1470のにっき</a></li>
+<li><a href="http://d.hatena.ne.jp/toritori0318/20140523/1400863038">GitHubクローンのGitLabを５分でインストールした - アルパカDiary</a></li>
+</ul>
+
+<p><a href="https://www.digitalocean.com/">Digital Ocean</a>はこんな感じでサーバーつくるときに色んなアプリケーションがプリインストールされたイメージを選べる。</p>
+
+<p><img alt="Digital OceanでDropletつくるときにGitLabを選択する画面" src="/img/posts/2014-05-24-gitlab-1min/select-image.png" /></p>
+
+<p>GitLabもこの中にあるので、これを選んでサーバーをつくると、GitLabがインストールされて<code>bundle install</code>とか<code>db:migrate</code>も済んでる状態で、さらにWebサーバーとWorkerも起動した状態でできあがるので、サーバーができた瞬間からGitLab使える状態になってる。大体1分くらいでできる。</p>
+
+<p>サーバーができたらとりあえずIP指定してブラウザで見たらログイン画面が表示されるので初期アカウントの</p>
+
+<ul>
+<li>Email: admin@local.host</li>
+<li>Password: 5iveL!fe</li>
+</ul>
+
+<p>でログインできるはず。</p>
+
+<p>起動した瞬間からGitLabを利用できる状態にはなるけど、ホスト名の設定しないとGitのURLとかがちゃんと表示されなかったりするので、そのへんは以下を見ながら設定すればすぐできる。</p>
+
+<p><a href="https://www.digitalocean.com/community/articles/how-to-use-the-gitlab-one-click-install-image-to-manage-git-repositories">How To Use the GitLab One-Click Install Image to Manage Git Repositories | DigitalOcean</a></p>
+
+<p>便利な世の中。</p>

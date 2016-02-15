@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="content-style-type" content="text/css" />
+<title>上下中央ハックの別の使い道のデモ - Webtech Walker</title>
+<style type="text/css">
+body{font-family: "ＭＳ Ｐゴシック"}
+a {color: #00C}
+h2 {font-size:120%;}
+h3 {padding: 5px;background: #EFEFEF; font-size: 100%;}
+pre {border: 1px solid #666; padding: 10px;}
+dt {padding: 5px 0;}
+
+/* hack */
+
+div.content {
+  width: 400px;
+}
+
+div.content p{
+	margin: 0;
+}
+
+div.content p.image {
+	float: left;
+}
+
+div.content p.textBody {
+	display: table-cell;
+}
+
+*html div.content p.textBody {
+  display: inline;
+  zoom: 1;
+}
+
+*:first-child+html div.content p.textBody {
+  display: inline;
+  zoom: 1;
+}
+
+</style>
+</head>
+<body>
+
+<div class="content">
+<p class="image"><img src="sample.gif" alt="画像" /></p>
+<p class="textBody">本文本文本文本文本文本文本文本文本文本文本本文本文本文本文本文本文本文本文本文本文本本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文本文</p>
+</div>
+
+</body>
+</html>

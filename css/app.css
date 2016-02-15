@@ -1,0 +1,555 @@
+.mod-posts, .mod-tags, .mod-about, .mod-author, .mod-tagpage {
+  margin-bottom: 50px; }
+  .mod-posts h2, .mod-tags h2, .mod-about h2, .mod-author h2, .mod-tagpage h2 {
+    font-size: 24px;
+    margin: 0 0 20px 0;
+    padding: 0 0 5px 0;
+    color: #666; }
+
+.mod-posts ul, .mod-tagpage ul {
+  margin: 10px 0;
+  padding: 0 0 0 5px; }
+  .mod-posts ul li, .mod-tagpage ul li {
+    margin: 5px 0;
+    padding: 0;
+    list-style: none; }
+    .mod-posts ul li a, .mod-tagpage ul li a {
+      display: inline-block;
+      padding-left: 15px;
+      background: url(/img/common/bg-arrow.png) no-repeat 0 8px; }
+    .mod-posts ul li time, .mod-tagpage ul li time {
+      display: inline-block;
+      margin-left: 10px;
+      font-size: 13px;
+      color: #777; }
+
+.highlight {
+  background: #f8f8f8; }
+
+.highlight .c {
+  color: #408080;
+  font-style: italic; }
+
+/* Comment */
+.highlight .k {
+  color: #008000;
+  font-weight: bold; }
+
+/* Keyword */
+.highlight .o {
+  color: #666666; }
+
+/* Operator */
+.highlight .cm {
+  color: #408080;
+  font-style: italic; }
+
+/* Comment.Multiline */
+.highlight .cp {
+  color: #BC7A00; }
+
+/* Comment.Preproc */
+.highlight .c1 {
+  color: #408080;
+  font-style: italic; }
+
+/* Comment.Single */
+.highlight .cs {
+  color: #408080;
+  font-style: italic; }
+
+/* Comment.Special */
+.highlight .gd {
+  color: #A00000; }
+
+/* Generic.Deleted */
+.highlight .ge {
+  font-style: italic; }
+
+/* Generic.Emph */
+.highlight .gr {
+  color: #FF0000; }
+
+/* Generic.Error */
+.highlight .gh {
+  color: #000080;
+  font-weight: bold; }
+
+/* Generic.Heading */
+.highlight .gi {
+  color: #00A000; }
+
+/* Generic.Inserted */
+.highlight .go {
+  color: #808080; }
+
+/* Generic.Output */
+.highlight .gp {
+  color: #000080;
+  font-weight: bold; }
+
+/* Generic.Prompt */
+.highlight .gs {
+  font-weight: bold; }
+
+/* Generic.Strong */
+.highlight .gu {
+  color: #800080;
+  font-weight: bold; }
+
+/* Generic.Subheading */
+.highlight .gt {
+  color: #0040D0; }
+
+/* Generic.Traceback */
+.highlight .kc {
+  color: #008000;
+  font-weight: bold; }
+
+/* Keyword.Constant */
+.highlight .kd {
+  color: #008000;
+  font-weight: bold; }
+
+/* Keyword.Declaration */
+.highlight .kn {
+  color: #008000;
+  font-weight: bold; }
+
+/* Keyword.Namespace */
+.highlight .kp {
+  color: #008000; }
+
+/* Keyword.Pseudo */
+.highlight .kr {
+  color: #008000;
+  font-weight: bold; }
+
+/* Keyword.Reserved */
+.highlight .kt {
+  color: #B00040; }
+
+/* Keyword.Type */
+.highlight .m {
+  color: #666666; }
+
+/* Literal.Number */
+.highlight .s {
+  color: #BA2121; }
+
+/* Literal.String */
+.highlight .na {
+  color: #7D9029; }
+
+/* Name.Attribute */
+.highlight .nb {
+  color: #008000; }
+
+/* Name.Builtin */
+.highlight .nc {
+  color: #0000FF;
+  font-weight: bold; }
+
+/* Name.Class */
+.highlight .no {
+  color: #880000; }
+
+/* Name.Constant */
+.highlight .nd {
+  color: #AA22FF; }
+
+/* Name.Decorator */
+.highlight .ni {
+  color: #999999;
+  font-weight: bold; }
+
+/* Name.Entity */
+.highlight .ne {
+  color: #D2413A;
+  font-weight: bold; }
+
+/* Name.Exception */
+.highlight .nf {
+  color: #0000FF; }
+
+/* Name.Function */
+.highlight .nl {
+  color: #A0A000; }
+
+/* Name.Label */
+.highlight .nn {
+  color: #0000FF;
+  font-weight: bold; }
+
+/* Name.Namespace */
+.highlight .nt {
+  color: #008000;
+  font-weight: bold; }
+
+/* Name.Tag */
+.highlight .nv {
+  color: #19177C; }
+
+/* Name.Variable */
+.highlight .ow {
+  color: #AA22FF;
+  font-weight: bold; }
+
+/* Operator.Word */
+.highlight .w {
+  color: #bbbbbb; }
+
+/* Text.Whitespace */
+.highlight .mf {
+  color: #666666; }
+
+/* Literal.Number.Float */
+.highlight .mh {
+  color: #666666; }
+
+/* Literal.Number.Hex */
+.highlight .mi {
+  color: #666666; }
+
+/* Literal.Number.Integer */
+.highlight .mo {
+  color: #666666; }
+
+/* Literal.Number.Oct */
+.highlight .sb {
+  color: #BA2121; }
+
+/* Literal.String.Backtick */
+.highlight .sc {
+  color: #BA2121; }
+
+/* Literal.String.Char */
+.highlight .sd {
+  color: #BA2121;
+  font-style: italic; }
+
+/* Literal.String.Doc */
+.highlight .s2 {
+  color: #BA2121; }
+
+/* Literal.String.Double */
+.highlight .se {
+  color: #BB6622;
+  font-weight: bold; }
+
+/* Literal.String.Escape */
+.highlight .sh {
+  color: #BA2121; }
+
+/* Literal.String.Heredoc */
+.highlight .si {
+  color: #BB6688;
+  font-weight: bold; }
+
+/* Literal.String.Interpol */
+.highlight .sx {
+  color: #008000; }
+
+/* Literal.String.Other */
+.highlight .sr {
+  color: #BB6688; }
+
+/* Literal.String.Regex */
+.highlight .s1 {
+  color: #BA2121; }
+
+/* Literal.String.Single */
+.highlight .ss {
+  color: #19177C; }
+
+/* Literal.String.Symbol */
+.highlight .bp {
+  color: #008000; }
+
+/* Name.Builtin.Pseudo */
+.highlight .vc {
+  color: #19177C; }
+
+/* Name.Variable.Class */
+.highlight .vg {
+  color: #19177C; }
+
+/* Name.Variable.Global */
+.highlight .vi {
+  color: #19177C; }
+
+/* Name.Variable.Instance */
+.highlight .il {
+  color: #666666; }
+
+/* Literal.Number.Integer.Long */
+h1, h2, h3, h4, h5, h6, p, ul, ol, li, dl, dt, dd, form, blockquote {
+  margin: 0;
+  padding: 0; }
+
+code,
+.highlight {
+  font-family: monaco, osaka-mono, monospace;
+  font-size: 13px; }
+
+a {
+  color: #3399CC; }
+
+a:visited {
+  color: #B9209A; }
+
+a:hover {
+  color: #bd3348; }
+
+img {
+  border: 0; }
+
+body, html {
+  height: 100%; }
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #3399CC;
+  color: #333;
+  line-height: 1.5;
+  font-family: 'Hiragino Kaku Gothic Pro', Meiryo, 'MS PGothic', Verdana, Arial, sans-serif; }
+
+.mod-content {
+  min-height: calc(100% - 250px);
+  background: url(/img/common/bg-all.png), #fbfbfb;
+  padding-bottom: 80px; }
+
+.mod-search {
+  border-bottom: 1px solid #297aa3;
+  height: 39px;
+  overflow: hidden; }
+  .mod-search > div {
+    max-width: 720px;
+    padding: 0 10px;
+    margin: 0 auto; }
+    .mod-search > div > div {
+      width: 320px;
+      float: right;
+      position: relative;
+      top: -10px;
+      right: -13px; }
+
+.mod-header {
+  position: relative;
+  max-width: 720px;
+  margin: 0 auto; }
+  .mod-header h1 {
+    padding: 65px 0;
+    text-align: center; }
+    .mod-header h1 img {
+      width: 500px;
+      height: 60px; }
+
+.mod-footer {
+  color: #FFF;
+  padding: 10px 0;
+  text-align: center;
+  height: 110px; }
+  .mod-footer > div {
+    max-width: 720px;
+    margin: 0 auto; }
+  .mod-footer .name {
+    margin: 10px 0;
+    font-size: 12px;
+    color: #EFEFEF;
+    font-style: italic; }
+  .mod-footer .icons {
+    margin: 20px 0;
+    padding: 0; }
+    .mod-footer .icons li {
+      display: inline-block;
+      margin: 0 5px; }
+      .mod-footer .icons li a:hover {
+        opacity: 0.8; }
+
+.mod-main {
+  max-width: 720px;
+  padding: 0 10px;
+  margin: 0 auto; }
+
+.mod-tags ol {
+  list-style: none;
+  margin: 0;
+  padding: 0; }
+  .mod-tags ol li {
+    display: inline-block;
+    white-space: nowrap;
+    margin: 2px 3px; }
+
+.mod-404 h1 {
+  margin-bottom: 20px; }
+
+.mod-entry time {
+  display: block;
+  background: url(/img/common/bg-border1.png) no-repeat 0 center;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px; }
+.mod-entry .tags {
+  text-align: right;
+  margin: 0;
+  padding: 0; }
+  .mod-entry .tags li {
+    display: inline-block;
+    list-style: none;
+    margin-right: 5px; }
+.mod-entry h1 {
+  font-size: 28px;
+  color: #000;
+  margin-bottom: 40px; }
+.mod-entry .body {
+  background: url(/img/common/bg-border2.png) no-repeat 0 bottom;
+  padding-bottom: 20px;
+  margin-bottom: 10px;
+  /*
+      pre code {
+        display: block;
+        position: relative;
+  
+        &:after {
+          content: attr(class);
+          display: inline-block;
+          position: absolute;
+          top: -25px;
+          right: -10px;
+          font-size: 42px;
+          color: #E2E2E2;
+          text-transform: uppercase;
+          font-family: sans-serif;
+          font-weight: bold;
+        }
+      }
+  */ }
+  .mod-entry .body img {
+    max-width: 100%;
+    height: auto; }
+  .mod-entry .body a {
+    word-wrap: break-word; }
+  .mod-entry .body h2 {
+    font-size: 20px;
+    margin: 40px 0 15px;
+    color: #000; }
+  .mod-entry .body h2::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 10px;
+    background: #3399CC;
+    margin-right: 7px;
+    position: relative;
+    top: -3px; }
+  .mod-entry .body h3 {
+    font-size: 18px;
+    margin: 30px 0 15px; }
+  .mod-entry .body h4, .mod-entry .body h5, .mod-entry .body h6 {
+    font-size: 16px;
+    margin: 20px 0 15px; }
+  .mod-entry .body p {
+    margin: 15px 0; }
+  .mod-entry .body ul, .mod-entry .body ol {
+    margin: 15px 0;
+    padding-left: 30px; }
+  .mod-entry .body li {
+    margin: 5px 0; }
+  .mod-entry .body li p {
+    margin: 5px 0; }
+  .mod-entry .body ul li {
+    list-style: circle; }
+    .mod-entry .body ul li ul, .mod-entry .body ul li ol {
+      margin: 5px 0; }
+    .mod-entry .body ul li li {
+      list-style: square; }
+  .mod-entry .body blockquote {
+    margin: 20px 0 0 30px;
+    background: #F5F5F5;
+    border-left: 2px solid #3399CC;
+    padding: 1px 20px; }
+  .mod-entry .body pre {
+    padding: 10px;
+    margin: 15px 0;
+    border: 1px solid #CCC;
+    line-height: 1.8;
+    overflow: auto;
+    background: #F8F8F8; }
+  .mod-entry .body p code,
+  .mod-entry .body li code {
+    background: #FCFCFC;
+    display: inline-block;
+    padding: 0 2px;
+    margin: 0 3px;
+    border: 1px solid #CCC;
+    vertical-align: top; }
+  .mod-entry .body table {
+    margin: 15px 0;
+    border-collapse: collapse; }
+  .mod-entry .body td, .mod-entry .body th {
+    padding: 5px;
+    border: 1px solid #CCC; }
+  .mod-entry .body th {
+    background: #EFEFEF; }
+  .mod-entry .body td {
+    background: #FFF; }
+  .mod-entry .body dl {
+    margin: 15px 0; }
+  .mod-entry .body dt {
+    font-weight: bold;
+    margin-bottom: 5px; }
+  .mod-entry .body dd {
+    padding-left: 15px;
+    margin-bottom: 10px; }
+  .mod-entry .body figure {
+    display: block;
+    text-align: center; }
+  .mod-entry .body figcaption {
+    display: block; }
+  .mod-entry .body .caption {
+    font-size: 13px;
+    color: #666;
+    display: block; }
+  .mod-entry .body .mod-ads {
+    margin: 20px 0 10px; }
+    .mod-entry .body .mod-ads .adsbygoogle {
+      width: 728px;
+      height: 90px; }
+.mod-entry .socials div {
+  display: inline-block;
+  vertical-align: top; }
+.mod-entry .paginate {
+  margin: 20px 0; }
+  .mod-entry .paginate li {
+    list-style: none;
+    margin: 10px 0; }
+    .mod-entry .paginate li span {
+      display: inline-block;
+      margin-right: 10px;
+      font-weight: bold;
+      font-size: 20px;
+      color: #999;
+      font-style: italic;
+      font-family: serif; }
+.mod-entry #disqus_thread {
+  margin: 40px 0 20px; }
+
+@media screen and (max-width: 720px) {
+  .mod-entry time {
+    background-image: none;
+    border-top: 1px solid #CCC;
+    border-bottom: 1px solid #CCC;
+    padding-top: 5px;
+    padding-bottom: 5px; }
+  .mod-entry .body .mod-ads .adsbygoogle {
+    width: 300px;
+    height: 250px; } }
+@media screen and (max-width: 500px) {
+  .mod-header h1 {
+    padding: 30px 0; }
+    .mod-header h1 img {
+      width: 250px;
+      height: 30px; } }

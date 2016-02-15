@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>HTML Importsで読み込まれたドキュメントからの相対パスを得る - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2014-07-11T13:00:00+09:00">2014年07月11日</time>
+
+<ul class="tags">
+    <li><a href="/tags/webcomponents.html">WebComponents</a></li>
+</ul>
+
+<h1>HTML Importsで読み込まれたドキュメントからの相対パスを得る</h1>
+
+<div class="body">
+
+<p><a href="https://github.com/hokaccha/x-sushiyuki">x-sushiyuki</a>というsushiyukiを表示するためのWebComponentsの要素を作ったんだけれども、importされたファイルからの相対パスでsushiyukiの画像パスを指定するのにちょっと苦戦した。</p>
+
+<p>たとえば、 /index.html から以下のように x-sushiyuki.html を呼び出す。</p>
+<pre class="highlight html"><code><span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"import"</span> <span class="na">href=</span><span class="s">"bower_components/x-sushiyuki/x-sushiyuki.html"</span><span class="nt">&gt;</span>
+</code></pre>
+
+<p>この x-sushiyuki.html に CustomElement で<code>&lt;x-sushiyuki&gt;</code>を登録する処理などがかかれているので、 /index.html では次のように<code>&lt;x-sushiyuki&gt;</code>が使えるようになる。</p>
+<pre class="highlight html"><code><span class="nt">&lt;x-sushiyuki</span> <span class="na">type=</span><span class="s">"uni"</span><span class="nt">&gt;</span>うに<span class="nt">&lt;/x-sushiyuki&gt;</span>
+</code></pre>
+
+<p>このようなコンポーネントをbowerなどで配布することを考えると、sushiyukiの画像はこのコンポーネントに含めたい。そうすると当然画像のパスは x-sushiyuki.html からの相対パスで解決したい。（1、2個くらいの画像だったらbase64で埋め込んでもいいけどsushiyukiは数が多いのでつらい）</p>
+
+<p>普通に書くとこれが解決できない。例えば x-sushiyuki.html のほうで<code>img/uni.png</code>を<code>src</code>にした<code>img</code>要素をつくって<code>&lt;x-sushiyuki&gt;</code>のShadowDOMにappendしたとする。しかしこのShadowDOMが展開されるのは index.html のほうなので index.html からの相対パスで解決される。</p>
+
+<p>これを解決する方法がよくわからなかったのでなんとか無理矢理解決した方法を紹介する。</p>
+
+<p>まず x-sushiyuki.html のほうのscript要素の中では<code>document.currentScript</code>で自分自信のscript要素を取得できる（platform.jsでPolyfillする場合は<code>document._currentScript</code>）。</p>
+
+<p>次に<code>currentScript.ownerDocument</code>で自分自身の<code>document</code>を取得できる。そして<code>document</code>には<code>baseURI</code>というプロパティがあって、これで自分のドキュメントが参照されているURLが取れる。例えばこんな感じ。</p>
+<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">currentScript</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">_currentScript</span> <span class="o">||</span> <span class="nb">document</span><span class="p">.</span><span class="nx">currentScript</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">currentScript</span><span class="p">.</span><span class="nx">ownerDocument</span><span class="p">;</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">baseURI</span><span class="p">);</span> <span class="c1">//=&gt; http://localhsot:8000/bower_components/x-sushiyuki/x-sushiyuki.html</span>
+</code></pre>
+
+<p>あとはこのURLをパースして相対パスを取ればいい。こんな感じにした。</p>
+<pre class="highlight javascript"><code><span class="kd">function</span> <span class="nx">getCwd</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">'a'</span><span class="p">);</span>
+  <span class="nx">a</span><span class="p">.</span><span class="nx">href</span> <span class="o">=</span> <span class="nx">url</span><span class="p">;</span>
+
+  <span class="kd">var</span> <span class="nx">origin</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">protocol</span> <span class="o">+</span> <span class="s1">'//'</span> <span class="o">+</span> <span class="nx">a</span><span class="p">.</span><span class="nx">host</span><span class="p">;</span> <span class="c1">// same as a.origin</span>
+  <span class="kd">var</span> <span class="nx">pathname</span> <span class="o">=</span> <span class="nx">a</span><span class="p">.</span><span class="nx">pathname</span><span class="p">;</span>
+
+  <span class="c1">// for IE10</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">pathname</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="s1">'/'</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">pathname</span> <span class="o">=</span> <span class="s1">'/'</span> <span class="o">+</span> <span class="nx">pathname</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">return</span> <span class="nx">origin</span> <span class="o">+</span> <span class="nx">pathname</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/</span><span class="se">\/[^\/]</span><span class="sr">*$/</span><span class="p">,</span> <span class="s1">''</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">cwd</span> <span class="o">=</span> <span class="nx">getCwd</span><span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">baseURI</span><span class="p">);</span>
+</code></pre>
+
+<p><code>a</code>要素でURLをパースして自分のファイルのディレクトリ的なのを返す。originもくっつけてるのは別のオリジンからこのドキュメントが読み込まれた場合にも対応するため。HTML ImportsはCORSに対応していればクロスオリジンで読み込めるので、CDNから読み込むとかもできそう。</p>
+
+<p>後はこれに画像のパスをくっつければOK。</p>
+<pre class="highlight javascript"><code><span class="nx">img</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">cwd</span> <span class="o">+</span> <span class="s1">'/img/'</span> <span class="o">+</span> <span class="nx">type</span> <span class="o">+</span> <span class="s1">'.png'</span><span class="p">;</span>
+</code></pre>
+
+<p>他にいい方法があれば知りたい所存。</p>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2014/06/peco-ghq-gh-open.html">peco、ghq、gh-openの組み合わせが捗る</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2014/10/sprinkler.html">GoでEnd To End Testingフレームワーク書いた</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

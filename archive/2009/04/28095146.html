@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>sfFormを継承したベースクラスを作る - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2009-04-28T00:00:00+09:00">2009年04月28日</time>
+
+<ul class="tags">
+    <li><a href="/tags/php.html">PHP</a></li>
+    <li><a href="/tags/symfony.html">symfony</a></li>
+</ul>
+
+<h1>sfFormを継承したベースクラスを作る</h1>
+
+<div class="body">
+
+<p>symfonyのタスクでpropel:build-formsとかやると、モデルからBaseFormPropelというクラスを継承したものがつくられます（Doctrineの場合はBaseFormDoctrine）。</p>
+
+<p>これは$form-&gt;save()とかやれて便利ではあるのですが、以下のような理由で僕は使ってません。</p>
+
+<ul>
+<li>formオブジェクトに共通の処理をもてない</li>
+<li>テストのしやすさなども考えると、モデルの処理はモデルに書きたい。</li>
+</ul>
+
+<p>なので自分でsfFormを直接継承したクラスをつくって、それをモジュール毎に継承して使ってます。</p>
+<pre class="highlight php"><code><span class="k">class</span> <span class="nc">myFormBase</span> <span class="k">extends</span> <span class="nx">sfForm</span>
+<span class="p">{</span>
+    <span class="c1">// 共通のメソッドとかsfFormのメソッド上書きしたりとか
+</span><span class="p">}</span>
+</code></pre>
+
+<p>ここに共通で使うcallbackのメソッドとか書いたりしてます。まだこのベースクラスをつくってる途中なので試行錯誤中です。</p>
+
+<p>あると便利だナーと思ったのは、確認画面用に値を出力するメソッド。基本的に確認画面があるなんてことを想定されてないので$form-&gt;getValue(&#39;filed&#39;)とかの値ってescaping_strategyを有効にしててもエスケープされないんですよね。</p>
+
+<p>あと、ラジオボタンで選択したラベルを表示とか、時間表示のメソッドもつくっておくと便利。</p>
+<pre class="highlight php"><code><span class="sd">/**
+ * エスケープしたフィールドの値を返す
+ *
+ * @param  string $filed
+ * @return string
+ */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">getEscValue</span><span class="p">(</span><span class="nv">$field</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">sfWidget</span><span class="o">::</span><span class="na">escapeOnce</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getValue</span><span class="p">(</span><span class="nv">$field</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="sd">/**
+ * ラジオボタンとかセレクトボックスのラベルの値を返す
+ *
+ * @param  string $filed
+ * @return string
+ */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">getLabelValue</span><span class="p">(</span><span class="nv">$field</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$choices</span> <span class="o">=</span> <span class="nv">$this</span><span class="p">[</span><span class="nv">$field</span><span class="p">]</span><span class="o">-&gt;</span><span class="na">getWidget</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getOption</span><span class="p">(</span><span class="s1">'choices'</span><span class="p">);</span>
+    <span class="nv">$value</span>   <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getValue</span><span class="p">(</span><span class="nv">$field</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">array_key_exists</span><span class="p">(</span><span class="nv">$value</span><span class="p">,</span> <span class="nv">$choices</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nv">$choices</span><span class="p">[</span><span class="nv">$value</span><span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="sd">/**
+ * 日付の配列を日付フォーマットに変換した値を返す
+ *
+ * @param  string $filed
+ * @param  string $format
+ * @return string
+ */</span>
+<span class="k">public</span> <span class="k">function</span> <span class="nf">getDateValue</span><span class="p">(</span><span class="nv">$field</span><span class="p">,</span> <span class="nv">$format</span> <span class="o">=</span> <span class="s1">'Y年m月d日'</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">myUtil</span><span class="o">::</span><span class="na">dateTimeArrayToString</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getValue</span><span class="p">(</span><span class="nv">$field</span><span class="p">),</span> <span class="nv">$format</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>ベースができてしまえば後はフォーム量産するのみなのでベースができるまでももう少しがんばる。</p>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2009/04/27092458.html">sfFormの汚染された値とクリーンな値について</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2009/05/01075712.html">meca.jsにposition:fixedを追加した</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>flipsnap.jsでIE10のPointer Eventsに対応した - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2012-11-16T00:00:00+09:00">2012年11月16日</time>
+
+<ul class="tags">
+    <li><a href="/tags/javascript.html">JavaScript</a></li>
+</ul>
+
+<h1>flipsnap.jsでIE10のPointer Eventsに対応した</h1>
+
+<div class="body">
+
+<p>flipsnap.jsをWindows8のIE10のタッチで動くようにしました。</p>
+
+<p><a href="http://pxgrid.github.com/js-flipsnap/">flipsnap.js</a></p>
+
+<p>思ったより簡単に対応できました。diffはこんな感じ。</p>
+
+<p><a href="https://github.com/pxgrid/js-flipsnap/commit/0524fefdbd8e2b02625a00fada9e2d3f9c73b2ef">IE10 for touch device support. Fix #13 · 0524fef · pxgrid/js-flipsnap</a></p>
+
+<p>IE10はiOSやAndroidのように<code>touchstart</code>や<code>touchmove</code>のようなタッチイベントが用意されておらず、代わりにタッチした際に、pointerイベントというイベントが発火します。</p>
+
+<ul>
+<li><a href="http://www.w3.org/Submission/pointer-events/">Pointer Events Specification</a></li>
+<li><a href="http://blogs.msdn.com/b/ie/archive/2011/09/20/touch-input-for-ie10-and-metro-style-apps.aspx">Touch Input for IE10 and Metro style Apps - IEBlog - Site Home - MSDN Blogs</a></li>
+</ul>
+
+<p>まだ<code>MSPointerDown</code>のように<code>MS</code>というprefixがついています。</p>
+<pre class="highlight javascript"><code><span class="nx">element</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'MSPointerDown'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// タッチが始まった時の処理</span>
+<span class="p">},</span> <span class="kc">false</span><span class="p">);</span>
+
+<span class="nx">element</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'MSPointerMove'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// タッチが動いている時の処理</span>
+<span class="p">},</span> <span class="kc">false</span><span class="p">);</span>
+
+<span class="nx">element</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">'MSPointerUp'</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// タッチが終わった時の処理</span>
+<span class="p">},</span> <span class="kc">false</span><span class="p">);</span>
+</code></pre>
+
+<p>基本的にはmouseイベントやtouchイベントと同じように使えるので、イベント名だけ変更すれば対応はできます。また、<code>window.navigator.msPointerEnabled</code>の値を見てpointerイベントが使用可能かどうかを判断することができます。</p>
+<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">support</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">mspointer</span><span class="p">:</span> <span class="nb">window</span><span class="p">.</span><span class="nx">navigator</span><span class="p">.</span><span class="nx">msPointerEnabled</span><span class="p">,</span>
+  <span class="na">touch</span><span class="p">:</span> <span class="s1">'ontouchstart'</span> <span class="k">in</span> <span class="nb">window</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">touchStartEvent</span> <span class="o">=</span>
+    <span class="nx">support</span><span class="p">.</span><span class="nx">mspointer</span> <span class="p">?</span> <span class="s1">'MSPointerDown'</span> <span class="p">:</span>
+    <span class="nx">support</span><span class="p">.</span><span class="nx">touch</span> <span class="p">?</span> <span class="s1">'touchstart'</span> <span class="p">:</span>
+    <span class="s1">'mousedown'</span><span class="p">;</span>
+
+<span class="nx">element</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="nx">touchStartEvent</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// タッチが始まった時の処理</span>
+<span class="p">},</span> <span class="kc">false</span><span class="p">);</span>
+</code></pre>
+
+<p>また、1点注意が必要で、CSSで<code>-ms-touch-action: none;</code>というのを指定しないとタッチしたときにネイティブのスクロールなどが優先されてpointerイベントがちゃんと発火しません。JavaScriptからこのプロパティを設定するには次のようにします。</p>
+<pre class="highlight javascript"><code><span class="k">if</span> <span class="p">(</span><span class="nx">support</span><span class="p">.</span><span class="nx">mspointer</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">element</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">msTouchAction</span> <span class="o">=</span> <span class="s1">'none'</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>CSSでやるならこうです。</p>
+<pre class="highlight css"><code><span class="nf">#element</span> <span class="p">{</span>
+  <span class="nl">-ms-touch-action</span><span class="p">:</span> <span class="nb">none</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>今回のflipsnap.jsでの対応は将来的にまだpointerイベントがどうなるかわからないので<code>MS</code>のプレフィックス限定で対応しています。将来的にプレフィックスが外れたり他のブラウザでも対応が始まった場合はその都度対応していく予定です。</p>
+
+<p>また、Windows8のタッチ対応端末で確認したところ、Chromeはtouchイベント、Firefoxはmouseイベントが発火していたのでそのままで使えてました。なかなかタッチイベントまわりカオスな状況ですね。</p>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2012/11/adventar.html">Advent Calendarの登録サイトつくりました</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2012/12/less_extend.html">最近のLessのextendの進捗</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

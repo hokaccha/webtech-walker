@@ -1,0 +1,1539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Webtech Walker</title>
+  <id>http://webtech-walker.com/</id>
+  <link href="http://webtech-walker.com/"/>
+  <link href="http://webtech-walker.com/atom.xml" rel="self"/>
+  <updated>2014-10-16T23:24:00+09:00</updated>
+  <author>
+    <name>Kazuhito Hokamura</name>
+  </author>
+  <entry>
+    <title>GoでEnd To End Testingフレームワーク書いた</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2014/10/sprinkler.html"/>
+    <id>http://webtech-walker.com/archive/2014/10/sprinkler.html</id>
+    <published>2014-10-16T23:24:00+09:00</published>
+    <updated>2014-10-16T23:24:00+09:00</updated>
+    <content type="html">&lt;p&gt;SeleniumラッパーなテストフレームワークをGoで書いてみた。初Go。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://github.com/hokaccha/sprinkler"&gt;https://github.com/hokaccha/sprinkler&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;GoのコードでE2Eテストのコード書けてもあんまり嬉しくないのでYAMLで書けるようにした。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;scenarios:
+- name: Hello sprinkler!
+  actions:
+  - visit: http://www.google.com
+  - assert_title: Google
+  - wait_for: input[type="text"]
+  - input:
+      element: input[type="text"]
+      value: Hello
+  - submit: form[name="f"]
+  - wait: 1000
+  - assert_text:
+      element: "#main"
+      contain: Hello
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;こんな感じのYAMLを以下のように実行すると&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ sprinkler hello.yml
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ブラウザが立ち上がってYAMLに書いたコマンドやアサーションを実行する。&lt;/p&gt;
+
+&lt;iframe src="//player.vimeo.com/video/109134889" width="600" height="380" frameborder="0"&gt;&lt;/iframe&gt;
+
+&lt;p&gt;&lt;a href="https://github.com/hokaccha/sprinkler/tree/master/example"&gt;example&lt;/a&gt;にある機能はひと通り動くものの、まだだいぶ機能たりない感じなんで地道に実装していく予定。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>HTML Importsで読み込まれたドキュメントからの相対パスを得る</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2014/07/html-import-relative-path.html"/>
+    <id>http://webtech-walker.com/archive/2014/07/html-import-relative-path.html</id>
+    <published>2014-07-11T13:00:00+09:00</published>
+    <updated>2014-07-11T13:00:00+09:00</updated>
+    <content type="html">&lt;p&gt;&lt;a href="https://github.com/hokaccha/x-sushiyuki"&gt;x-sushiyuki&lt;/a&gt;というsushiyukiを表示するためのWebComponentsの要素を作ったんだけれども、importされたファイルからの相対パスでsushiyukiの画像パスを指定するのにちょっと苦戦した。&lt;/p&gt;
+
+&lt;p&gt;たとえば、 /index.html から以下のように x-sushiyuki.html を呼び出す。&lt;/p&gt;
+&lt;pre class="highlight html"&gt;&lt;code&gt;&lt;span class="nt"&gt;&amp;lt;link&lt;/span&gt; &lt;span class="na"&gt;rel=&lt;/span&gt;&lt;span class="s"&gt;"import"&lt;/span&gt; &lt;span class="na"&gt;href=&lt;/span&gt;&lt;span class="s"&gt;"bower_components/x-sushiyuki/x-sushiyuki.html"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;この x-sushiyuki.html に CustomElement で&lt;code&gt;&amp;lt;x-sushiyuki&amp;gt;&lt;/code&gt;を登録する処理などがかかれているので、 /index.html では次のように&lt;code&gt;&amp;lt;x-sushiyuki&amp;gt;&lt;/code&gt;が使えるようになる。&lt;/p&gt;
+&lt;pre class="highlight html"&gt;&lt;code&gt;&lt;span class="nt"&gt;&amp;lt;x-sushiyuki&lt;/span&gt; &lt;span class="na"&gt;type=&lt;/span&gt;&lt;span class="s"&gt;"uni"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;うに&lt;span class="nt"&gt;&amp;lt;/x-sushiyuki&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このようなコンポーネントをbowerなどで配布することを考えると、sushiyukiの画像はこのコンポーネントに含めたい。そうすると当然画像のパスは x-sushiyuki.html からの相対パスで解決したい。（1、2個くらいの画像だったらbase64で埋め込んでもいいけどsushiyukiは数が多いのでつらい）&lt;/p&gt;
+
+&lt;p&gt;普通に書くとこれが解決できない。例えば x-sushiyuki.html のほうで&lt;code&gt;img/uni.png&lt;/code&gt;を&lt;code&gt;src&lt;/code&gt;にした&lt;code&gt;img&lt;/code&gt;要素をつくって&lt;code&gt;&amp;lt;x-sushiyuki&amp;gt;&lt;/code&gt;のShadowDOMにappendしたとする。しかしこのShadowDOMが展開されるのは index.html のほうなので index.html からの相対パスで解決される。&lt;/p&gt;
+
+&lt;p&gt;これを解決する方法がよくわからなかったのでなんとか無理矢理解決した方法を紹介する。&lt;/p&gt;
+
+&lt;p&gt;まず x-sushiyuki.html のほうのscript要素の中では&lt;code&gt;document.currentScript&lt;/code&gt;で自分自信のscript要素を取得できる（platform.jsでPolyfillする場合は&lt;code&gt;document._currentScript&lt;/code&gt;）。&lt;/p&gt;
+
+&lt;p&gt;次に&lt;code&gt;currentScript.ownerDocument&lt;/code&gt;で自分自身の&lt;code&gt;document&lt;/code&gt;を取得できる。そして&lt;code&gt;document&lt;/code&gt;には&lt;code&gt;baseURI&lt;/code&gt;というプロパティがあって、これで自分のドキュメントが参照されているURLが取れる。例えばこんな感じ。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;currentScript&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;_currentScript&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;currentScript&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;doc&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;currentScript&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;ownerDocument&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;doc&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;baseURI&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;//=&amp;gt; http://localhsot:8000/bower_components/x-sushiyuki/x-sushiyuki.html&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;あとはこのURLをパースして相対パスを取ればいい。こんな感じにした。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;getCwd&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;url&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;createElement&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'a'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;href&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;url&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;origin&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;protocol&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'//'&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;host&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// same as a.origin&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;pathname&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;pathname&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// for IE10&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;pathname&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;!==&lt;/span&gt; &lt;span class="s1"&gt;'/'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;pathname&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'/'&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;pathname&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;origin&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;pathname&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;replace&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sr"&gt;/&lt;/span&gt;&lt;span class="se"&gt;\/[^\/]&lt;/span&gt;&lt;span class="sr"&gt;*$/&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;''&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;cwd&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;getCwd&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;doc&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;baseURI&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;a&lt;/code&gt;要素でURLをパースして自分のファイルのディレクトリ的なのを返す。originもくっつけてるのは別のオリジンからこのドキュメントが読み込まれた場合にも対応するため。HTML ImportsはCORSに対応していればクロスオリジンで読み込めるので、CDNから読み込むとかもできそう。&lt;/p&gt;
+
+&lt;p&gt;後はこれに画像のパスをくっつければOK。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="nx"&gt;img&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;src&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;cwd&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/img/'&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;type&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'.png'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;他にいい方法があれば知りたい所存。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>peco、ghq、gh-openの組み合わせが捗る</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2014/06/peco-ghq-gh-open.html"/>
+    <id>http://webtech-walker.com/archive/2014/06/peco-ghq-gh-open.html</id>
+    <published>2014-06-24T17:03:00+09:00</published>
+    <updated>2014-06-24T17:03:00+09:00</updated>
+    <content type="html">&lt;p&gt;それぞれのツールは以下を見ればどんなのかわかると思う。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://lestrrat.ldblog.jp/archives/39427929.html"&gt;peco（Simplistic interactive filtering tool）を作った話 : D-7 &lt;altijd in beweging&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://motemen.hatenablog.com/entry/2014/06/01/introducing-ghq"&gt;ghq: リモートリポジトリのローカルクローンをシンプルに管理する - 詩と創作・思索のひろば (Poetry, Writing and Contemplation)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://unknownplace.org/archives/gh-open.html"&gt;GitHubのレポジトリURLを開くgh-openコマンド - unknownplace.org&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;pecoとghqを組み合わせる例はpecoのREADMEにあるようにかなり強力で、ghqで管理しているリポジトリのディレクトリにcdしたりするのに便利。&lt;/p&gt;
+
+&lt;p&gt;こんな感じ。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ cd $(ghq list -p | peco)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;また、typester先生作のgh-openは指定したディレクトリのリポジトリをGitHubで開けるので、同じように使えばpecoでGitHubのURLを開ける。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ gh-open $(ghq list -p | peco)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;こんな感じで適当にエイリアス作って使ってる。エイリアス名はだいぶ適当。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;alias g='cd $(ghq list -p | peco)'
+alias gh='gh-open $(ghq list -p | peco)'
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;捗る。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Re: Single Page Application ではない場合 JavaScript コードのエントリポイントはどこにあるべきか？</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2014/03/javascript-entry-point.html"/>
+    <id>http://webtech-walker.com/archive/2014/03/javascript-entry-point.html</id>
+    <published>2014-03-31T14:47:00+09:00</published>
+    <updated>2014-03-31T14:47:00+09:00</updated>
+    <content type="html">&lt;p&gt;&lt;a href="http://blog.kyanny.me/entry/2014/03/31/033140"&gt;Single Page Application ではない場合 JavaScript コードのエントリポイントはどこにあるべきか？ - @kyanny&amp;#39;s blog&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Backbone.Routerは基本的にhistory APIやhashchangeを使ったSPAのためのルーティングをしてくれるものなので、SPAじゃない場合に使うのはあんまりオススメできない。&lt;/p&gt;
+
+&lt;p&gt;方法は色々だと思うけど、自分の場合はそういうケースでは次のような簡易的なURL Dispatcherを書いて対応することが多い。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://gist.github.com/hokaccha/9885783"&gt;dispatcher.js&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;これをこんな感じで使う。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="c1"&gt;// main.js&lt;/span&gt;
+&lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Dispatcher&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+  &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;route&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'.*'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;            &lt;span class="s1"&gt;'Common'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;route&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'/'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;             &lt;span class="s1"&gt;'Top'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;route&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'/user/([^/]+)'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'User'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;dispatch&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+    &lt;span class="na"&gt;path&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;location&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;pathname&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="na"&gt;actions&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;MyApp&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Actions&lt;/span&gt;
+  &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="c1"&gt;// actions/common.js&lt;/span&gt;
+&lt;span class="nx"&gt;MyApp&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Actions&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Common&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;path&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="c1"&gt;// 全ページで共通の処理&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+
+&lt;span class="c1"&gt;// actions/top.js&lt;/span&gt;
+&lt;span class="nx"&gt;MyApp&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Actions&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Top&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;path&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="c1"&gt;// トップページのときの処理&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+
+&lt;span class="c1"&gt;// actions/user.js&lt;/span&gt;
+&lt;span class="nx"&gt;MyApp&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Actions&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;User&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;id&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="c1"&gt;// /user/100 のときは id に 100 が渡ってくる&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;単に正規表現でURLをディスパッチしてるだけなので、そんなにかっこよくは書けないけど、わりと柔軟に書けるし実装も小さくて手を入れやすいのである程度の規模ならこれでなんとかなることは多い。&lt;/p&gt;
+
+&lt;p&gt;あと、SPAとSPAじゃないページが混じってるアプリケーションもわりと多いので、その場合はこのDispatcherでルーティングした先でBackbone.Routerを初期化するとかいうケースもあったりする。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>クライアントサイドJavaScriptのテストカバレッジをCoverallsに投げる</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2014/01/clientside-javascript-coveralls.html"/>
+    <id>http://webtech-walker.com/archive/2014/01/clientside-javascript-coveralls.html</id>
+    <published>2014-01-08T13:42:00+09:00</published>
+    <updated>2014-01-08T13:42:00+09:00</updated>
+    <content type="html">&lt;p&gt;&lt;a href="https://coveralls.io/"&gt;Coveralls&lt;/a&gt;というGitHubのプロジェクトのテストカバレッジを記録するためのサービスがあって、クライアントサイドのJavaScriptのテストでもできそうだったんでやってみた。&lt;/p&gt;
+
+&lt;p&gt;最近のJavaScriptのカバレッジツールは&lt;a href="http://blanketjs.org/"&gt;Blanket.js&lt;/a&gt;がいけてるらしいんだけど、これを使ってクライアントサイドJavaScriptのカバレッジをCoverallsに投げるの若干めんどそうだったんで、&lt;a href="https://github.com/deepsweet/poncho"&gt;poncho&lt;/a&gt;っていうラッパーを使ってみた。&lt;/p&gt;
+
+&lt;p&gt;ponchoはMocha、PhantomJS、Blanket.jsをうまいことつないでくれるやつで、普通にMochaでテスト書いてるプロジェクトだったらすごく簡単に設定できる。Mocha限定になっちゃうけど。&lt;/p&gt;
+
+&lt;p&gt;すでにMochaでテストが書かれてて、&lt;code&gt;test/index.html&lt;/code&gt;とかでテスト実行できる（ブラウザで開いてMochaのテストが走る）とすると、まず、&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ npm install poncho
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;して、カバレッジをとりたい対象のファイルを読み込んでいる&lt;code&gt;script&lt;/code&gt;要素に&lt;code&gt;data-cover&lt;/code&gt;をつける。&lt;/p&gt;
+&lt;pre class="highlight html"&gt;&lt;code&gt;&lt;span class="nt"&gt;&amp;lt;script &lt;/span&gt;&lt;span class="na"&gt;src=&lt;/span&gt;&lt;span class="s"&gt;"flipsnap.js"&lt;/span&gt; &lt;span class="na"&gt;data-cover&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&amp;lt;/script&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;そして&lt;code&gt;poncho&lt;/code&gt;コマンドを実行するとカバレッジが取れる（phantomjsがインストールされてないとダメかも）。こんな感じ。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ ./node_modules/.bin/poncho test/index.html
+file: flipsnap.js
+coverage: 81.0909090909091
+hist: 223
+misses: 52
+sloc: 275
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これをCoverallsに投げるには、レポーターに&lt;code&gt;lcov&lt;/code&gt;を指定して&lt;a href="https://github.com/cainus/node-coveralls"&gt;node-coveralls&lt;/a&gt;にパイプで出力を渡すだけ。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ npm install coveralls
+$ ./node_modules/.bin/poncho -R lcov test/index.html | ./node_modules/.bin/coveralls
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ローカルでこれ実行してもエラーになるので、これをtravis-ciで実行できるようにする。&lt;/p&gt;
+
+&lt;p&gt;例えば&lt;code&gt;.travis.yml&lt;/code&gt;はこんな感じ。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;script: phantomjs test/lib/mocha-phantomjs.coffee test/index.html
+after_success:
+  - npm install poncho coveralls
+  - ./node_modules/.bin/poncho -R lcov test/index.html | ./node_modules/.bin/coveralls
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;npmのインストールとかは&lt;code&gt;package.json&lt;/code&gt;に書いてもいいけどそのへんはお好みで。&lt;/p&gt;
+
+&lt;p&gt;そしてCoverallsとTravisCIの両方でプロジェクトをONにしてpushするとTravisCIからCoverallsに結果が送られる。結果はこんな感じ。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://coveralls.io/r/pxgrid/js-flipsnap"&gt;pxgrid/js-flipsnap | Coveralls - Test Coverage History &amp;amp; Statistics&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;既存のコードにほとんど手を入れず（&lt;code&gt;data-cover&lt;/code&gt;つけるぐらいで）簡単に設定できた。すごい。Mochaですでにテスト書いてある場合はponchoでCoverallsは簡単でオススメ。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Font AwesomeマジAwesome &amp;#x23;LOVEFONT</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2013/12/font-awesome-lovefont.html"/>
+    <id>http://webtech-walker.com/archive/2013/12/font-awesome-lovefont.html</id>
+    <published>2013-12-14T00:00:00+09:00</published>
+    <updated>2013-12-14T00:00:00+09:00</updated>
+    <content type="html">&lt;p&gt;&lt;a href="http://www.adventar.org/calendars/63"&gt;#LOVEFONT Advent Calendar 2013&lt;/a&gt; 14日目です。&lt;/p&gt;
+
+&lt;p&gt;フォントについて語るAdvent Calendarなんだけど斜め上でFont Awesomeについて書こうと思います。&lt;/p&gt;
+
+&lt;p&gt;Font AwesomeというのはWebサイトで使える様々なアイコンをフォントファイルとして提供しているライブラリです。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://fontawesome.io/"&gt;Font Awesome&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;これの何がいいかというと、まず色々なアイコンが簡単に使えるというのはもちろんのこと、それがフォントファイルで提供されているというところです。フォントファイルで提供されているということはつまり、CSSで見た目を制御できるわけです。&lt;/p&gt;
+
+&lt;p&gt;例えば、大きさを変えようと思ったら&lt;code&gt;font-size&lt;/code&gt;プロパティで変えられるし、色を変えようと思ったら&lt;code&gt;color&lt;/code&gt;プロパティで変えられるわけ。つまりアイコンをちょっと変更するだけで画像切り出し直すみたいな手間から開放されるわけで、マジAwewomeなわけです。&lt;/p&gt;
+
+&lt;p&gt;使い方は簡単で、CSSとフォントファイルを読み込んだら&lt;code&gt;i&lt;/code&gt;要素に決まった&lt;code&gt;class&lt;/code&gt;を指定するだけ。&lt;/p&gt;
+&lt;pre class="highlight html"&gt;&lt;code&gt;&lt;span class="nt"&gt;&amp;lt;i&lt;/span&gt; &lt;span class="na"&gt;class=&lt;/span&gt;&lt;span class="s"&gt;"fa fa-check"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&amp;lt;/i&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これだけ。（前は&lt;code&gt;class=&amp;quot;icon-check&amp;quot;&lt;/code&gt;とかだったけどバージョン4から&lt;code&gt;fa&lt;/code&gt;に変わった）&lt;/p&gt;
+
+&lt;p&gt;あと、色とか大きさ変えるだけじゃなくて、CSSのアニメーションなんかも当然効くのでローディングのアニメーションなんかも簡単にできます。&lt;/p&gt;
+
+&lt;p&gt;例えばこんな感じ。&lt;/p&gt;
+
+&lt;iframe width="100%" height="280" src="http://jsfiddle.net/hokaccha/KZY6F/4/embedded/result,html,css/" allowfullscreen="allowfullscreen" frameborder="0"&gt;&lt;/iframe&gt;
+
+&lt;p&gt;また、フォントファイルをローカルにインストールすればPhotoShopなんかでも使えるのでデザイナさんも楽にデザインできるみたいです（たぶん）。&lt;/p&gt;
+
+&lt;p&gt;以上、#LOVEFONT Advent Calendarとしては斜め上なエントリでした。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>nodebrewにexecコマンドを追加した</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2013/12/nodebrew-exec.html"/>
+    <id>http://webtech-walker.com/archive/2013/12/nodebrew-exec.html</id>
+    <published>2013-12-01T00:00:00+09:00</published>
+    <updated>2013-12-01T00:00:00+09:00</updated>
+    <content type="html">&lt;p&gt;Node.js Advent Calendar 1日目です。まだ空きがありますので、Node.jsネタあるよーという方ぜひ参加してみてください。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://www.adventar.org/calendars/56"&gt;Node.js Advent Calendar 2013&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;さて、この前のNode学園祭2013のLTでもちょっと話したんですが、nodebrewに&lt;code&gt;exec&lt;/code&gt;というコマンドを追加しました。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;exec&lt;/code&gt;を使うと一時的に別のバージョンでNode.jsを実行することができるようになります。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ nodebrew exec &amp;lt;version&amp;gt; -- &amp;lt;command&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;例えばこんな感じ。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;# 今使ってるバージョンは v0.10.21
+$ nodebrew ls
+v0.8.26
+v0.10.21
+
+current: v0.10.21
+
+# たしかに v0.10.21
+$ node -v
+v0.10.21
+
+# execで一時的に v0.8.26 を使いたい
+$ nodebrew exec v0.8.26 -- node -v
+v0.8.26
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;例えば試しにunstableなバージョンでアプリケーションを実行したりとか&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ nodebrew exec v0.11.9 -- node app.js
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ちょっと違うバージョンの動作を確認したいなーというときとか&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ nodebrew exec v0.11.9 -- node
+&amp;gt; console.log(...)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;こんな感じに使えます。&lt;/p&gt;
+
+&lt;p&gt;また、&lt;code&gt;node&lt;/code&gt;コマンドに限らず、グローバルにインストールしたnpmモジュールも同じように実行できます。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ nodebrew exec v0.11.9 -- grunt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;selfupdate&lt;/code&gt;コマンドでアップデートできるのでぜひお試しください。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ nodebrew selfupdate
+&lt;/code&gt;&lt;/pre&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Adventar 2013 の楽しみ方</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2013/11/adventar_2013.html"/>
+    <id>http://webtech-walker.com/archive/2013/11/adventar_2013.html</id>
+    <published>2013-11-01T10:12:00+09:00</published>
+    <updated>2013-11-01T10:12:00+09:00</updated>
+    <content type="html">&lt;p&gt;皆様、今年もAdvent Calendarの季節がやってまいりました。&lt;/p&gt;
+
+&lt;p&gt;去年つくったAdvent Calendarを登録するためのAdventarというサービスをリニューアルして2013年版をリリースしました。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://www.adventar.org/"&gt;Adventar&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;去年は一人でもモクモクとやってたんですが、今年は&lt;a href="https://twitter.com/june29"&gt;@june29&lt;/a&gt;さん、&lt;a href="https://twitter.com/ayumiko"&gt;@ayumiko&lt;/a&gt;さんという仲間を得て、ワイワイとやりながらみんなでつくりました。&lt;/p&gt;
+
+&lt;p&gt;Advent Calendarといえば技術系のブログリレーとして知られていますが、Adventarでは去年、技術と関係ないAdvent Calendarもたくさんつくられていたのもあり、今年は敢えてリードテキストに「技術系」というワードを抜いて、技術者以外でも気軽に参加できるようにという思いを込めました。&lt;/p&gt;
+
+&lt;p&gt;今年はすでに20以上のカレンダーがつくられていますが、半分以上技術関係ないカレンダーになっています。&lt;a href="http://www.adventar.org/calendars/79"&gt;ラーメン&lt;/a&gt;や&lt;a href="http://www.adventar.org/calendars/70"&gt;寿司&lt;/a&gt;、&lt;a href="http://www.adventar.org/calendars/80"&gt;モンハン&lt;/a&gt;なんてのもあってもはやなんでもありな感じです。&lt;/p&gt;
+
+&lt;p&gt;そしてこれらのカレンダーは気軽に参加できるので楽チンです（ラーメンや寿司はflickrとかTwitterのURL貼るだけ！）。&lt;/p&gt;
+
+&lt;p&gt;そもそもAdvent Calendarは、「クリスマスまで一日一日を楽しみに待つ」というものなので、12月にみんなでワイワイやって楽しめれば技術にこだわらないでもいいよね、と今年リリースしてから改めて思いました。&lt;/p&gt;
+
+&lt;p&gt;もちろん技術系のブログリレーというのが元にあってのAdvent Calendarですのでそちらのカレンダーが増えるのも嬉しいです。&lt;/p&gt;
+
+&lt;p&gt;Advent Calendarに参加したことない人も、気軽にカレンダーつくったり、おもしろそうなのに参加して遊んでみてください！&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>ISUCON3 予選の記録</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2013/10/isucon3_qualifier.html"/>
+    <id>http://webtech-walker.com/archive/2013/10/isucon3_qualifier.html</id>
+    <published>2013-10-06T21:10:00+09:00</published>
+    <updated>2013-10-06T21:10:00+09:00</updated>
+    <content type="html">&lt;p&gt;チームNoderとして&lt;a href="https://twitter.com/yosuke_furukawa"&gt;@yosuke_furukawa&lt;/a&gt;さんと&lt;a href="https://twitter.com/hakobera"&gt;@hakobera&lt;/a&gt;さんと一緒にISUCON3に参戦してきた。ISUCON初参戦。なんとか1日目の9位に食い込んで本選にもでれるっぽい（まだ暫定だけど）。&lt;/p&gt;
+
+&lt;p&gt;以下大体の記録。&lt;/p&gt;
+
+&lt;h2&gt;序盤&lt;/h2&gt;
+
+&lt;p&gt;前日までにLingerでチャットルーム、GitHubでプライベートリポジトリつくって当日に臨む。当日はyosuke_furukawaさんが勤務するDeNAのオフィスをお借りして3人で集まって作業した。&lt;/p&gt;
+
+&lt;p&gt;まず最初にAWSの設定をhakoberaさんにお願いして、sshでログインできるようにしてもらう。僕とyosuke_furukawaさんはAWSに不慣れだったので二人だったらここでだいぶ時間かかった気がする。&lt;/p&gt;
+
+&lt;p&gt;とりあえずアプリをgitで管理してローカルで作業できるようにしたりアプリの構成とかベンチマークツールの使い方を把握するなどの雑務をやって、Node.jsのアプリを起動する。&lt;/p&gt;
+
+&lt;p&gt;しかし、ベンチマーク取ってみると、何も触ってないのにMemcachedまわりでエラー吐いたりtmpファイル作ろうとするところでエラー吐いたりしてまともにベンチとれずｗ&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Node.js実装についてはsupervisordではなくstandaloneで動かすとtmpfile()が $HOME/tmp にテンポラリファイル作ろうとするため、コンソールから直接npm start等で起動した場合はそのようなフォルダがなくエラーとなる問題が1日目のAMIにありました。この点でハマってしまった方、申し訳ありません。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://isucon.net/archives/32853582.html"&gt;#isucon 2013年予選問題の解説など : ISUCON公式Blog&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;まさに罠だったｗ（Memcachedのエラーがなんだったのかは今となっては定かではない）&lt;/p&gt;
+
+&lt;p&gt;僕とyosuke_furukawaさんでなんとかまともにベンチとれるようにアプリを直す間にhakoberaさんがNginxとかRedisをたててもらったりしてなんとか戦えそうなところまで持っていく。&lt;/p&gt;
+
+&lt;h2&gt;中盤&lt;/h2&gt;
+
+&lt;p&gt;パッと見て問題ありそうな、Markdownを外部プロセスで変換してるところを直したり、インデックスが必要そうなカラムにインデックス張ったり、Nginxで静的ファイルを返すようにしたりでお昼すぎくらいにスコアは2000くらい。&lt;/p&gt;
+
+&lt;p&gt;そんでとりあえずログ取ってどこをチューニングするか決めてやろうってことで、hakoberaさんにログとってもらって、&lt;code&gt;/&lt;/code&gt;と&lt;code&gt;/recent/:page&lt;/code&gt;が遅いってことがわかったんでここをメインにチューニングする方針に。&lt;/p&gt;
+
+&lt;p&gt;その部分のアプリの実装みたらmemosのレコードを100件引いてきてそのユーザーを引くのに100件クエリを発行してた（いわゆるN+1問題）のでここはすぐ速くできそうだなと思って手をつける。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;IN&lt;/code&gt;で一気に引いてくればいいかなと思ったけど、そもそもユーザー増えることなさそうなのでメモリに全ユーザーのデータ持ってればよさそうだなと思ってそれで実装したらそれで3500くらいまでスコア上がる。&lt;/p&gt;
+
+&lt;h2&gt;終盤&lt;/h2&gt;
+
+&lt;p&gt;そこから色々試すも大きくスコア上がらず。&lt;/p&gt;
+
+&lt;p&gt;最後にmemosのデータをキャッシュしようと思ったけど、memosは更新があるので複数workerでアプリ起動してたらプロセス間でメモリ共有できないなーと思いつつ、Redisで実装してる時間なかったので、worker数を1にしてメモリにmemosのデータを突っ込めばいいかと思って実装し始めたのが終了一時間前くらい。&lt;/p&gt;
+
+&lt;p&gt;なんとか30分前くらいに実装できてベンチとったら8400くらいでて3人歓喜。そんで後はhakoberaさんがNginxをチューニングして9268.6まで上がってフィニッシュ。&lt;/p&gt;
+
+&lt;h2&gt;終了後&lt;/h2&gt;
+
+&lt;p&gt;終わった後、workloadオプションってなんだったのかって話ししてて、実はこれあげると負荷増えるけどさばいた分スコア上がるんじゃね？っていうのに終わった後に気づいて悔しかった。&lt;/p&gt;
+
+&lt;p&gt;オプション自体には気づいてたけど、単に負荷あげるだけのオプションっぽいから意味ないよね、っていうのでなぜかみんな納得して無視しちゃってた。冷静に考えればそんな無駄なオプションあるわけないのに・・。この日の教訓は「意味のないオプションなどない」でした。&lt;/p&gt;
+
+&lt;p&gt;何はともあれ運営の皆さんありがとうございました！とても楽しいイベントでした。本選も楽しみです！&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>静的サイト開発ツールとしてのMiddlemanとGrunt</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2013/09/middleman_vs_grunt.html"/>
+    <id>http://webtech-walker.com/archive/2013/09/middleman_vs_grunt.html</id>
+    <published>2013-09-03T12:09:00+09:00</published>
+    <updated>2013-09-03T12:09:00+09:00</updated>
+    <content type="html">&lt;p&gt;最近自分の周りを見ると、フロントエンドの開発ツールといえばGruntをみんな使ってるんだけど、Middlemanを使うのもけっこういいんじゃないかと思ったので比較してみる。&lt;/p&gt;
+
+&lt;h2&gt;実現したいこと&lt;/h2&gt;
+
+&lt;p&gt;例えば次のようなものをつくりたいとする。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;HTMLは数ページ〜十数ページくらい（ヘッダ・フッタくらいは共通化したい）&lt;/li&gt;
+&lt;li&gt;JSはconcatしてminifyしたい&lt;/li&gt;
+&lt;li&gt;CSSはSassを使いたい&lt;/li&gt;
+&lt;li&gt;開発時はwatchしたり動的サーバーなりでJSやCSSは動的にビルドしたい&lt;/li&gt;
+&lt;li&gt;最終的には成果物として静的ファイルを出力したい&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;まあ、フロントエンドの開発ではいたって普通な要件だと思う。普段サーバーサイドの開発してたり、サーバーサイドと一緒にフロントエンドも開発してる人にとっては、静的ファイルだけ成果物としてあればいいとかあるの？と思うかもしれないけど自分の周りではけっこうよくある。&lt;/p&gt;
+
+&lt;h2&gt;Gruntとの比較について&lt;/h2&gt;
+
+&lt;p&gt;このようなものを作りたいときにGruntとMiddlemanだったらどっちがいいかな？というのが今回の趣旨だけど、GruntとMiddlemanはアーキテクチャも思想もまったく違っていて、そもそも比較対象にならないのではというのは当然ある。&lt;/p&gt;
+
+&lt;p&gt;ただ今回のようなケースにおいてはどちらのツールを使っても実現できるため、どっちがいいかを比較てみようという感じ。&lt;/p&gt;
+
+&lt;p&gt;最終的にはMiddlemanがいいんじゃないかというのが自分の意見なんだけど、「それは今回のようなケースでは」という前提であって、Gruntのほうが柔軟で、できることは多いのでもっと複雑なことをしたい場合や、静的サイト開発以外の目的であればMiddlemanでは対応が難しいケースも多いと思う。&lt;/p&gt;
+
+&lt;p&gt;例えばjQueryで使わているみたいに、JavaScriptのライブラリをビルドするための使うのであればGruntが最適だろうと思う。&lt;/p&gt;
+
+&lt;p&gt;あとJekyllあたりも比較対象にはなるんだけど今回は割愛。&lt;/p&gt;
+
+&lt;h2&gt;Gruntの場合&lt;/h2&gt;
+
+&lt;p&gt;それぞれでほぼ同じような挙動になるようにして設定したのをGitHubに上げた。まずGruntはこんな感じ。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://github.com/hokaccha/frontend-dev-env/tree/master/grunt"&gt;hokaccha/frontend-dev-env/grunt - GitHub&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Gruntfile.jsは次のようになっている。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="nx"&gt;module&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;exports&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;grunt&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+
+  &lt;span class="nx"&gt;BUILD_DIR&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'build'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="nx"&gt;SRC_DIR&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'source'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="nx"&gt;grunt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;task&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;loadNpmTasks&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'assemble'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="nx"&gt;grunt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;task&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;loadNpmTasks&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'grunt-contrib-sass'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="nx"&gt;grunt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;task&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;loadNpmTasks&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'grunt-contrib-concat'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="nx"&gt;grunt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;task&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;loadNpmTasks&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'grunt-contrib-uglify'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="nx"&gt;grunt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;task&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;loadNpmTasks&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'grunt-contrib-copy'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="nx"&gt;grunt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;task&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;loadNpmTasks&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'grunt-contrib-clean'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="nx"&gt;grunt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;task&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;loadNpmTasks&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'grunt-contrib-connect'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="nx"&gt;grunt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;task&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;loadNpmTasks&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'grunt-contrib-watch'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+  &lt;span class="nx"&gt;grunt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;initConfig&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+    &lt;span class="na"&gt;assemble&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="na"&gt;options&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="na"&gt;layout&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;SRC_DIR&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/layouts/layout.hbs'&lt;/span&gt;
+      &lt;span class="p"&gt;},&lt;/span&gt;
+      &lt;span class="na"&gt;dist&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="na"&gt;expand&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="na"&gt;cwd&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;SRC_DIR&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'*.hbs'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="na"&gt;dest&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;BUILD_DIR&lt;/span&gt;
+      &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="na"&gt;sass&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="na"&gt;options&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="na"&gt;bundleExec&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;
+      &lt;span class="p"&gt;},&lt;/span&gt;
+      &lt;span class="na"&gt;dist&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="na"&gt;files&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+          &lt;span class="p"&gt;{&lt;/span&gt;
+            &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;SRC_DIR&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/css/app.scss'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+            &lt;span class="na"&gt;dest&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;BUILD_DIR&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/css/app.css'&lt;/span&gt;
+          &lt;span class="p"&gt;}&lt;/span&gt;
+        &lt;span class="p"&gt;]&lt;/span&gt;
+      &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="na"&gt;concat&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="na"&gt;dist&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+          &lt;span class="nx"&gt;SRC_DIR&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/js/lib/jquery.js'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+          &lt;span class="nx"&gt;SRC_DIR&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/js/lib/underscore.js'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+          &lt;span class="nx"&gt;SRC_DIR&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/js/lib/backbone.js'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+          &lt;span class="nx"&gt;SRC_DIR&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/js/app/main.js'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="p"&gt;],&lt;/span&gt;
+        &lt;span class="na"&gt;dest&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;BUILD_DIR&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/js/app.js'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+      &lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="na"&gt;uglify&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="na"&gt;dist&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="na"&gt;files&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+          &lt;span class="s1"&gt;'build/js/app.js'&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;BUILD_DIR&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/js/app.js'&lt;/span&gt;
+        &lt;span class="p"&gt;}&lt;/span&gt;
+      &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="na"&gt;copy&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="na"&gt;dist&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="na"&gt;expand&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="na"&gt;cwd&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;SRC_DIR&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/img'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="na"&gt;src&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'**/*'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="na"&gt;dest&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;BUILD_DIR&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/img'&lt;/span&gt;
+      &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="na"&gt;clean&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;BUILD_DIR&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+    &lt;span class="na"&gt;connect&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="na"&gt;server&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="na"&gt;options&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+          &lt;span class="na"&gt;port&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;process&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;env&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;PORT&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="mi"&gt;3000&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+          &lt;span class="na"&gt;base&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;BUILD_DIR&lt;/span&gt;
+        &lt;span class="p"&gt;}&lt;/span&gt;
+      &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt;
+    &lt;span class="na"&gt;watch&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="na"&gt;assemble&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="na"&gt;files&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;SRC_DIR&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/*.hsb'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;SRC_DIR&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/layouts/*'&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+        &lt;span class="na"&gt;tasks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'assemble'&lt;/span&gt;
+      &lt;span class="p"&gt;},&lt;/span&gt;
+      &lt;span class="na"&gt;sass&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="na"&gt;files&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;SRC_DIR&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/css/*'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="na"&gt;tasks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'sass'&lt;/span&gt;
+      &lt;span class="p"&gt;},&lt;/span&gt;
+      &lt;span class="na"&gt;js&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="na"&gt;files&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;SRC_DIR&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/js/**/*'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="na"&gt;tasks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'concat'&lt;/span&gt;
+      &lt;span class="p"&gt;},&lt;/span&gt;
+      &lt;span class="na"&gt;copy&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="na"&gt;files&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;SRC_DIR&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/img/**/*'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+        &lt;span class="na"&gt;tasks&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'copy'&lt;/span&gt;
+      &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="p"&gt;});&lt;/span&gt;
+
+  &lt;span class="nx"&gt;grunt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;registerTask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'build'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'clean'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'concat'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'uglify'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'sass'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'assemble'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'copy'&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+  &lt;span class="nx"&gt;grunt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;registerTask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'server'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'clean'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'concat'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'sass'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'assemble'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'copy'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'connect'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'watch'&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+  &lt;span class="nx"&gt;grunt&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;registerTask&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'default'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'build'&lt;/span&gt;&lt;span class="p"&gt;]);&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;お、おう、これはすごい。力作。正直このエントリ書くのにこのGruntfile書くのが一番時間かかった。やはりGruntは色々なものを組みわせて柔軟に書ける反面、自分でプラグインを選んで手動で設定行わなければいけないというのが難点だと思う。長くなるし複雑になる。&lt;/p&gt;
+
+&lt;p&gt;Grunt力は正直あんまり高くないほうだと思うのでもっとうまく書けるのかもしれないけど。あとGrunefileをCoffeeで書けば多少は短くなるだろうけど本質は変わらないね。&lt;/p&gt;
+
+&lt;p&gt;ちなみに少しだけ中の解説をすると、テンプレートエンジンからHTMLにレンダリングしたりlayout的な機能を提供する&lt;a href="http://assemble.io/"&gt;Assemble&lt;/a&gt;というのを使ってる。これはこれで便利。他はほとんど&lt;code&gt;grunt-contrib-*&lt;/code&gt;なのでほぼGruntのベーシックな機能しか使ってない。&lt;/p&gt;
+
+&lt;h2&gt;Middleman&lt;/h2&gt;
+
+&lt;p&gt;一方Middleman。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://github.com/hokaccha/frontend-dev-env/tree/master/middleman"&gt;hokaccha/frontend-dev-env/middleman - GitHub&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;設定ファイルであるconfig.rbはこんな感じ。&lt;/p&gt;
+&lt;pre class="highlight ruby"&gt;&lt;code&gt;&lt;span class="n"&gt;set&lt;/span&gt; &lt;span class="ss"&gt;:css_dir&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'css'&lt;/span&gt;
+&lt;span class="n"&gt;set&lt;/span&gt; &lt;span class="ss"&gt;:js_dir&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'js'&lt;/span&gt;
+
+&lt;span class="n"&gt;configure&lt;/span&gt; &lt;span class="ss"&gt;:development&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;set&lt;/span&gt; &lt;span class="ss"&gt;:debug_assets&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kp"&gt;true&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="n"&gt;configure&lt;/span&gt; &lt;span class="ss"&gt;:build&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+  &lt;span class="n"&gt;activate&lt;/span&gt; &lt;span class="ss"&gt;:minify_javascript&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Gruntに比べると超シンプル。プラグインも一個も入れてない。&lt;/p&gt;
+
+&lt;p&gt;Middlemanがいいと思うところをいくつか紹介してみる。&lt;/p&gt;
+
+&lt;h3&gt;Asset Pipeline&lt;/h3&gt;
+
+&lt;p&gt;なんといってもこれが一番大きい。Asset Pipeline。&lt;/p&gt;
+
+&lt;p&gt;例えば以下のようにJavaScript内で&lt;code&gt;require&lt;/code&gt;と書くことができ、&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="c1"&gt;//= require _lib/jquery&lt;/span&gt;
+&lt;span class="c1"&gt;//= require _lib/underscore&lt;/span&gt;
+&lt;span class="c1"&gt;//= require _lib/backbone&lt;/span&gt;
+&lt;span class="c1"&gt;//= require _app/main.js&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これが開発時にはHTMLで次のように展開される。（?body=1というのはrequireを無視するというクエリ）&lt;/p&gt;
+&lt;pre class="highlight html"&gt;&lt;code&gt;&lt;span class="nt"&gt;&amp;lt;script &lt;/span&gt;&lt;span class="na"&gt;src=&lt;/span&gt;&lt;span class="s"&gt;"/js/_lib/jquery.js?body=1"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&amp;lt;/script&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;script &lt;/span&gt;&lt;span class="na"&gt;src=&lt;/span&gt;&lt;span class="s"&gt;"/js/_lib/underscore.js?body=1"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&amp;lt;/script&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;script &lt;/span&gt;&lt;span class="na"&gt;src=&lt;/span&gt;&lt;span class="s"&gt;"/js/_lib/backbone.js?body=1"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&amp;lt;/script&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;script &lt;/span&gt;&lt;span class="na"&gt;src=&lt;/span&gt;&lt;span class="s"&gt;"/js/_app/main.js?body=1"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&amp;lt;/script&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;script &lt;/span&gt;&lt;span class="na"&gt;src=&lt;/span&gt;&lt;span class="s"&gt;"/js/app.js?body=1"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&amp;lt;/script&amp;gt;&lt;/span&gt; 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;本番環境（というか静的ファイル出力時）には次のようになって、concatされてminifyされた状態のapp.jsが出力される。&lt;/p&gt;
+&lt;pre class="highlight html"&gt;&lt;code&gt;&lt;span class="nt"&gt;&amp;lt;script &lt;/span&gt;&lt;span class="na"&gt;src=&lt;/span&gt;&lt;span class="s"&gt;"/js/app.js"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&amp;lt;/script&amp;gt;&lt;/span&gt; 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これは開発時にはすごく便利で、開発時だけminifyされてないしconcatもされてないので、かなり開発しやすい。Source Mapで将来的には解決する問題だとは思うけど現時点ではかなり現実的でよい方法だと思う。&lt;/p&gt;
+
+&lt;p&gt;SassもこのAsset Pipelineという機能がコンパイルしてる。あとCoffeeScriptなんかもプラグイン入れたり設定変えたりしなくても、拡張子を&lt;code&gt;.coffee&lt;/code&gt;にするだけでコンパイルできる。&lt;/p&gt;
+
+&lt;h3&gt;relative links&lt;/h3&gt;
+
+&lt;p&gt;他にも静的ファイルをつくる上で嬉しい機能がいくつかある。例えば&lt;code&gt;link_to&lt;/code&gt;。layoutに&lt;/p&gt;
+&lt;pre class="highlight erb"&gt;&lt;code&gt;&lt;span class="nt"&gt;&amp;lt;li&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&amp;lt;%=&lt;/span&gt; &lt;span class="n"&gt;link_to&lt;/span&gt; &lt;span class="s1"&gt;'About'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'/about.html'&lt;/span&gt; &lt;span class="cp"&gt;%&amp;gt;&lt;/span&gt;&lt;span class="nt"&gt;&amp;lt;/li&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と書いてる場合、リンクは通常絶対パスになるが、要件によってはファイルを設置するパスが決まっておらず相対パスのほうが都合がいいような場合もあるけど、HTMLが階層をまたぐときにめんどくさい。&lt;/p&gt;
+
+&lt;p&gt;そんなとき、&lt;code&gt;link_to&lt;/code&gt;ヘルパーを使っていると、設定で&lt;code&gt;set :relative_links, true&lt;/code&gt;とすれば、自動的にHTMLの階層を見て相対パスに書き換えてくれたりする。&lt;/p&gt;
+
+&lt;p&gt;例えば、&lt;code&gt;/index.html&lt;/code&gt;ではリンク先が&lt;code&gt;about.html&lt;/code&gt;になるけど、&lt;code&gt;/dir/page.html&lt;/code&gt;からは&lt;code&gt;../about.html&lt;/code&gt;になるような感じ。&lt;/p&gt;
+
+&lt;p&gt;リンクだけじゃなくてscript要素やlink要素の参照先も設定すれば相対パスになる。これは地味にうれしい機能。&lt;/p&gt;
+
+&lt;h3&gt;動的サーバー&lt;/h3&gt;
+
+&lt;p&gt;Gruntはどうしてもその性質からwatchしてコンパイルという手順を踏まないといけないので、ラグがでて、編集してリロードするとまだファイルができてないとかあってイライラすることがある。&lt;/p&gt;
+
+&lt;p&gt;一方、Middlemanは開発時は動的サーバーなのでそれがない。しかもRackのMiddlewareを差し込めるため既存の資産が使えて嬉しかったりする。&lt;/p&gt;
+
+&lt;p&gt;まあこの辺はLiveReloadとかGlowlの通知とか使えばどうにかなるのかもしれないけどちょっとそこまでは試してない。（ちなみにLiveReloadのプラグインはMiddlemanの公式にある）&lt;/p&gt;
+
+&lt;h2&gt;まとめ&lt;/h2&gt;
+
+&lt;p&gt;Middleman推しまくりになってしまったけど、別にGruntをdisってるわけじゃないというのは最後に付け加えておく。むしろGruntは素晴らしいツールだと思うし今後もっと使われるようになると思う。&lt;/p&gt;
+
+&lt;p&gt;だけど、今回のような特定のケースではそれに特化したツールがあればそっちを使う方が色々と便利なことが多いんじゃないだろうか、という一つの提案でした。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>ブログをJekyllからmiddlemanに移行してTravis CIでGitHub Pagesにデプロイするようにした</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2013/08/jekyll_to_middleman.html"/>
+    <id>http://webtech-walker.com/archive/2013/08/jekyll_to_middleman.html</id>
+    <published>2013-08-26T00:00:00+09:00</published>
+    <updated>2013-08-26T00:00:00+09:00</updated>
+    <content type="html">&lt;p&gt;ちょうど一年くらい前にWordPressからJekyllに移行したんだけど、今回middlemanで作りなおしてみた。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://github.com/hokaccha/webtech-walker"&gt;hokaccha/webtech-walker - GitHub&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;特にJekyllに不満があったわけでもなく単に技術的興味によるもの。&lt;/p&gt;
+
+&lt;h2&gt;middleman&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href="http://middlemanapp.com/"&gt;Middleman: Hand-crafted frontend development&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;middlemanはほぼJekyllのようなものなんだけど、&lt;a href="http://middlemanapp.com/asset-pipeline/"&gt;Asset Pipeline&lt;/a&gt;が使えたり、&lt;a href="http://middlemanapp.com/templates/"&gt;テンプレート&lt;/a&gt;がerbとかhaml、Slimなどで書けたり、&lt;a href="http://middlemanapp.com/helpers/"&gt;helper&lt;/a&gt;が充実してたりする。&lt;/p&gt;
+
+&lt;p&gt;RailsのViewまわりの機能をそのまま持ってきたような感じなので、普段Rails使ってる人にとってはJekyllよりも使いやすいかもしれない。個人的にもJekyllよりはmiddlemanのほうが好みだった。&lt;/p&gt;
+
+&lt;p&gt;調べた時にでてくる情報量などはJekyllのほうが多いかなという印象だったけど、このへんはもう少し時間が経てば解決するかなと思う。&lt;/p&gt;
+
+&lt;p&gt;せっかくAsset PipelineがあるんでAltJSとか使ってかっこいいJavaScriptにしちゃおうかなーと思ってたんだけどよく考えたらこのブログ一行もJSなくてAsset Pipelineがほぼ不発（Sassでちょっと使ってるくらい）に終わったのが残念だった。&lt;/p&gt;
+
+&lt;h2&gt;Travis CI でデプロイ&lt;/h2&gt;
+
+&lt;p&gt;あと今回、gitでソースをmasterにpushしたらTravis CIがビルドしてビルド結果をGitHub Pagesにデプロイしてくれるという仕組みにしてみた。masterにpushするとこんな感じでビルドが走る。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://travis-ci.org/hokaccha/webtech-walker/builds/10609434"&gt;hokaccha/webtech-walker - Travis CI&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Jekyllのときはビルドしてデプロイするrakeのタスクを書いて手元でやってたんだけど（プラグイン使ってたのでGitHub Pages側でビルドできなかったので）、こういうのをCIサーバーにやってもらうのはやはり楽。&lt;/p&gt;
+
+&lt;p&gt;ただ、pushしてから反映されるまでに少し時間がかかる（数十秒から数分くらい）ので頻繁に更新とか修正がない個人ブログ程度でないとけっこうつらい感じはする。&lt;/p&gt;
+
+&lt;p&gt;ちなみにこれはtricknotes先生の手法の丸パクリで、&lt;code&gt;Rakefile&lt;/code&gt;とか&lt;code&gt;.travis.yml&lt;/code&gt;もほぼそのまま使わせていただきました。詳しくは以下を参考のこと。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://tricknotes.hateblo.jp/entry/2013/06/17/020229"&gt;Middleman で作った web サイトを Travis + GitHub pages でお手軽に運用する - tricknotesのぼうけんのしょ&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;トークンの設定とかがちょっとだけ面倒ではあるけどかなり簡単に設定でた。tricknotes++であります。&lt;ins&gt;（追記: TokenがTravisのログに残る問題があったので直した。もしこの方法でやる場合は気をつけましょう）&lt;/ins&gt;&lt;/p&gt;
+
+&lt;p&gt;手元でビルドしたのとTravis CIでビルドしたのの結果が違うところがけっこうあって、デプロイするときに無駄なdiffがでてたので、それを解決するのにちょっと手間取った。&lt;/p&gt;
+
+&lt;p&gt;例えばtag一覧を出すときに、tagのデータをHashで持ってるので順番が保証されずにビルドの環境によって順番が変わるとかそういう感じ。他にもいくつかそういうのがあった。middleman-blogのバグっぽいのが原因のもいくつかあったのでそれについてはパッチ投げようかなと思ってる。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>jQueryプラグインのテストを複数のjQueryのバージョンで実行する</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2013/08/mocha_travis_multi_jquery_version.html"/>
+    <id>http://webtech-walker.com/archive/2013/08/mocha_travis_multi_jquery_version.html</id>
+    <published>2013-08-20T00:00:00+09:00</published>
+    <updated>2013-08-20T00:00:00+09:00</updated>
+    <content type="html">&lt;p&gt;Travis CIは&lt;/p&gt;
+&lt;pre class="highlight yaml"&gt;&lt;code&gt;&lt;span class="s"&gt;language&lt;/span&gt;&lt;span class="pi"&gt;:&lt;/span&gt; &lt;span class="s"&gt;node_js&lt;/span&gt;
+&lt;span class="s"&gt;node_js&lt;/span&gt;&lt;span class="pi"&gt;:&lt;/span&gt;
+  &lt;span class="pi"&gt;-&lt;/span&gt; &lt;span class="s"&gt;0.10&lt;/span&gt;
+  &lt;span class="pi"&gt;-&lt;/span&gt; &lt;span class="s"&gt;0.8&lt;/span&gt;
+  &lt;span class="pi"&gt;-&lt;/span&gt; &lt;span class="s"&gt;0.6&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とか書けば複数のバージョンでテスト実行してくれてマジすごいんだけど、同じことをjQueryのバージョンでもやってみた。&lt;/p&gt;
+
+&lt;p&gt;主にjQueryのプラグインを書いてる場合などに便利だと思う。1.9で非互換な変更があったんでバージョン違うとプラグイン動かないとかけっこうあるからね。&lt;/p&gt;
+
+&lt;p&gt;まず&lt;a href="https://github.com/metaskills/mocha-phantomjs"&gt;mocha-phantomjs&lt;/a&gt;を使ってmochaで書いたテストをphantomjsで動くようにする。&lt;/p&gt;
+
+&lt;p&gt;jQueryのバージョンはmocha-phantomjsに環境変数で渡したいんだけど、mocha-phantomjsは環境変数をブラウザに渡せるようになってなかったので、パッチ書いたのでひとまずそっちを使う。（Pull Requestは送っといたので取り込まれたらそっち使いましょう）&lt;/p&gt;
+
+&lt;p&gt;（追記：取り込まれた）&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ npm install mocha-phantomjs
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;そしたらjQueryを環境変数からバージョンを切り替えて読めるようにする。こんな感じ。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;v&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'1.8.2'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// ブラウザでテストを走らせる場合のバージョン&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;mpjs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;window&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;mochaPhantomJS&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;mpjs&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="nx"&gt;mpjs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;env&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;JQUERY_VERSION&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+     &lt;span class="nx"&gt;v&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;mpjs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;env&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;JQUERY_VERSION&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;src&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'http://ajax.googleapis.com/ajax/libs/jquery/'&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;v&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/jquery.js'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'&amp;lt;script src="'&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="nx"&gt;src&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'"&amp;gt;&amp;lt;/script&amp;gt;'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'&amp;lt;script&amp;gt;console.log("Load jQuery: " + $.fn.jquery)&amp;lt;/script&amp;gt;'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;})();&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これでjQueryを環境変数からバージョンを指定して読み込めるようになるので、次のようなコマンドで実行するとバージョンを変更できる。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ JQUERY_VERSION=1.9.1 ./node_modules/.bin/mocha-phantomjs test/index.html
+Load jQuery: 1.9.1
+
+# test result ...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Travis CI の設定はこんな感じ。&lt;/p&gt;
+&lt;pre class="highlight yaml"&gt;&lt;code&gt;&lt;span class="s"&gt;language&lt;/span&gt;&lt;span class="pi"&gt;:&lt;/span&gt; &lt;span class="s"&gt;node_js&lt;/span&gt;
+&lt;span class="s"&gt;node_js&lt;/span&gt;&lt;span class="pi"&gt;:&lt;/span&gt;
+  &lt;span class="pi"&gt;-&lt;/span&gt; &lt;span class="s"&gt;0.8&lt;/span&gt;
+&lt;span class="s"&gt;script&lt;/span&gt;&lt;span class="pi"&gt;:&lt;/span&gt; &lt;span class="s"&gt;npm test&lt;/span&gt;
+&lt;span class="s"&gt;env&lt;/span&gt;&lt;span class="pi"&gt;:&lt;/span&gt;
+  &lt;span class="pi"&gt;-&lt;/span&gt; &lt;span class="s"&gt;JQUERY_VERSION=1.6.4&lt;/span&gt;
+  &lt;span class="pi"&gt;-&lt;/span&gt; &lt;span class="s"&gt;JQUERY_VERSION=1.7.2&lt;/span&gt;
+  &lt;span class="pi"&gt;-&lt;/span&gt; &lt;span class="s"&gt;JQUERY_VERSION=1.8.3&lt;/span&gt;
+  &lt;span class="pi"&gt;-&lt;/span&gt; &lt;span class="s"&gt;JQUERY_VERSION=1.10.2&lt;/span&gt;
+  &lt;span class="pi"&gt;-&lt;/span&gt; &lt;span class="s"&gt;JQUERY_VERSION=2.0.2&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Travis CIは環境変数が上記のように複数指定されてるとすべてのパターンでテストを実行してくれるのでこれで全部のバージョンでテストされる。&lt;/p&gt;
+
+&lt;p&gt;結果はこんな感じ。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://travis-ci.org/hokaccha/mocha-phantom-travis-test/builds/10399660"&gt;hokaccha/mocha-phantom-travis-test - Travis CI&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Travis CI 便利すぎる。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>JavaScriptでRuby 2.0のRefinements的なのを実装してみる</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2013/05/javascript_refinements.html"/>
+    <id>http://webtech-walker.com/archive/2013/05/javascript_refinements.html</id>
+    <published>2013-05-09T00:00:00+09:00</published>
+    <updated>2013-05-09T00:00:00+09:00</updated>
+    <content type="html">&lt;p&gt;Ruby2.0でRefinementsという、クラスの拡張を特定にスコープに限定する仕組みが導入された（一応使えるけどまだ実験的な機能）。&lt;/p&gt;
+
+&lt;p&gt;こんな感じで使う&lt;/p&gt;
+&lt;pre class="highlight ruby"&gt;&lt;code&gt;&lt;span class="c1"&gt;# foo.rb&lt;/span&gt;
+&lt;span class="k"&gt;module&lt;/span&gt; &lt;span class="nn"&gt;Foo&lt;/span&gt;
+  &lt;span class="n"&gt;refine&lt;/span&gt; &lt;span class="no"&gt;String&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
+    &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;greeting&lt;/span&gt;
+      &lt;span class="s2"&gt;"hello &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="nb"&gt;self&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;!"&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="highlight ruby"&gt;&lt;code&gt;&lt;span class="nb"&gt;require&lt;/span&gt; &lt;span class="s1"&gt;'./foo'&lt;/span&gt;
+&lt;span class="n"&gt;using&lt;/span&gt; &lt;span class="no"&gt;Foo&lt;/span&gt;
+
+&lt;span class="nb"&gt;puts&lt;/span&gt; &lt;span class="s1"&gt;'hokaccha'&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nf"&gt;greeting&lt;/span&gt; &lt;span class="c1"&gt;#=&amp;gt; hello hokaccha!&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;refine&lt;/code&gt;で拡張した&lt;code&gt;String#greeting&lt;/code&gt;メソッドは&lt;code&gt;using&lt;/code&gt;したファイル内でしか使えない。&lt;/p&gt;
+
+&lt;p&gt;このような仕組みがあると、どこでどのようにクラスが拡張されたか、わけがわからなくなるという問題を解決できる。&lt;/p&gt;
+
+&lt;p&gt;試しにJavaScriptでも実装してみた。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://gist.github.com/hokaccha/5546064"&gt;refinements.js&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;こんな感じで使う。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="c1"&gt;// TestRefineという名前でクラスの拡張を定義&lt;/span&gt;
+&lt;span class="nx"&gt;Refinements&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;register&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'TestRefine'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;refine&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="c1"&gt;// String.prototypeを拡張する&lt;/span&gt;
+  &lt;span class="nx"&gt;refine&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;String&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;prototype&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="na"&gt;greeting&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s1"&gt;'Hello '&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="k"&gt;this&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'!'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+
+&lt;span class="c1"&gt;// registerした定義をusingで使う&lt;/span&gt;
+&lt;span class="nx"&gt;Refinements&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;using&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'TestRefine'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="c1"&gt;// この中でのみ String#greeting が利用可能&lt;/span&gt;
+  &lt;span class="s1"&gt;'hokkacha'&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;greeting&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt; &lt;span class="c1"&gt;//=&amp;gt; hello hokaccha!&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+
+&lt;span class="s1"&gt;'hokkacha'&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;greeting&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt; &lt;span class="c1"&gt;//=&amp;gt; エラー&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;Refinements.using&lt;/code&gt;のコールバックの中でだけ&lt;code&gt;refine&lt;/code&gt;で定義したクラスの拡張が利用できる。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;register&lt;/code&gt;の中ではいくつでも&lt;code&gt;refine&lt;/code&gt;できる。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="nx"&gt;Refinements&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;register&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'TestRefine'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;refine&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="c1"&gt;// Array.prototypeを拡張する&lt;/span&gt;
+  &lt;span class="nx"&gt;refine&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;Array&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;prototype&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="c1"&gt;// ランダムで一個だけ要素を取得するメソッド&lt;/span&gt;
+    &lt;span class="na"&gt;sample&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;index&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nb"&gt;Math&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;floor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;Math&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;random&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;length&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+      &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nx"&gt;index&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="p"&gt;});&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// String.prototypeを拡張する&lt;/span&gt;
+  &lt;span class="nx"&gt;refine&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;String&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;prototype&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="na"&gt;greeting&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s1"&gt;'Hello '&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="k"&gt;this&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'!'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;また、&lt;code&gt;using&lt;/code&gt;は複数のモジュールを一度に利用できる。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="nx"&gt;Refinements&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;using&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'TestRefine'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'TestRefine2'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="c1"&gt;// ...&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これで基本的によくないとされているネイティブオブジェクトのprototype拡張も比較的安全に行うことができるようになる。&lt;/p&gt;
+
+&lt;p&gt;ただし（致命的な）欠点に&lt;code&gt;using&lt;/code&gt;の中で非同期処理があった場合、非同期処理の中では拡張が使えないというのがある。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="nx"&gt;Refinements&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;using&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'TestRefine'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="c1"&gt;// ここでは使えるけど&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;elem&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="nx"&gt;sample&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+
+  &lt;span class="nx"&gt;setTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="c1"&gt;// ここでは使えない&lt;/span&gt;
+    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;elem&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="nx"&gt;sample&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+  &lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;done&lt;/code&gt;みたいな関数を引数にとって終了を待ってもいいけどそしたら&lt;code&gt;using&lt;/code&gt;の外でも拡張が有効になる場合がでてきてRefinementsとはなんだったのかということになるので非同期の場合は諦めた。&lt;/p&gt;
+
+&lt;p&gt;つまり非同期処理が多用されるJavaScriptにおいてこのモジュールは使いものにならんということですね。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>modern.IE でIEの検証環境をさくっとつくる</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2013/04/modern_ie.html"/>
+    <id>http://webtech-walker.com/archive/2013/04/modern_ie.html</id>
+    <published>2013-04-11T00:00:00+09:00</published>
+    <updated>2013-04-11T00:00:00+09:00</updated>
+    <content type="html">&lt;p&gt;&lt;a href="http://www.modern.ie/ja"&gt;modern.IE&lt;/a&gt;というIEの検証のために色々できるサイトができて、ここでIEのVMのイメージを落とすことができる。Virtual Box、VMWare Fusion、Parallelsとメジャーなものは全部対応してる。すごい。&lt;/p&gt;
+
+&lt;p&gt;とりあえずMacのVirtual BoxにIE10 Win8をいれてみた。まず以下からからMacとVirtual Boxを選んで「IE10 - Win8」の&lt;code&gt;.sfx&lt;/code&gt;とかの&lt;code&gt;.rar&lt;/code&gt;のファイルを全部ダウンロードする。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://www.modern.ie/ja/virtualization-tools"&gt;http://www.modern.ie/ja/virtualization-tools&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;「.sfx」というのがよくわからんかったけどなんか圧縮形式らしくて実行権限つけて実行すれば解凍されるらしい。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ chmod +x IE10.Win8.For.MacVirtualBox.part1.sfx
+$ ./IE10.Win8.For.MacVirtualBox.part1.sfx
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;そうすると&lt;code&gt;.ova&lt;/code&gt;のファイルができるのでこれをダブルクリックすればVirtual BoxでWin8とIE10が使えるようになる。&lt;/p&gt;
+
+&lt;p&gt;&lt;img alt="IE10" src="/img/posts/2013-04-11-modern_ie/ie10.png" /&gt;&lt;/p&gt;
+
+&lt;p&gt;これはすごい。&lt;/p&gt;
+
+&lt;p&gt;あとGithubに&lt;a href="https://github.com/xdissent/ievms"&gt;ievms&lt;/a&gt;というのがあってこれはワンライナーでVMの環境つくれるみたいな感じらしい。IEの開発環境進化してる。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Node.jsのFiberを使って非同期処理を同期っぽく書く</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2013/04/node_await_flow.html"/>
+    <id>http://webtech-walker.com/archive/2013/04/node_await_flow.html</id>
+    <published>2013-04-10T00:00:00+09:00</published>
+    <updated>2013-04-10T00:00:00+09:00</updated>
+    <content type="html">&lt;p&gt;FirefoxのJavaScriptではバージョンを1.7以上に指定するとyieldが使えて非同期処理を同期っぽく書くことができるようになる。&lt;/p&gt;
+
+&lt;p&gt;適当な例だけどこんな感じ。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;run&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;f&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;g&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;g&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;send&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+  &lt;span class="nx"&gt;g&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="nx"&gt;run&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[];&lt;/span&gt;
+
+  &lt;span class="nx"&gt;result&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'foo'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// ここで1秒待つ&lt;/span&gt;
+  &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="nx"&gt;setTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;result&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'bar'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+  &lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// ここで1秒待つ&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;baz&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="nx"&gt;setTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="c1"&gt;// nextの引数がyieldの返り値になる&lt;/span&gt;
+    &lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'baz'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+  &lt;span class="nx"&gt;result&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;baz&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// 2秒後に出力&lt;/span&gt;
+  &lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;result&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// ["foo", "bar", "baz"]&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ちなみにこのような手法は昔から知られているので詳しくは以下を参照のこと。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://labs.cybozu.co.jp/blog/kazuho/archives/2007/05/coopthread.php"&gt;Kazuho@Cybozu Labs: JavaScript/1.7 で協調的マルチスレッド&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://d.hatena.ne.jp/amachang/20080303/1204544340"&gt;JavaScript1.7 の yield を使って、非同期処理を同期処理のように書く方法 - IT戦記&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;このようにyieldが使えるようになると夢広がりんぐなわけですが、未だにFirefox以外では利用できないわけです。そこでNode.jsの&lt;a href="https://github.com/laverdet/node-fibers"&gt;node-fibers&lt;/a&gt;というネイティブ拡張を使うとyieldっぽいのができるようになる。&lt;/p&gt;
+
+&lt;p&gt;さっきのをnode-fibersを使って書くとこんな感じになる。だいたい同じ。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;Fiber&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;require&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'fibers'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+&lt;span class="kd"&gt;function&lt;/span&gt; &lt;span class="nx"&gt;run&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;f&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;fiber&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;Fiber&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;fiber&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;run&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;x&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+  &lt;span class="p"&gt;});&lt;/span&gt;
+  &lt;span class="nx"&gt;fiber&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;run&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;
+
+&lt;span class="nx"&gt;run&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[];&lt;/span&gt;
+
+  &lt;span class="nx"&gt;result&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'foo'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// ここで1秒待つ&lt;/span&gt;
+  &lt;span class="nx"&gt;Fiber&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;yield&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;setTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;result&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'bar'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+  &lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// ここで1秒待つ&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;baz&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;Fiber&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="k"&gt;yield&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;setTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="c1"&gt;// nextの引数がyieldの返り値になる&lt;/span&gt;
+    &lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'baz'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+
+  &lt;span class="nx"&gt;result&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;baz&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// 2秒後に出力&lt;/span&gt;
+  &lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;result&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// ["foo", "bar", "baz"]&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このままだとちょっと使いづらいので色々ラッパーがでてる。有名なのはこんなの。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://github.com/alexeypetrushin/synchronize"&gt;synchronize&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://github.com/scriby/asyncblock"&gt;asyncblock&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;ちょっと試しに自分でも作ってみた。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://github.com/hokaccha/node-await-flow"&gt;hokaccha/node-await-flow GitHub&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;こんな感じで使う。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;AwaitFlow&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;require&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'await-flow'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+&lt;span class="c1"&gt;// AwaitFlow.runのコールバックはawait関数を引数にとる&lt;/span&gt;
+&lt;span class="nx"&gt;AwaitFlow&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;run&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;await&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="c1"&gt;// await関数を実行するとnextが実行されるまで次の処理に移るのを待つ&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;result&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;await&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;setTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="c1"&gt;// next関数は第一引数にエラー、第二引数にawaitが返す値を指定する&lt;/span&gt;
+      &lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kc"&gt;null&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'foo'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="p"&gt;});&lt;/span&gt;
+
+  &lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;result&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;//=&amp;gt; foo&lt;/span&gt;
+&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;err&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="c1"&gt;// 処理が全部終わったら呼ばれる。エラーはまとめてここで処理できる&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ファイルを読み込んで1秒まって別のファイルに書き込むみたいのはこんな感じで書ける。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;AwaitFlow&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;require&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'await-flow'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;fs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;require&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'fs'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+&lt;span class="nx"&gt;AwaitFlow&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;run&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;await&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="c1"&gt;// read file async&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;content&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;await&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;fs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;readFile&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'./foo.txt'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'utf8'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="p"&gt;});&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// wait 1000ms&lt;/span&gt;
+  &lt;span class="nx"&gt;await&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;setTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="p"&gt;});&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// write file async&lt;/span&gt;
+  &lt;span class="nx"&gt;await&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;fs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;writeFile&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'./bar.txt'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;content&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;err&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;err&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Function#bindとか使えば1行でも書けるね！でも見づらいね！&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;AwaitFlow&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;require&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'await-flow'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;fs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;require&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'fs'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+&lt;span class="nx"&gt;AwaitFlow&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;run&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;await&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;content&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;await&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;fs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;readFile&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;bind&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;fs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'./foo.txt'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'utf8'&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+  &lt;span class="nx"&gt;await&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="nx"&gt;setTimeout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;next&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1000&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+  &lt;span class="nx"&gt;await&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;fs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;writeFile&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;bind&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;fs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'./bar.txt'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;content&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;err&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;err&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;エラー処理とかがまだいまいちな感じで機能もsynchronizeとかasyncblockとかに比べて全然なのでnpmには上げてない。とりあえずコルーチン使った非同期処理を自分で書いてみたかっただけ。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Ubuntu上でXvfbを使ってJavaScriptのユニットテストをChromeとFirefoxで実行する</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2013/04/xvfb-js-unit-test.html"/>
+    <id>http://webtech-walker.com/archive/2013/04/xvfb-js-unit-test.html</id>
+    <published>2013-04-09T00:00:00+09:00</published>
+    <updated>2013-04-09T00:00:00+09:00</updated>
+    <content type="html">&lt;p&gt;JavaScriptのユニットテストをJenkinsとかでCIしたいとき、PhantomJSで実行するのもいいけどやっぱりChromeとかFirefoxみたいな実際のブラウザでテストしたい。でも環境作るのめんどくさいよなーと思ってたけどXvfbを使うとChromeとかFirefoxが動くのでLinux版のChromeとFirefoxだけだとわりと簡単に環境つくれた。&lt;/p&gt;
+
+&lt;p&gt;Xvfbというのは画面入出力をシミュレートするやつでデスクトップ環境を用意しなくてもChromeとかFirefoxとかが動かせるやつ。&lt;/p&gt;
+
+&lt;p&gt;OSはUbuntsの12.04（precise64）で試した。&lt;/p&gt;
+
+&lt;p&gt;まずXvfbを入れる。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ sudo apt-get install xvfb
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;次にFirefoxを入れる。これもすぐ入る。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ sudo apt-get install firefox
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Chromeは一手間必要だけどわりとすぐ入る。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+$ sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" &amp;gt;&amp;gt; /etc/apt/sources.list.d/google.list'
+$ sudo apt-get update
+$ sudo apt-get install google-chrome-stable
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;参考: &lt;a href="http://shiganaiman.hatenablog.com/entry/2012/01/24/120405"&gt;UbuntuにGoogle Chromeをインストールする - しがないまんとはなんですと！&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;ユニットテストを実行するのには&lt;a href="https://github.com/airportyh/testem"&gt;Testem&lt;/a&gt;を使ってみた。Testemはテストランナーのツールでユニットテストの自動実行とかをしてくれるやつ。&lt;/p&gt;
+
+&lt;p&gt;Node.jsは入ってる前提で、npmでインストール。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ npm install testem
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;そしたら&lt;code&gt;testem launchers&lt;/code&gt;コマンドで今実行できるブラウザが表示されるので見てみる。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ ./node_modules/.bin/testem launchers
+Have 2 launchers available; auto-launch info displayed on the right.
+
+Launcher      Type          CI  Dev
+------------  ------------  --  ---
+Firefox       browser       ✔           
+Chrome        browser       ✔ 
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ちゃんとFirefoxとChromeがある！&lt;/p&gt;
+
+&lt;p&gt;そして、適当にtestemの設定ファイルとテストファイルを用意する。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;# testem.yml
+framework: mocha
+src_files:
+  - expect.js
+  - test.js
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="c1"&gt;// test.js&lt;/span&gt;
+&lt;span class="nx"&gt;describe&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'document.body.tagName'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="nx"&gt;it&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'should be BODY'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;expect&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;document&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;body&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;tagName&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nx"&gt;to&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;be&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'BODY'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これでテストは通るはずだけどまだこのままだと動かない。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ ./node_modules/.bin/testem ci
+# Launching Firefox
+# 
+TAP version 13
+not ok 1 - Firefox "undefined"
+  ---
+    message: "Exited with code 1"
+  ...
+
+# Launching Chrome
+# 
+not ok 2 - Chrome "undefined"
+  ---
+    message: "Exited with code 1"
+  ...
+
+
+1..2
+# tests 2
+# fail  2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;なぜならまだXvfbを立ち上げてないのでディスプレイがなくてFirefoxもChromeも起動できない。&lt;/p&gt;
+
+&lt;p&gt;なのでXvfbを立ち上げる。ホントはちゃんと起動スクリプトとか書いたほうがいいんだろうけどとりあえず適当に。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ Xvfb :99 -screen 0 1024x768x24 &amp;gt; /dev/null 2&amp;gt;&amp;amp;1 &amp;amp;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これで&lt;code&gt;:99.0&lt;/code&gt;でXvfbが立ち上がったのでこれを環境変数で指定してtestemを実行する。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ DISPLAY=:99.0 ./node_modules/.bin/testem ci
+# Launching Firefox
+# .
+TAP version 13
+ok 1 - Firefox document.body.tagName should be BODY
+
+# Launching Chrome
+# .
+ok 2 - Chrome document.body.tagName should be BODY
+
+
+1..2
+# tests 2
+# pass  2
+
+# ok
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;そうするとちゃんとFirefoxとChromeでテストが実行される。すごい。後はこれをJenkinsとかで走らせればOK。たぶんSeleniumのテストとかもこれで走らせられるね。&lt;/p&gt;
+
+&lt;p&gt;ちなみにTravis CIはXvfbに対応してるんだけど現時点ではFirefoxしか入ってないっぽい。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://about.travis-ci.org/docs/user/gui-and-headless-browsers/"&gt;Travis CI: GUI &amp;amp; Headless browser testing on travis-ci.org&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;関係ないけどVagrant使うとこういうの手軽にまっさらな環境で試せるので楽チン。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Windows8のChromeやFirefoxはタッチイベントとマウスイベント両方考慮すべし</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2013/03/win8_chrome_touch_event.html"/>
+    <id>http://webtech-walker.com/archive/2013/03/win8_chrome_touch_event.html</id>
+    <published>2013-03-05T00:00:00+09:00</published>
+    <updated>2013-03-05T00:00:00+09:00</updated>
+    <content type="html">&lt;p&gt;タッチ系の操作をスマホでもデスクトップPCでも動くようにするため、タッチイベントがある場合は&lt;code&gt;touchstart&lt;/code&gt;や&lt;code&gt;touchmove&lt;/code&gt;を使い、タッチイベントをサポートしていないブラウザでは&lt;code&gt;mousedown&lt;/code&gt;や&lt;code&gt;mousemove&lt;/code&gt;を使って同じ挙動にするというケースがあります。&lt;/p&gt;
+
+&lt;p&gt;例えばこういうやつ。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://pxgrid.github.com/js-flipsnap/demo.html"&gt;flipsnap.js DEMO&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;そのようなケースでは僕はこれまで次のように書いていました。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;supportTouch&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'ontouchstart'&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;window&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;touchStartEvent&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;supportTouch&lt;/span&gt; &lt;span class="p"&gt;?&lt;/span&gt; &lt;span class="s1"&gt;'touchstart'&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'mousedown'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;touchMoveEvent&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;supportTouch&lt;/span&gt; &lt;span class="p"&gt;?&lt;/span&gt; &lt;span class="s1"&gt;'touchmove'&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'mousemove'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;touchEndEvent&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;supportTouch&lt;/span&gt; &lt;span class="p"&gt;?&lt;/span&gt; &lt;span class="s1"&gt;'touchend'&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'mouseup'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="nx"&gt;element&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;addEventListener&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;touchStartEvent&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="p"&gt;...&lt;/span&gt; &lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="nx"&gt;element&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;addEventListener&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;touchMoveEvent&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="p"&gt;...&lt;/span&gt; &lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="nx"&gt;element&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;addEventListener&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;touchEndEvent&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="p"&gt;...&lt;/span&gt; &lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="kc"&gt;false&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;タッチ系のイベントがあるかどうかでバインドするイベントを決める感じです。&lt;/p&gt;
+
+&lt;p&gt;しかし、これだとWindows8のChromeやFirefoxでマウスの操作が動きません。Windows8のChromeやFirefoxはタッチイベントをサポートしており、画面をタッチして操作した場合はタッチ系のイベントが、マウスで操作した場合はマウス系のイベントが発火するようになっています。&lt;/p&gt;
+
+&lt;p&gt;なので上記のような処理だとタッチ系のイベントしかハンドラがバインドされず、マウスで操作しようとしたときに何もおきないということになります。&lt;/p&gt;
+
+&lt;p&gt;対応方法は色々あると思うけど、flipsnap.jsでは&lt;code&gt;touchstart&lt;/code&gt;と&lt;code&gt;mousedown&lt;/code&gt;の両方にイベントをバインドしておいて、それらのイベントリスナの中でmoveイベントとendイベントをバインドし、endイベントでリスナを解除するみたいな感じにしました。&lt;/p&gt;
+
+&lt;p&gt;ちなみにWindows8のIE10の場合はまたちょっと話が違ってきていて、MSPointerというポインターイベントがあってそれはこの前書いたのでそっちを参照のこと。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://webtech-walker.com/archive/2012/11/flipsnap_ie10_pointerevents.html"&gt;flipsnap.jsでIE10のPointer Eventsに対応した - Webtech Walker&lt;/a&gt;&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Backbone.js 0.9.10 の変更点</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2013/01/backbone_0.9.10.html"/>
+    <id>http://webtech-walker.com/archive/2013/01/backbone_0.9.10.html</id>
+    <published>2013-01-20T00:00:00+09:00</published>
+    <updated>2013-01-20T00:00:00+09:00</updated>
+    <content type="html">&lt;p&gt;Backbone.jsの0.9.10がリリースされました。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://backbonejs.org/#changelog"&gt;Backbone.js - Change Log&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;変更点は次のような感じです。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;route&lt;/code&gt;イベントはこれまではBackbone.historyで発火してたんですが、routerでも発火されるようになりました。&lt;/li&gt;
+&lt;li&gt;バリデーションが走るのが&lt;code&gt;save&lt;/code&gt;メソッドのみになりました。&lt;code&gt;set&lt;/code&gt;メソッドやnewしたときには走りません。&lt;code&gt;save&lt;/code&gt;以外でもバリデーションを実行するにはオプションに&lt;code&gt;{validate:true}&lt;/code&gt;を指定します。&lt;/li&gt;
+&lt;li&gt;バリデーションが失敗したときのイベントが&lt;code&gt;error&lt;/code&gt;から&lt;code&gt;invalid&lt;/code&gt;になりました。（本家のChange Logには未掲載）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;View#make&lt;/code&gt;が削除されました。代わりに&lt;code&gt;$&lt;/code&gt;を直接使ってDOM要素を初期化しましょう。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Model#change&lt;/code&gt;メソッドが削除されました。
+Passing {silent:true} on change will no longer delay individual &amp;quot;change:attr&amp;quot; events, instead they are silenced entirely.&lt;/li&gt;
+&lt;li&gt;これまでは&lt;code&gt;{silent:true}&lt;/code&gt;を指定してsetした属性は&lt;code&gt;change&lt;/code&gt;メソッドを呼ぶことで&lt;code&gt;change:xxx&lt;/code&gt;イベントが発火していましたが、その機能はなくなりました。&lt;code&gt;{silent:true}&lt;/code&gt;は単純にイベントが呼ばれないだけです。&lt;/li&gt;
+&lt;li&gt;その他バグFixいくつか。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;バリデーションの挙動はここ最近でよく変わってるので注意が必要そうです。&lt;/p&gt;
+
+&lt;p&gt;ちなみにドキュメントの冒頭に以下のようにあります。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Backbone 0.9.10 should be considered as a release candidate for an upcoming 1.0.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;0.9.10は1.0のRC版（リリース候補）ってことみたいですね。1.0が出るのは近そうだけどまだけっこう変わる可能性はありそうです。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Backbone.js 0.9.9 の変更点</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2012/12/backbone_0.9.9.html"/>
+    <id>http://webtech-walker.com/archive/2012/12/backbone_0.9.9.html</id>
+    <published>2012-12-19T00:00:00+09:00</published>
+    <updated>2012-12-19T00:00:00+09:00</updated>
+    <content type="html">&lt;p&gt;&lt;a href="http://www.adventar.org/calendars/15"&gt;Backbone.js Advent Calendar&lt;/a&gt;の19日目です。&lt;/p&gt;
+
+&lt;p&gt;先週Backbone.jsの0.9.9がリリースされてけっこう変更点多いのでChange Logに書いてあるやつを簡単にまとめときます。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://backbonejs.org/#changelog"&gt;Backbone.js - Change Log&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;また、先日清水さん（&lt;a href="https://twitter.com/tori3_jp"&gt;@tori3_jp&lt;/a&gt;）が以下のようなエントリを書いていて、いくつか重複する点がありますので、こちらも参照してください。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://tech.naver.jp/blog/?p=2342"&gt;Backbone.js 1.0に向けての変更点 « NAVER Engineers&amp;#39; Blog&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2&gt;Events関連&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Eventsに&lt;code&gt;listenTo&lt;/code&gt;と&lt;code&gt;stopListening&lt;/code&gt;が追加されました。清水さんのエントリの追記の部分に詳しく書いてあります。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Backbone&lt;/code&gt;オブジェクトが&lt;code&gt;Events&lt;/code&gt;を継承するようになりました。&lt;code&gt;Backbone.on(&amp;#39;foo&amp;#39;)&lt;/code&gt;みたいなグローバルなイベントが貼れるみたいです。&lt;/li&gt;
+&lt;li&gt;jQueryの&lt;code&gt;one&lt;/code&gt;メソッドのように、一回だけイベントハンドラを実行する&lt;code&gt;once&lt;/code&gt;がEventsに追加されました。&lt;/li&gt;
+&lt;li&gt;jQueryのように&lt;code&gt;obj.on({click: action})&lt;/code&gt;みたいなイベントの指定ができるようになりました。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;Model、Collection関連&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;collectionの&lt;code&gt;add&lt;/code&gt;メソッドのオプションで&lt;code&gt;{merge: true}&lt;/code&gt;が指定されていた場合、既存のモデルを更新するようになりました。これも清水さんのエントリに詳しく書いてあります。&lt;/li&gt;
+&lt;li&gt;collectionに&lt;code&gt;update&lt;/code&gt;メソッドが追加されました。詳しくは&lt;a href="http://backbonejs.org/#Collection-update"&gt;ドキュメント&lt;/a&gt;を。&lt;/li&gt;
+&lt;li&gt;collectionの&lt;code&gt;reset&lt;/code&gt;イベントハンドラの引数の&lt;code&gt;options&lt;/code&gt;に&lt;code&gt;previousModels&lt;/code&gt;という&lt;code&gt;reset&lt;/code&gt;される前のモデルのリストが渡されるようになりました。&lt;/li&gt;
+&lt;li&gt;バリデーションが&lt;code&gt;silent&lt;/code&gt;オプションが&lt;code&gt;true&lt;/code&gt;のときも実行されるようになりました。また、それに伴って&lt;code&gt;isValid&lt;/code&gt;メソッドがなくなりました。&lt;/li&gt;
+&lt;li&gt;Collectionで使えるUnderscore.jsのメソッドにエイリアスのメソッド名も使えるようになりました。（&lt;code&gt;collect&lt;/code&gt;, &lt;code&gt;inject&lt;/code&gt;, &lt;code&gt;foldl&lt;/code&gt;, &lt;code&gt;foldr&lt;/code&gt;, &lt;code&gt;head&lt;/code&gt;, &lt;code&gt;tail&lt;/code&gt;, &lt;code&gt;take&lt;/code&gt;など）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;getByCid&lt;/code&gt;が削除され、&lt;code&gt;get&lt;/code&gt;メソッドで&lt;code&gt;id&lt;/code&gt;と&lt;code&gt;cid&lt;/code&gt;の両方を探すようになりました。&lt;/li&gt;
+&lt;li&gt;Collectionの&lt;code&gt;sort&lt;/code&gt;メソッドが、&lt;code&gt;reset&lt;/code&gt;イベントの代わりに&lt;code&gt;sort&lt;/code&gt;イベントを発火するようになりました。&lt;/li&gt;
+&lt;li&gt;modelの&lt;code&gt;isNew&lt;/code&gt;が&lt;code&gt;true&lt;/code&gt;のときに&lt;code&gt;destroy&lt;/code&gt;を呼んだら&lt;code&gt;false&lt;/code&gt;を返すようになりました（って書いてあるけど実際は0.9.2からこの挙動です）。&lt;/li&gt;
+&lt;li&gt;modelやcollectionでフェッチした後、定義した全ての&lt;code&gt;parse&lt;/code&gt;メソッドが実行されるようになりました。（これについてはコードも読んだけど、どう変わったのかよくわからなかったので原文載せときます）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;After fetching a model or a collection, all defined &lt;code&gt;parse&lt;/code&gt; functions will now be run. So fetching a collection and getting back new models could cause both the collection to parse the list, and then each model to be parsed in turn, if you have both functions defined.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;collectionでfetchしたときに新しいmodelがあったらそのmodelに対しても&lt;code&gt;parse&lt;/code&gt;が呼ばれるみたいな感じな気がするんだけど0.9.2のころからそうだったしなあという感じでよくわかりません。&lt;/p&gt;
+
+&lt;h2&gt;View関連&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Viewの&lt;code&gt;options&lt;/code&gt;、&lt;code&gt;el&lt;/code&gt;、&lt;code&gt;tagName&lt;/code&gt;に関数を指定すると実行時に評価されるようになりました。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;Sync関連&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;HTTPの&lt;code&gt;PATCH&lt;/code&gt;メソッドをサポートするようになりました。&lt;code&gt;save&lt;/code&gt;メソッドのオプションで&lt;code&gt;{patch: true}&lt;/code&gt;にすると&lt;code&gt;PUT&lt;/code&gt;のところが&lt;code&gt;PATCH&lt;/code&gt;になります。&lt;br&gt;
+&lt;code&gt;PATCH&lt;/code&gt;メソッドについては以下のエントリがわかりやすいです。&lt;br&gt;
+&lt;a href="http://d.hatena.ne.jp/ZIGOROu/20120211/1328982756"&gt;PATCH メソッド、新しい HTTP Status Code - Yet Another Hackadelic&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Backbone.sync&lt;/code&gt;に&lt;code&gt;request&lt;/code&gt;イベントが追加されました（実際にはModelやCollectionに対して発火します）。サーバーへのリクエストを開始したときに発火します。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;emulateHTTP&lt;/code&gt;と&lt;code&gt;emulateJSON&lt;/code&gt;がメソッド呼び出し時のオプションとして指定できるようになりました。&lt;/li&gt;
+&lt;li&gt;Backbone.ajaxというフックが追加されました。この関数を上書きすることで&lt;code&gt;Backbone.sync&lt;/code&gt;のAjax部分の動作を変更できます。デフォルトでは&lt;code&gt;Backbone.$.ajax&lt;/code&gt;が使われます。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;Router関連&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Router&lt;/code&gt;のURLにオプションを指定できるようになりました。&lt;code&gt;docs/:section(/:subsection)&lt;/code&gt;のような感じで&lt;code&gt;()&lt;/code&gt;の部分はあってもなくてもいいようなURLが指定できます。&lt;/li&gt;
+&lt;li&gt;ルーターの定義のところで、先頭と末尾のスラッシュの正規化のバグを修正しました。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;その他&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;DOM操作やAjaxの呼び出しを行うためのjQuery互換ライブラリの差し替えを行うのに&lt;code&gt;setDomLibrary&lt;/code&gt;というメソッドが用意されていましたが、これが削除され、&lt;code&gt;Backbone.$&lt;/code&gt;を差し替えるようになりました。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Backbone.wrapError&lt;/code&gt;が削除されました。（現時点でgh-pagesブランチには乗ってないけど&lt;a href="https://github.com/documentcloud/backbone/commit/5a4d405f640ac4b843e8c3ffd6eb0ae52d7f9b4a"&gt;masterブランチのコミット&lt;/a&gt;にあったので掲載）&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;以上ですが、けっこう多いですね。1.0でまたどれくらい変わるかがきになるところです。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Backbone.Modelのattributesにオブジェクト入れるときの注意</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2012/12/backbone_model_object.html"/>
+    <id>http://webtech-walker.com/archive/2012/12/backbone_model_object.html</id>
+    <published>2012-12-15T00:00:00+09:00</published>
+    <updated>2012-12-15T00:00:00+09:00</updated>
+    <content type="html">&lt;p&gt;&lt;a href="http://www.adventar.org/calendars/15"&gt;Backbone.js Advent Calendar&lt;/a&gt;の15日目です。軽めにいきます。&lt;/p&gt;
+
+&lt;p&gt;Backbone.Modelの&lt;code&gt;attributes&lt;/code&gt;にオブジェクトを設定するときの注意点など。&lt;code&gt;attributes&lt;/code&gt;は&lt;code&gt;set&lt;/code&gt;とかで設定される値をオブジェクトして持っているやつです。&lt;/p&gt;
+
+&lt;p&gt;まず次のように&lt;code&gt;set&lt;/code&gt;で&lt;code&gt;attributes&lt;/code&gt;を設定します。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;MyModel&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;Backbone&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Model&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;extend&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;m&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;MyModel&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="nx"&gt;m&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'hoge'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'fuga'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="nx"&gt;m&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'foo'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="na"&gt;bar&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'baz'&lt;/span&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このように&lt;code&gt;hoge&lt;/code&gt;には文字列、&lt;code&gt;foo&lt;/code&gt;にはオブジェクトを設定しました。そして&lt;code&gt;toJSON&lt;/code&gt;で&lt;code&gt;attributes&lt;/code&gt;を取得して値を更新してみます。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;attrs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;m&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;toJSON&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="nx"&gt;attrs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;hoge&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'new fuga'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="nx"&gt;attrs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;foo&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;bar&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'new baz'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;そして&lt;code&gt;attributes&lt;/code&gt;の中身を見てみると・・&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;m&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;attributes&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="c1"&gt;// =&amp;gt; { hoge: 'fuga', foo: { bar: 'new baz' } }&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;hoge&lt;/code&gt;の値は変わってないのに&lt;code&gt;foo.bar&lt;/code&gt;の値が変わってますね。どうしてこうなった。&lt;/p&gt;
+
+&lt;p&gt;と、まあこういう問題があるわけです。&lt;/p&gt;
+
+&lt;p&gt;では原因を見て行きましょう。まず、&lt;code&gt;toJSON&lt;/code&gt;の実装は次のようになっています。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="nx"&gt;toJSON&lt;/span&gt;&lt;span class="err"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;options&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;clone&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;attributes&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;},&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このように&lt;code&gt;attributes&lt;/code&gt;を&lt;code&gt;_.clone&lt;/code&gt;してるだけです。&lt;code&gt;_.clone&lt;/code&gt;してるということは参照ではなくてオブジェクトのコピーが返りそうな雰囲気です。コピーが返るということは返ってきた値を変更しても元のオブジェクトには影響しないはず・・。&lt;/p&gt;
+
+&lt;p&gt;なんですが、実は&lt;code&gt;_.close&lt;/code&gt;はネストしたオブジェクトに対応しておらず、ネストしている場合はそのまま参照がコピーされるのです。なんてこったい＼(^o^)／&lt;/p&gt;
+
+&lt;p&gt;なので&lt;code&gt;hoge&lt;/code&gt;の値は変更しても元の値は影響を受けておらず、&lt;code&gt;foo.bar&lt;/code&gt;の値を変更したら元のオブジェクトにも影響がでてしまったというわけ。&lt;/p&gt;
+
+&lt;p&gt;ちなみに&lt;code&gt;_.close&lt;/code&gt;の実装は次のようになってて&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="nx"&gt;_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;clone&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="nx"&gt;_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;isObject&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;isArray&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;?&lt;/span&gt; &lt;span class="nx"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;slice&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;extend&lt;/span&gt;&lt;span class="p"&gt;({},&lt;/span&gt; &lt;span class="nx"&gt;obj&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;_.extend({}, obj)&lt;/code&gt;を返してるだけなので元凶は&lt;code&gt;_.extend&lt;/code&gt;だったりします。&lt;code&gt;_.extend&lt;/code&gt;は次のようにネストしたオブジェクトに対応してないのがわかります。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="na"&gt;foo&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="na"&gt;bar&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'baz'&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;b&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="na"&gt;foo&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="na"&gt;hoge&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'fuga'&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+
+&lt;span class="nx"&gt;_&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;extend&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;b&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// { foo: { hoge: 'fuga' } }&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;この問題を解決できるのは我らがjQuery大先生です。jQueryの&lt;code&gt;$.extend&lt;/code&gt;は第一引数を&lt;code&gt;true&lt;/code&gt;にすることでネストしたオブジェクトにも対応できます。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;a&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="na"&gt;foo&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="na"&gt;bar&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'baz'&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;b&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="na"&gt;foo&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="na"&gt;hoge&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'fuga'&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;
+
+&lt;span class="nx"&gt;$&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;extend&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;b&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// { foo: { bar: 'baz', hoge: 'fuga' } }&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;すばらしいですね。これを利用して次のように&lt;code&gt;toJSON&lt;/code&gt;を上書きします。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;MyModel&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;Backbone&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Model&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;extend&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+  &lt;span class="na"&gt;toJSON&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;options&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="nx"&gt;$&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;extend&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kc"&gt;true&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{},&lt;/span&gt; &lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;attributes&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これで大丈夫なはず。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;m&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;MyModel&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="nx"&gt;m&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'hoge'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'fuga'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="nx"&gt;m&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;set&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'foo'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="na"&gt;bar&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="s1"&gt;'baz'&lt;/span&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;attrs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;m&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;toJSON&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+&lt;span class="nx"&gt;attrs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;hoge&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'new fuga'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="nx"&gt;attrs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;foo&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;bar&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'new baz'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="nx"&gt;console&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;log&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;m&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;attributes&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="c1"&gt;// =&amp;gt; { hoge: 'fuga', foo: { bar: 'baz' } }&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;おっけーですねー。すばらしいですねー。jQueryまじイノベーティブです。&lt;/p&gt;
+
+&lt;p&gt;以上、&lt;del&gt;jQuery&lt;/del&gt;&lt;ins&gt;Backbone.js&lt;/ins&gt; Advent Calendarでした。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Backbone.jsでNode.jsとクライアントサイドのロジックをイケてる感じで共通化する</title>
+    <link rel="alternate" href="http://webtech-walker.com/archive/2012/12/backbone_node_common.html"/>
+    <id>http://webtech-walker.com/archive/2012/12/backbone_node_common.html</id>
+    <published>2012-12-11T00:00:00+09:00</published>
+    <updated>2012-12-11T00:00:00+09:00</updated>
+    <content type="html">&lt;p&gt;&lt;a href="http://www.adventar.org/calendars/15"&gt;Backbone.js Advent Calendar&lt;/a&gt;の12日目です。&lt;/p&gt;
+
+&lt;p&gt;Backbone.jsを使ってNode.jsとクライアントサイドのJavaScriptでロジックを共有する方法について書いてみます。&lt;/p&gt;
+
+&lt;p&gt;Node.jsといえばチャット。チャットといえばSocket.IOということでSocket.IOを使ったチャットを例にしてみます。&lt;/p&gt;
+
+&lt;p&gt;例えばチャットの一回の文字列の上限を140文字にしたいとします。その場合クライアント側でもサーバー側でも同じバリデーションのロジックを実装するのは面倒ですし、上限値が変更になったときに2箇所変更するのはイケてないですね。そこでBackbone.jsを使ってその部分のロジックを共通化する方法を考えてみます。&lt;/p&gt;
+
+&lt;p&gt;Backbone.jsはnpmでインストールできるのでまずはBackbone.jsとSocket.IOをインストールします。&lt;/p&gt;
+&lt;pre class="highlight plaintext"&gt;&lt;code&gt;$ npm install backbone socket.io
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;次に、サーバーサイドとクライアントサイドの共通のロジックを記述するmodelBase.jsというモデルを作ります。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="c1"&gt;// modelBase.js&lt;/span&gt;
+
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;root&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;Backbone&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;root&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Backbone&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="nx"&gt;require&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'backbone'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;TEXT_LIMIT&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;140&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;MessageBase&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;Backbone&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Model&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;extend&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+    &lt;span class="na"&gt;validate&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;attrs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;attrs&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;text&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;length&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;=&lt;/span&gt; &lt;span class="nx"&gt;TEXT_LIMIT&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+        &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="s1"&gt;'text is too long'&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+      &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="p"&gt;},&lt;/span&gt;
+
+    &lt;span class="c1"&gt;// その他共通のロジック&lt;/span&gt;
+  &lt;span class="p"&gt;});&lt;/span&gt;
+
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;MessagesBase&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;Backbone&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Collection&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;extend&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+    &lt;span class="c1"&gt;// 共通のロジック&lt;/span&gt;
+  &lt;span class="p"&gt;});&lt;/span&gt;
+
+  &lt;span class="cm"&gt;/**
+   * Expose
+   */&lt;/span&gt;
+  &lt;span class="nx"&gt;root&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;MessagesBase&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;MessagesBase&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+  &lt;span class="nx"&gt;root&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;MessageBase&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;MessageBase&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;})(&lt;/span&gt;&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;イケてるポイントはここや&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;Backbone&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;root&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Backbone&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="nx"&gt;require&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'backbone'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ここでサーバーサイド、クライアントサイドのどちらでも使えるようにしてるところです。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="nx"&gt;root&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;MessagesBase&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;MessagesBase&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="nx"&gt;root&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;MessageBase&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;MessageBase&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;次にNode.js側でこのmodelBase.jsを継承したmodel.jsをつくります。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="c1"&gt;// server: model.js&lt;/span&gt;
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;modelBase&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;require&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'./modelBase'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;Message&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;modelBase&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;MessageBase&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;extend&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+  &lt;span class="c1"&gt;// サーバー側のロジック&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;Messages&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;modelBase&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;MessagesBase&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;extend&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+  &lt;span class="na"&gt;model&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;Message&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// サーバー側のロジック&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+
+&lt;span class="nx"&gt;module&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;exports&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Messages&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;Messages&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;そしてイケてるチャットアプリのapp.jsでmodel.jsで定義した&lt;code&gt;Messages&lt;/code&gt;を使ってチャットのメッセージを管理します。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="c1"&gt;// server: app.js&lt;/span&gt;
+
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;io&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;require&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'socket.io'&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nx"&gt;listen&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;3030&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;Messages&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;require&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'./model'&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nx"&gt;Messages&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;messages&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Messages&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+
+&lt;span class="c1"&gt;// modelBaseを静的ファイルとして配信&lt;/span&gt;
+&lt;span class="nx"&gt;io&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="kr"&gt;static&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'/modelBase.js'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="na"&gt;file&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;__dirname&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/modelBase.js'&lt;/span&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+
+&lt;span class="nx"&gt;io&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;sockets&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;on&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'connection'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="c1"&gt;// なんかチャットのロジック&lt;/span&gt;
+
+  &lt;span class="nx"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;on&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'create'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;text&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="c1"&gt;// バリデーションが通ったらbroadcast（pushはバリデーションが通らなかったらfalseを返す）&lt;/span&gt;
+    &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;model&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;messages&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;push&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="na"&gt;text&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;text&lt;/span&gt; &lt;span class="p"&gt;};&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;model&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+      &lt;span class="nx"&gt;socket&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;broadcast&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;emit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'update'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nx"&gt;model&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;toJSON&lt;/span&gt;&lt;span class="p"&gt;());&lt;/span&gt;
+    &lt;span class="p"&gt;}&lt;/span&gt;
+  &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ここでのイケてるポイントはこんな感じでmodelBase.jsを配信してることですね。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="c1"&gt;// modelBaseを静的ファイルとして配信&lt;/span&gt;
+&lt;span class="nx"&gt;io&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="kr"&gt;static&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'/modelBase.js'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="na"&gt;file&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;__dirname&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s1"&gt;'/modelBase.js'&lt;/span&gt; &lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;expressと併用してる場合などはそっちで配信してもいいと思います。&lt;/p&gt;
+
+&lt;p&gt;そうするとクライアント側では、次のようにmodelBase.jsを読み込むことができます。（Backbone.jsとかUnderscore.jsとかはこの前に読み込んでる前提）&lt;/p&gt;
+&lt;pre class="highlight html"&gt;&lt;code&gt;&lt;span class="nt"&gt;&amp;lt;script &lt;/span&gt;&lt;span class="na"&gt;src=&lt;/span&gt;&lt;span class="s"&gt;"http://localhost:3030/socket.io/socket.io.js"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&amp;lt;/script&amp;gt;&lt;/span&gt;
+&lt;span class="nt"&gt;&amp;lt;script &lt;/span&gt;&lt;span class="na"&gt;src=&lt;/span&gt;&lt;span class="s"&gt;"http://localhost:3030/socket.io/modelBase.js"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&amp;lt;/script&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;そうしたらクライアント側も同じようにmodelBaseを継承してモデルを実装することができます。&lt;/p&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="c1"&gt;// client: model.js&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;root&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;Message&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;root&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;MessageBase&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;extend&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+    &lt;span class="c1"&gt;// クライアント側のロジック&lt;/span&gt;
+  &lt;span class="p"&gt;});&lt;/span&gt;
+
+  &lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;Messages&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;root&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;MessagesBase&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;extend&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;
+    &lt;span class="na"&gt;model&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;Message&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+
+    &lt;span class="c1"&gt;// クライアント側のロジック&lt;/span&gt;
+  &lt;span class="p"&gt;});&lt;/span&gt;
+
+  &lt;span class="nx"&gt;root&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;Messages&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="nx"&gt;Messages&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;span class="p"&gt;})(&lt;/span&gt;&lt;span class="k"&gt;this&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class="highlight javascript"&gt;&lt;code&gt;&lt;span class="kd"&gt;var&lt;/span&gt; &lt;span class="nx"&gt;messages&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;new&lt;/span&gt; &lt;span class="nx"&gt;Messages&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+
+&lt;span class="nx"&gt;$&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'form'&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nx"&gt;submit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kd"&gt;function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nx"&gt;e&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+  &lt;span class="nx"&gt;e&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;preventDefault&lt;/span&gt;&lt;span class="p"&gt;();&lt;/span&gt;
+
+  &lt;span class="c1"&gt;// createしたらイケてる感じでsocket.emitするようにしとく&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="nx"&gt;messages&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="nx"&gt;create&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="na"&gt;text&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nx"&gt;$&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'input[type="text"]'&lt;/span&gt;&lt;span class="p"&gt;).&lt;/span&gt;&lt;span class="nx"&gt;val&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="p"&gt;}))&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+    &lt;span class="nx"&gt;alert&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'バリデーションエラー！'&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+  &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このように簡単にロジックを共通化することができます。イケてますね。&lt;/p&gt;
+
+&lt;p&gt;また、Backbone.Syncをサーバー側ではRedisやmongodb、クライアント側ではsocketを使った処理に差し替えればさらにイケてるチャットアプリにすることができそうです。&lt;/p&gt;
+</content>
+  </entry>
+</feed>

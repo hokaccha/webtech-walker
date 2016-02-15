@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>MySQLの小技メモ - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2007-05-17T00:00:00+09:00">2007年05月17日</time>
+
+<ul class="tags">
+    <li><a href="/tags/mysql.html">MySQL</a></li>
+</ul>
+
+<h1>MySQLの小技メモ</h1>
+
+<div class="body">
+
+<p>MySQLで忘れがちなコマンドとかメモです。</p>
+
+<h2>UNIQUE KEY :: 複数のカラムでユニークになる条件を指定する</h2>
+<pre class="highlight plaintext"><code>CREATE TABLE `test_table` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `name` text NOT NULL default '',
+  `email` text NOT NULL default '',
+  `tel` text NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  UNIQUE KEY `name` (`name`,`email`)
+)
+</code></pre>
+
+<p>UNIQUE KEYの部分でユニークになる条件を指定しています。nameとemailが両方重複しているデータが登録できなくなります。</p>
+<pre class="highlight plaintext"><code>select * from test_table;
++----+------+------------------+--------------+
+| id | name | email            | tel          |
++----+------+------------------+--------------+
+|  1 | hoka | hoka@example.com | 01-2345-6789 |
++----+------+------------------+--------------+
+</code></pre>
+
+<p>例えば上記のように入力されていたら、以下のようなSQLはエラーになるわけです。</p>
+<pre class="highlight plaintext"><code>INSERT INTO test_table (name,email,tel) VALUES("hoka","hoka@example.com","12-3456-7890");
+
+INSERT INTO test_table (name,email,tel) VALUES("hokamura“,”hoka@example.com”,”12-3456-7890″);
+INSERT INTO test_table (name,email,tel) VALUES("hoka","hokamura@example.com","12-3456-7890");
+</code></pre>
+
+<h2>mysqldump :: データベースのバックアップを取る</h2>
+
+<p>mysqldumpでデータベースのバックアップを取ることが出来ます。詳細は以下の通りです。</p>
+
+<h3>すべてのデータベースのバックアップ</h3>
+<pre class="highlight plaintext"><code>$ mysqldump -u root -x --all-databases &gt; dump.sql
+</code></pre>
+
+<h3>特定のデータベースのみのバックアップ</h3>
+<pre class="highlight plaintext"><code>$ mysqldump -u root データベース名 &gt; dump.sql
+</code></pre>
+
+<h3>mysqldumpのすべてのデータベースのバックアップを復元</h3>
+<pre class="highlight plaintext"><code>$ mysql -u root -p &lt; dump.sql
+</code></pre>
+
+<h3>特定データベースのみの復元</h3>
+<pre class="highlight plaintext"><code>$ mysql -u root データベース名 &lt; dump.sql
+</code></pre>
+
+<h2>order by rand() :: ランダムにレコードを取り出す</h2>
+
+<p>下記のSQLでランダムにソートしたデータを抽出できます。</p>
+<pre class="highlight plaintext"><code>SELECT * FROM table ORDER BY RAND();
+</code></pre>
+
+<p>その中から一つだけ取り出すにはlimitをつければいいだけです。</p>
+<pre class="highlight plaintext"><code>SELECT id FROM entry ORDER BY rand() LIMIT 1;
+</code></pre>
+
+<p>ただ、データ量がたくさんあるテーブルだと遅くなるようです。</p>
+
+<p><a href="http://d.hatena.ne.jp/naoya/20051118/1132279240">MySQL の order by rand() - naoyaのはてなダイアリー</a></p>
+
+<h2>CREATE ... SELECT :: 既存のテーブルをデータごと別名でコピーする</h2>
+
+<p>テーブルをカラムのデータごとコピーするには下記SQLを実行します。</p>
+<pre class="highlight plaintext"><code>CREATE TABLE new_table SELECT * FROM original_table;
+</code></pre>
+
+<p>マニュアルに下記のようあります。</p>
+
+<blockquote>
+<p>インデックスは新しいテーブルに持ち越されません。また、一部のカラム型の変換が行われる場合があります。たとえば、AUTO_INCREMENT 属性は維持されず、VARCHAR 型のカラムは CHAR 型のカラムになることがあります。</p>
+
+<p><cite><a href="http://dev.mysql.com/doc/refman/4.1/ja/create-table.html">MySQL 4.1 リファレンスマニュアル::6.5.3. CREATE TABLE 構文</a></cite></p>
+</blockquote>
+
+<p>インデックスは持ち越されないようです。それはわかりました。データ型変わってしまうこともある、とありますがどんな条件で変わるかはちょっとわかりませんでした。</p>
+
+<h2>文字化けを直す</h2>
+
+<p>MySQLの文字化けで悩んでる人は結構いると思いますが（僕だけかもしれないがorz）そんなMySQL文字化け問題を解決できそうなページを見つけました。こちらは元記事よりうまく説明できる自信が無いのでリンクだけ貼っておきます。</p>
+
+<p><a href="http://wota.jp/ac/?date=20061011">ヽ( ・∀・)ノくまくまー(2006-10-11)::[MySQL] 文字化け問題を本気で直す</a></p>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2007/05/08223419.html">PHPのユーザーエージェントを変更する方法</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2007/05/21215114.html">IE6のバグのまとめ</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

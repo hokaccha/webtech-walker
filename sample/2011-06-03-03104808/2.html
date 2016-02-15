@@ -1,0 +1,81 @@
+<!DOCTYPE html> 
+<html lang="ja"> 
+<head> 
+<meta charset="utf-8"> 
+<meta name="viewport" content="width=device-width"> 
+<title>font size</title> 
+<style>
+pre {
+	border: 1px solid #999;
+	background: #EFEFEF;
+	padding: 10px;
+	margin: 10px;
+}
+</style>
+</head> 
+<body> 
+<div id="msg"></div>
+<pre><code>var mbFontsizeWidthCalcBug = (function(doc) {
+    var body = doc.body;
+    var span = doc.createElement('span');
+    var width = {};
+    var i = 10;
+
+    span.style.position = 'absolute';
+    span.style.visibility = 'hidden';
+    span.innerHTML = 'あ';
+    body.appendChild(span);
+
+    for (;i &lt; 13; i++) {
+        span.style.fontSize = i + 'px';
+        width[i] = span.offsetWidth;
+    }
+
+    body.removeChild(span);
+    body = span = null;
+
+    return (width[12] === width[11] &amp;&amp; width[11] - 1 === width[10]);
+})(document);
+
+
+var msg = document.getElementById("msg");
+if (mbFontsizeWidthCalcBug) {
+    msg.innerHTML = 'フォントサイズの幅計算がおかしいブラウザです！';
+}
+else {
+    msg.innerHTML = '大丈夫だ、問題ない。';
+}</code></pre>
+<script>
+var mbFontsizeWidthCalcBug = (function(doc) {
+	var body = doc.body;
+	var span = doc.createElement('span');
+	var width = {};
+	var i = 10;
+
+	span.style.position = 'absolute';
+	span.style.visibility = 'hidden';
+	span.innerHTML = 'あ';
+	body.appendChild(span);
+
+	for (;i < 13; i++) {
+		span.style.fontSize = i + 'px';
+		width[i] = span.offsetWidth;
+	}
+
+	body.removeChild(span);
+	body = span = null;
+
+	return (width[12] === width[11] && width[11] - 1 === width[10]);
+})(document);
+
+
+var msg = document.getElementById("msg");
+if (mbFontsizeWidthCalcBug) {
+	msg.innerHTML = 'フォントサイズの幅計算がおかしいブラウザです！';
+}
+else {
+	msg.innerHTML = '大丈夫だ、問題ない。';
+}
+</script>
+</body> 
+</html> 

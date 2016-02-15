@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>FlexSDKをインストールしてみた - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2008-12-18T00:00:00+09:00">2008年12月18日</time>
+
+<ul class="tags">
+    <li><a href="/tags/flash.html">Flash</a></li>
+</ul>
+
+<h1>FlexSDKをインストールしてみた</h1>
+
+<div class="body">
+
+<p>環境はMacOSX10.5でインストールしたのはFlexSDK3です。</p>
+
+<h2>FlexSDKのインストール</h2>
+
+<p>ここからダウンロードする。</p>
+
+<p><a href="http://sourceforge.net/adobe/wiki/Projects/">http://sourceforge.net/adobe/wiki/Projects/</a></p>
+
+<h2>設定してパスを通す</h2>
+
+<p>解凍したファイルを/Developer/SDKs以下に設置します。ディレクトリ名をflex<em>sdk</em>3→flexにリネームしました。</p>
+
+<p>設置したら/Developer/SDKs/flex/binにパスを通します。僕の場合パスの設定はzshrc.mineに書いているので、zshrc.mineに以下を記述しました。</p>
+<pre class="highlight plaintext"><code>export PATH=/Developer/SDKs/flex/bin:$PATH
+</code></pre>
+
+<h2>動作確認</h2>
+
+<p>以下のコードをtest.mxmlで保存します。</p>
+<pre class="highlight xml"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;mx:Application</span> <span class="na">xmlns:mx=</span><span class="s">"http://www.adobe.com/2006/mxml"</span> <span class="na">layout=</span><span class="s">"absolute"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;mx:Label</span> <span class="na">text=</span><span class="s">"Hello World!!"</span> <span class="na">fontSize=</span><span class="s">"40"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/mx:Application&gt;</span>
+</code></pre>
+
+<p>保存したら下記コマンドでコンパイル。</p>
+<pre class="highlight plaintext"><code>$ mxmlc test.mxml
+</code></pre>
+
+<p>これでSWFが生成されるのでFlasyPlayerで確認しましょう。</p>
+
+<p><img alt="Flash PlayerでHello Worldが表示されている" src="/img/posts/2008-12-18-18230720/flex_test.png" /></p>
+
+<p>ばっちりですね。デバッグ版Flash playerはここからダウンロードできます。</p>
+
+<p><a href="http://www.adobe.com/support/flashplayer/downloads.html">http://www.adobe.com/support/flashplayer/downloads.html</a></p>
+
+<h2>traceのログ出力設定</h2>
+
+<p>/Library/Application Support/macromedia/mm.cfg</p>
+
+<p>をつくって、以下を記述します。</p>
+<pre class="highlight plaintext"><code>ErrorReportingEnable=1
+TraceOutputFileEnable=1
+</code></pre>
+
+<p>出力先は固定で、下記ファイルにはかれます。</p>
+
+<p>~/Library/Preferences/Macromedia/Flash Player/Logs/flashlog.txt</p>
+
+<p>テストしてみましょう。</p>
+<pre class="highlight plaintext"><code>// traceTest.as
+package {
+    import flash.display.*; 
+    public class traceTest extends Sprite {
+        public function traceTest() {
+            trace("traceのテスト");
+        }
+    }
+}
+</code></pre>
+
+<p>これをコンパイルしてFlasyPlayerで起動するとログがはかれるはず。</p>
+<pre class="highlight plaintext"><code>$ mxmlc traceTest.as
+$ open -a Flash\ Player traceTest.swf
+$ tail -f ~/Library/Preferences/Macromedia/Flash\ Player/Logs/flashlog.txt
+traceのテスト
+</code></pre>
+
+<p>おーでてる。ちなみに最近カヤックからリリースした<a href="http://wonderfl.net/">wonderfl</a>というサービスを使えば環境を用意することなくASのコードをコンパイルして試すことができます。</p>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2008/12/15101251.html">zshの設定メモ</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2009/01/03145545.html">iPhoneでWebページのアイコンを表示させる方法</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

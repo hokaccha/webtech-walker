@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Python初心者によるPythonのいいところ、はまりどころのまとめ - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2010-10-13T00:00:00+09:00">2010年10月13日</time>
+
+<ul class="tags">
+    <li><a href="/tags/python.html">Python</a></li>
+</ul>
+
+<h1>Python初心者によるPythonのいいところ、はまりどころのまとめ</h1>
+
+<div class="body">
+
+<p>Python勉強し始めて一ヶ月くらいたったんで一度復習を兼ねてまとめてみようと思います。僕が今までPHPとかPerlとかJavaScriptを使っていて、Pythonはこうやるのかーとか、これは便利だなーと思ったところ、開発していてはまったところなどピックアップしてみました。</p>
+
+<p><a href="http://www.amazon.co.jp/exec/obidos/ASIN/4873113938/ref=nosim/webtech00-22">初めてのPython</a>を読んで<a href="http://atnd.org/events/8088">初心者向け勉強会</a>に参加した程度の知識です。とりあえず初めてのPythonがかなりいいのでこれ読むだけで大体基礎は習得できた気がします。基本的な文法の説明だけでなく、大事なことは何回も繰り返し書いてあったり、Pythonの思想などにも触れているのでなぜこういう実装になっているかということも理解できます。これオススメ。</p>
+
+<p>尚、このエントリーではPythonのバージョンは2.5をベースにしてます（主にGoogleAppEngineで使ってるので）。間違えなどあったらツッコミお待ちしてます。</p>
+
+<h2>文法、演算子など</h2>
+
+<h3>インデント</h3>
+
+<p>これはPython知らない人でも知ってると思いますけど、Pythonはブロックをインデントで制御します。{ } とか do end
+みたいのはありません。</p>
+<pre class="highlight python"><code><span class="k">if</span> <span class="n">x</span><span class="p">:</span>
+    <span class="o">...</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="o">...</span>
+
+<span class="k">def</span> <span class="nf">x</span><span class="p">:</span>
+    <span class="o">...</span>
+</code></pre>
+
+<p>これは最初キモイなーと思ってたけど慣れるとこっちのほうが見やすいと思ってくるから不思議なもんです。言語レベルでインデントが強制されるので必然的にコードが統一されるのはいいなと思います。</p>
+
+<h3>変数展開</h3>
+
+<p>文字列の中で変数を展開するのはPerlとかPHPだとダブルクォートを使ったりしますが、Pythonではシングルクォートとダブルクォートは同じ扱いです。どうやって変数展開するかというと、以下のような書き方をします。</p>
+<pre class="highlight python"><code><span class="n">x</span> <span class="o">=</span> <span class="s">'foo'</span>
+<span class="n">y</span> <span class="o">=</span> <span class="s">'bar'</span>
+<span class="k">print</span> <span class="s">'hoge </span><span class="si">%</span><span class="s">s'</span> <span class="o">%</span> <span class="n">x</span>         <span class="c">#=&gt; hoge foo</span>
+<span class="k">print</span> <span class="s">'hoge </span><span class="si">%</span><span class="s">s </span><span class="si">%</span><span class="s">s'</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="c">#=&gt; hoge foo bar</span>
+<span class="k">print</span> <span class="s">'hoge </span><span class="si">%003</span><span class="s">d'</span> <span class="o">%</span> <span class="mi">1</span>      <span class="c">#=&gt; hoge 001</span>
+</code></pre>
+
+<p>sprintfみたいな感じですね。以下のように名前を指定してdictを指定する書き方も可能で、これはかなり便利です。</p>
+<pre class="highlight python"><code><span class="k">print</span> <span class="s">'hoge </span><span class="si">%(x)</span><span class="s">s </span><span class="si">%(y)003</span><span class="s">d'</span> <span class="o">%</span> <span class="p">{</span><span class="s">'x'</span><span class="p">:</span> <span class="s">'foo'</span><span class="p">,</span> <span class="s">'y'</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span> <span class="c">#=&gt; hoge foo 001</span>
+</code></pre>
+
+<p>locals()という関数を使うとローカルスコープの変数をdictで返してくれます。これを使うと以下のような書き方も可能です。</p>
+<pre class="highlight python"><code><span class="n">x</span> <span class="o">=</span> <span class="s">'foo'</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">print</span> <span class="s">'hoge </span><span class="si">%(x)</span><span class="s">s </span><span class="si">%(y)003</span><span class="s">d'</span> <span class="o">%</span> <span class="nb">locals</span><span class="p">()</span> <span class="c">#=&gt; hoge foo 001</span>
+</code></pre>
+
+<h3>値の範囲</h3>
+
+<p>複数の比較を連結できるのが便利です。以下のようなxが1と10の間の値という比較を書くことができます。</p>
+<pre class="highlight python"><code><span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">:</span>
+    <span class="o">...</span>
+</code></pre>
+
+<p>これができるのは結構嬉しい。</p>
+
+<h3>print</h3>
+
+<p>printはPHPやPerlに比べるとリストや辞書（ハッシュ）なども見やすく出力してくれるのがいいです。</p>
+<pre class="highlight python"><code><span class="k">print</span> <span class="s">'foo'</span>                 <span class="c">#=&gt; foo</span>
+<span class="k">print</span> <span class="s">'foo'</span><span class="p">,</span> <span class="s">'bar'</span><span class="p">,</span> <span class="s">'baz'</span>   <span class="c">#=&gt; foo bar baz</span>
+<span class="k">print</span> <span class="p">[</span><span class="s">'foo'</span><span class="p">,</span> <span class="s">'bar'</span><span class="p">,</span> <span class="s">'baz'</span><span class="p">]</span> <span class="c">#=&gt; ['foo', 'bar', 'baz']</span>
+<span class="k">print</span> <span class="p">{</span><span class="s">'foo'</span><span class="p">:</span> <span class="s">'bar'</span><span class="p">}</span>        <span class="c">#=&gt; {'foo': 'bar'}</span>
+</code></pre>
+
+<p>自動で改行してくれたりカンマ区切りにしたとき自動で空白を入れてくれたりと、場合によってはありがた迷惑な感じに感じるときもあります（自動改行は最後にカンマ入れると抑止可能だけどスペースが入る）。</p>
+
+<p>Python3からはステートメントではなく関数になり、空白とか改行を引数で指定して制御できるので今よりはだいぶ使いやすくなりそうです。</p>
+
+<h3>is演算子</h3>
+
+<p>is演算子は同じ参照を指しているときにTrueを返します。</p>
+<pre class="highlight python"><code><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="s">'foo'</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span>
+<span class="k">print</span> <span class="n">x</span> <span class="ow">is</span> <span class="n">y</span> <span class="c">#=&gt; True</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="s">'foo'</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="s">'foo'</span><span class="p">]</span>
+<span class="n">x</span> <span class="ow">is</span> <span class="n">y</span> <span class="c">#=&gt; False</span>
+</code></pre>
+
+<p>上記の例は正しいのですが、文字列の比較でまれにおかしくなることがあるらしく、以下のようなことがあります。</p>
+<pre class="highlight python"><code><span class="n">x</span> <span class="o">=</span> <span class="s">'foo bar'</span>
+<span class="n">y</span> <span class="o">=</span> <span class="s">'foo bar'</span>
+<span class="n">x</span> <span class="ow">is</span> <span class="n">y</span> <span class="c">#=&gt; False これは正しい</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="s">'foo'</span>
+<span class="n">y</span> <span class="o">=</span> <span class="s">'foo'</span>
+<span class="k">print</span> <span class="n">x</span> <span class="ow">is</span> <span class="n">y</span> <span class="c">#=&gt; True ！？</span>
+</code></pre>
+
+<p>短い文字列のときは高速化のためにオブジェクトをキャッシュすることがあるらしく、キャッシュしたオブジェクトを参照するとis演算子でTrueになるということです。</p>
+
+<h3>in演算子</h3>
+
+<p>in演算子は色々便利。</p>
+<pre class="highlight python"><code><span class="c"># 文字列に含まれるか</span>
+<span class="k">print</span> <span class="s">'f'</span> <span class="ow">in</span> <span class="s">'foo'</span> <span class="c">#=&gt; True</span>
+
+<span class="c"># dictのキーが存在するか（値でなはい）</span>
+<span class="k">print</span> <span class="s">'foo'</span> <span class="ow">in</span> <span class="p">{</span><span class="s">'foo'</span><span class="p">:</span> <span class="s">'bar'</span><span class="p">}</span> <span class="c">#=&gt; True</span>
+<span class="k">print</span> <span class="s">'bar'</span> <span class="ow">in</span> <span class="p">{</span><span class="s">'foo'</span><span class="p">:</span> <span class="s">'bar'</span><span class="p">}</span> <span class="c">#=&gt; False</span>
+
+<span class="c"># リストの要素に存在するか</span>
+<span class="k">print</span> <span class="s">'foo'</span> <span class="ow">in</span> <span class="p">[</span><span class="s">'foo'</span><span class="p">,</span> <span class="s">'bar'</span><span class="p">]</span> <span class="c">#=&gt; True</span>
+</code></pre>
+
+<p>含まれないという条件のときはnot in。</p>
+<pre class="highlight python"><code><span class="k">print</span> <span class="s">'a'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s">'foo'</span>             <span class="c">#=&gt; True</span>
+<span class="k">print</span> <span class="s">'f'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s">'foo'</span>             <span class="c">#=&gt; False</span>
+<span class="k">print</span> <span class="s">'hoge'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s">'foo'</span><span class="p">,</span> <span class="s">'bar'</span><span class="p">]</span> <span class="c">#=&gt; True</span>
+</code></pre>
+
+<h3>改行</h3>
+
+<p>基本的にPythonは改行が文の終わりになりますけど、バックスラッシュか括弧を使うと改行ができます。</p>
+<pre class="highlight python"><code><span class="k">print</span> <span class="s">'foo'</span> <span class="o">+</span> \
+<span class="s">'bar'</span> <span class="c">#=&gt; 'foobar'</span>
+
+<span class="k">print</span> <span class="p">(</span><span class="s">'foo'</span> <span class="o">+</span>
+<span class="s">'bar'</span><span class="p">)</span> <span class="c">#=&gt; 'foobar'</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="n">x</span>
+    <span class="o">&amp;&amp;</span> <span class="n">y</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">'foo'</span><span class="p">:</span> <span class="s">'bar'</span><span class="p">,</span>
+    <span class="s">'hoge'</span><span class="p">:</span> <span class="s">'fuga'</span><span class="p">,</span>
+<span class="p">]</span>
+</code></pre>
+
+<h3>三項演算子</h3>
+
+<p>三項演算子は他の言語とかなり違うので戸惑いました。</p>
+<pre class="highlight python"><code><span class="n">x</span> <span class="o">=</span> <span class="s">'foo'</span> <span class="k">if</span> <span class="o">&lt;</span><span class="err">条件式</span><span class="o">&gt;</span> <span class="k">else</span> <span class="s">'bar'</span>
+</code></pre>
+
+<p>慣れればわかりやすそうな気もしますけど。ネストもできます。</p>
+
+<h3>多分岐</h3>
+
+<p>Pythonではswitchがないのでifでがんばります。</p>
+<pre class="highlight python"><code><span class="n">x</span> <span class="o">=</span> <span class="s">'foo'</span>
+<span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s">'foo'</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">'x is foo'</span>
+<span class="k">elif</span> <span class="n">x</span> <span class="o">==</span> <span class="s">'bar'</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">'x is bar'</span>
+<span class="k">elif</span> <span class="n">x</span> <span class="o">==</span> <span class="s">'baz'</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">'x is baz'</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">'x is unknown'</span>
+
+<span class="c">#=&gt; x is foo</span>
+</code></pre>
+
+<p>分岐の中の処理が簡単なものならdictで以下の様にするなど。</p>
+<pre class="highlight python"><code><span class="n">x</span> <span class="o">=</span> <span class="s">'bar'</span>
+<span class="k">print</span> <span class="p">{</span>
+    <span class="s">'foo'</span><span class="p">:</span> <span class="s">'x is foo'</span><span class="p">,</span>
+    <span class="s">'bar'</span><span class="p">:</span> <span class="s">'x is bar'</span><span class="p">,</span>
+    <span class="s">'baz'</span><span class="p">:</span> <span class="s">'x is baz'</span><span class="p">,</span>
+<span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s">'x is unknown'</span><span class="p">)</span>
+
+<span class="c">#=&gt; x is bar</span>
+</code></pre>
+
+<p>もしくは三項演算子のネストなど。</p>
+<pre class="highlight python"><code><span class="n">x</span> <span class="o">=</span> <span class="s">'baz'</span>
+<span class="k">print</span> <span class="s">'x is foo'</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s">'foo'</span> <span class="k">else</span> \
+      <span class="s">'x is bar'</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s">'bar'</span> <span class="k">else</span> \
+      <span class="s">'x is baz'</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s">'baz'</span> <span class="k">else</span> \
+      <span class="s">'x is unknown'</span>
+
+<span class="c">#=&gt; x is baz</span>
+</code></pre>
+
+<h3>インクリメント、デクリメント</h3>
+
+<p>i++みたいなインクリメントがないみたいです。これで。</p>
+<pre class="highlight python"><code><span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span> <span class="c"># インクリメント</span>
+<span class="n">i</span> <span class="o">-=</span> <span class="mi">1</span> <span class="c"># デクリメント</span>
+</code></pre>
+
+<h3>リスト内包表記</h3>
+
+<p>map関数やfilter関数のようなリストをつくる動作を簡潔に書けるのがリスト内包表記です。</p>
+
+<p>以下の例はmap関数のような挙動になります。</p>
+<pre class="highlight python"><code><span class="n">foo</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="k">print</span> <span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">foo</span><span class="p">]</span> <span class="c">#=&gt; [2, 4, 6]</span>
+</code></pre>
+
+<p>ifの条件分岐でfilter関数のような挙動も。</p>
+<pre class="highlight python"><code><span class="n">foo</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]</span>
+<span class="k">print</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">foo</span> <span class="k">if</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="c">#=&gt; [2, 4, 6]</span>
+</code></pre>
+
+<p>ネストも可能。</p>
+<pre class="highlight python"><code><span class="n">foo</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">bar</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">]</span>
+<span class="k">print</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">foo</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">bar</span><span class="p">]</span> <span class="c">#=&gt; [11, 21, 31, 12, 22, 32, 13, 23, 33]</span>
+</code></pre>
+
+<p>Pythonにしてはあんまり可読性がよくない気がするんですけど慣れなのかな。</p>
+
+<h3>forループ</h3>
+
+<p>PHPでいう以下のような表記はPythonではできません。</p>
+<pre class="highlight php"><code><span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">echo</span> <span class="nv">$i</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>こういう場合はrange関数やxrange関数を使います。range関数はリストをつくり、xrangeはオブジェクトをつくります。xrangeのほうが省メモリになるようです。</p>
+<pre class="highlight python"><code><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="k">print</span> <span class="n">i</span> <span class="c">#=&gt; 0 1 2 3 4 5 6 7 8 9 (実際は改行される)</span>
+</code></pre>
+
+<h3>pass文</h3>
+
+<p>何も処理しないんだけど文法的に何か文が必要というときにpass文を使います。これはPythonならではだなと思いました。</p>
+
+<p>例えば例外キャッチして何もしないとか。</p>
+<pre class="highlight python"><code><span class="k">try</span><span class="p">:</span>
+    <span class="o">...</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="k">pass</span>
+</code></pre>
+
+<p>実装途中にメソッドの定義だけ先にしておきたいときとかにも使えそうです。</p>
+
+<h3>ループにelse</h3>
+
+<p>Pythonにはforやwhileにもelseがあります。ループが終了するときにelse句が処理されます。ただしbreakでループを抜けた際は実行されないので、breakで抜けたかどうかを判定することができます。</p>
+
+<p>例えば以下のようなコードを簡潔に書くことができます（これはin演算子でできますけどforを使った場合）。</p>
+<pre class="highlight python"><code><span class="c"># foo というリストにhogeという要素があったらfound、なかったらnot foundを出力する</span>
+<span class="n">found</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">foo</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s">'hoge'</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">'found'</span>
+        <span class="n">found</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">break</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">'not found'</span>
+</code></pre>
+
+<p>これをforとelseを使うとこうなります。見つかった場合はbreakで抜けるのでelseが実行されません。見つからなければbreakが実行されないのでelseに書いた処理が実行されます。</p>
+<pre class="highlight python"><code><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">foo</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s">'hoge'</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">'found'</span>
+        <span class="k">break</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">'not found'</span>
+</code></pre>
+
+<p>これは結構便利かも。</p>
+
+<h3>ドキュメント</h3>
+
+<p>help関数やpydocで出力されるドキュメントはすごく簡単に書けます。モジュールや関数の最初に文字列を指定するだけです。トリプルクォーテーションで複数行書くことも可能です。</p>
+<pre class="highlight python"><code><span class="c"># foo.py</span>
+
+<span class="s">'this module doc'</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="s">'foo'</span>
+
+<span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+    <span class="s">'foo method doc'</span>
+    <span class="k">return</span> <span class="n">y</span>
+</code></pre>
+
+<p>これをpydocやhelp関数で出力するとこんな感じになります。</p>
+<pre class="highlight python"><code><span class="n">Help</span> <span class="n">on</span> <span class="n">module</span> <span class="n">foo</span><span class="p">:</span>
+
+<span class="n">NAME</span>
+    <span class="n">foo</span> <span class="o">-</span> <span class="n">this</span> <span class="n">module</span> <span class="n">doc</span>
+
+<span class="n">FILE</span>
+    <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">hokamura</span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">py</span><span class="o">/</span><span class="n">foo</span><span class="o">.</span><span class="n">py</span>
+
+<span class="n">FUNCTIONS</span>
+    <span class="n">foo</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">foo</span> <span class="n">method</span> <span class="n">doc</span>
+
+<span class="n">DATA</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="s">'foo'</span>
+</code></pre>
+
+<p>書式が簡単だし、関数の中にドキュメント書けるのはコード読むときにわかりやすそうだなと思いました。</p>
+
+<h3>文字コードの指定</h3>
+
+<p>Pythonのプログラム内でマルチバイト文字列を扱うときは文字コードの宣言をする必要があります。utf-8にするときはファイルの先頭に以下の記述を追加します。</p>
+<pre class="highlight python"><code><span class="c"># -*- coding: utf-8 -*-</span>
+</code></pre>
+
+<p>Perlでいう use utf8 みたいなもんです。</p>
+
+<h2>組み込みの関数、メソッド</h2>
+
+<h3>dir関数</h3>
+
+<p>dir関数を使うと変数に定義されている属性やメソッドを調べることができます。</p>
+<pre class="highlight python"><code><span class="n">x</span> <span class="o">=</span> <span class="s">'foo'</span>
+<span class="k">print</span> <span class="nb">dir</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c">#=&gt; ['__add__', '__class__', '__contains__', '__delattr__', '__doc__', '__eq__', '__ge__', '__getattribute__', '__getitem__', '__getnewargs__', '__getslice__', '__gt__', '__hash__', '__init__', '__le__', '__len__', '__lt__', '__mod__', '__mul__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__rmod__', '__rmul__', '__setattr__', '__str__', 'capitalize', 'center', 'count', 'decode', 'encode', 'endswith', 'expandtabs', 'find', 'index', 'isalnum', 'isalpha', 'isdigit', 'islower', 'isspace', 'istitle', 'isupper', 'join', 'ljust', 'lower', 'lstrip', 'partition', 'replace', 'rfind', 'rindex', 'rjust', 'rpartition', 'rsplit', 'rstrip', 'split', 'splitlines', 'startswith', 'strip', 'swapcase', 'title', 'translate', 'upper', 'zfill']</span>
+</code></pre>
+
+<p>xは文字列オブジェクトなので文字列オブジェクトのメソッドや属性の名前が全て羅列されます。</p>
+
+<h3>help関数</h3>
+
+<p>help関数でhelpを表示できます。これはいいですねー。僕はインタラクティブシェルでよく使ってます。dir関数と違ってprintで出力する必要はありません。</p>
+<pre class="highlight python"><code><span class="n">help</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">join</span><span class="p">)</span>
+</code></pre>
+<pre class="highlight python"><code><span class="n">Help</span> <span class="n">on</span> <span class="n">method_descriptor</span><span class="p">:</span>
+
+<span class="n">join</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="n">S</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sequence</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">string</span>
+
+    <span class="n">Return</span> <span class="n">a</span> <span class="n">string</span> <span class="n">which</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">concatenation</span> <span class="n">of</span> <span class="n">the</span> <span class="n">strings</span> <span class="ow">in</span> <span class="n">the</span>
+    <span class="n">sequence</span><span class="o">.</span>  <span class="n">The</span> <span class="n">separator</span> <span class="n">between</span> <span class="n">elements</span> <span class="ow">is</span> <span class="n">S</span><span class="o">.</span>
+</code></pre>
+
+<h3>isinstance関数</h3>
+
+<p>isinstance関数で型判定ができます。第二引数はタプルで複数指定可能なのが便利げです。複数指定した場合はどれかがマッチすればTrueを返します。</p>
+<pre class="highlight python"><code><span class="k">print</span> <span class="nb">isinstance</span><span class="p">(</span><span class="s">'foo'</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>             <span class="c">#=&gt; True</span>
+<span class="k">print</span> <span class="nb">isinstance</span><span class="p">(</span><span class="s">u'foo'</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>            <span class="c">#=&gt; False</span>
+<span class="k">print</span> <span class="nb">isinstance</span><span class="p">(</span><span class="s">u'foo'</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">unicode</span><span class="p">))</span> <span class="c">#=&gt; True</span>
+<span class="k">print</span> <span class="nb">isinstance</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="nb">list</span><span class="p">)</span>        <span class="c">#=&gt; True</span>
+<span class="k">print</span> <span class="nb">isinstance</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">)</span>       <span class="c">#=&gt; False</span>
+</code></pre>
+
+<h3>str.join</h3>
+
+<p>joinメソッドが文字列オブジェクトに定義されているのは結構違和感ありました。リスト以外にも文字列なども引数にとれます。</p>
+<pre class="highlight python"><code><span class="k">print</span> <span class="s">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">'foo'</span><span class="p">,</span> <span class="s">'bar'</span><span class="p">,</span> <span class="s">'baz'</span><span class="p">])</span> <span class="c">#=&gt; foo/bar/baz</span>
+<span class="k">print</span> <span class="s">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">'foo'</span><span class="p">)</span> <span class="c">#=&gt; f/o/o</span>
+</code></pre>
+
+<p>また、自動で型変換してくれないので、リストにint型などの要素があると例外を投げます。</p>
+<pre class="highlight python"><code><span class="k">print</span> <span class="s">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">'foo'</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="c">#=&gt; TypeError: sequence item 1: expected string, int found</span>
+</code></pre>
+
+<p>何がくるかわからないものをjoinするときはstrにキャストしといたほうがよさげです。</p>
+<pre class="highlight python"><code><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="s">'foo'</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="k">print</span> <span class="s">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span> <span class="c">#=&gt; foo/1</span>
+</code></pre>
+
+<h3>dict.get</h3>
+
+<p>辞書の値にアクセスするのはx[’foo’]という形式で取得する方法と、x.get(’foo’)で取得する方法があります。前者はキーが存在しない場合例外を投げます。後者はキーが存在しない場合はNoneを返し、例外を投げません。getメソッドの第二引数が指定してあればその値を返します。</p>
+<pre class="highlight python"><code><span class="n">x</span> <span class="o">=</span> <span class="p">{</span><span class="s">'foo'</span><span class="p">:</span><span class="s">'bar'</span><span class="p">}</span>
+<span class="k">print</span> <span class="n">x</span><span class="p">[</span><span class="s">'foo'</span><span class="p">]</span>              <span class="c">#=&gt; bar</span>
+<span class="k">print</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'foo'</span><span class="p">)</span>          <span class="c">#=&gt; bar</span>
+<span class="k">print</span> <span class="n">x</span><span class="p">[</span><span class="s">'hoge'</span><span class="p">]</span>             <span class="c">#=&gt; KeyError: 'hoge'</span>
+<span class="k">print</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'hoge'</span><span class="p">)</span>         <span class="c">#=&gt; None</span>
+<span class="k">print</span> <span class="n">x</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'hoge'</span><span class="p">,</span> <span class="s">'fuga'</span><span class="p">)</span> <span class="c">#=&gt; fuga</span>
+</code></pre>
+
+<h3>dict.setdefault</h3>
+
+<p>キーが存在しないときだけ要素を追加するときはsetdefaultを使うと便利です。</p>
+<pre class="highlight python"><code><span class="k">if</span> <span class="s">'foo'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span>
+    <span class="n">x</span><span class="p">[</span><span class="s">'foo'</span><span class="p">]</span> <span class="o">=</span> <span class="s">'bar'</span>
+</code></pre>
+
+<p>このようなコードは以下のように書けます。</p>
+<pre class="highlight python"><code><span class="n">x</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s">'foo'</span><span class="p">,</span> <span class="s">'bar'</span><span class="p">)</span>
+</code></pre>
+
+<h3>tuple</h3>
+
+<p>Pythonにはタプルという型があって、ほとんどリストと同じなのですが、リストと違ってタプルは変更することが不可能になっています。</p>
+<pre class="highlight python"><code><span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="s">'foo'</span><span class="p">,</span> <span class="s">'bar'</span><span class="p">)</span> <span class="c"># タプルは丸括弧でつくる</span>
+<span class="k">print</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>         <span class="c"># =&gt; foo</span>
+<span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">'hoge'</span>      <span class="c"># =&gt; TypeError: 'tuple' object does not support item assignment</span>
+</code></pre>
+
+<p>このようにタプルの値を変更しようとうすると例外が投げられます。メソッドなどもリストと同じように使うことができます。タプルは辞書のキーに指定できたりします（リストはできない）。</p>
+
+<p>丸括弧はタプルをつくる以外にも用途があるので、注意が必要です。一つの要素を丸括弧で囲んでもタプルになりません。そのときはカンマを最後につけます。空のタプルは丸括弧のみで作ることができます。</p>
+<pre class="highlight python"><code><span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c">#=&gt; &lt;type 'int'&gt;</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>
+<span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c">#=&gt; &lt;type 'tuple'&gt;</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="p">()</span>
+<span class="k">print</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c">#=&gt; &lt;type 'tuple'&gt;</span>
+</code></pre>
+
+<h3>set</h3>
+
+<p>set型は重複を許さないリストのようなもので、集合を表します。集合の和や差を以下のように書くことができます。</p>
+<pre class="highlight python"><code><span class="n">s1</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="n">s2</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+
+<span class="k">print</span> <span class="n">s1</span> <span class="o">|</span> <span class="n">s2</span> <span class="c">#=&gt; set([1, 2, 3, 4, 5]) 和</span>
+<span class="k">print</span> <span class="n">s1</span> <span class="o">-</span> <span class="n">s2</span> <span class="c">#=&gt; set([2, 4])          差</span>
+<span class="k">print</span> <span class="n">s1</span> <span class="o">&amp;</span> <span class="n">s2</span> <span class="c">#=&gt; set([1, 3])          積</span>
+<span class="k">print</span> <span class="n">s1</span> <span class="o">^</span> <span class="n">s2</span> <span class="c">#=&gt; set([2, 4, 5])       排他的論理和</span>
+</code></pre>
+
+<h2>関数</h2>
+
+<h3>関数に属性</h3>
+
+<p>以下のように関数オブジェクトには属性を追加できます。</p>
+<pre class="highlight python"><code><span class="k">def</span> <span class="nf">x</span><span class="p">():</span> <span class="k">pass</span>
+<span class="n">x</span><span class="o">.</span><span class="n">foo</span> <span class="o">=</span> <span class="s">'bar'</span>
+<span class="k">print</span> <span class="n">x</span><span class="o">.</span><span class="n">foo</span> <span class="c">#=&gt; bar</span>
+</code></pre>
+
+<p>JavaScriptっぽいですね。ちなみに文字列とかリストなどのオブジェクトには追加できません。</p>
+<pre class="highlight python"><code><span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">x</span><span class="o">.</span><span class="n">foo</span> <span class="o">=</span> <span class="s">'bar'</span> <span class="c">#=&gt; AttributeError: 'list' object has no attribute 'foo'</span>
+</code></pre>
+
+<h3>関数引数の取り方</h3>
+
+<p>Pythonの引数の取り方は本当にいいなと思いました。</p>
+
+<p>デフォルト値を設定しないものは必須で、デフォルト値を設定したもの省略できます。これはPHPと同じですね。</p>
+<pre class="highlight python"><code><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="k">print</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span>
+
+<span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>  <span class="c">#=&gt; 1 2 3</span>
+<span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>     <span class="c">#=&gt; 1 2 0</span>
+<span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>        <span class="c">#=&gt; 1 0 0</span>
+<span class="n">foo</span><span class="p">()</span>         <span class="c">#=&gt; TypeError: foo() takes at least 1 argument (0 given)</span>
+</code></pre>
+
+<p>Pythonでは関数呼び出しのときにキーワードで引数を指定できるのがポイントです。これができると、何がいいかというと、まず関数呼び出しのコードの可読性がよくなります。この場合引数の順番は関係ありません。</p>
+<pre class="highlight python"><code><span class="n">foo</span><span class="p">(</span><span class="n">z</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="c">#=&gt; 1 2 3</span>
+</code></pre>
+
+<p>また、yはデフォルト値を使いたいけどzに値を入れたいときに便利です。</p>
+<pre class="highlight python"><code><span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span> <span class="c">#=&gt; 1 0 3</span>
+</code></pre>
+
+<p>可変長引数は、どんな引数をいくつ受け取るかわからない場合に使います。頭に*をつるとタプルで、**をつけるとキーワード指定した値を辞書で受け取ります。</p>
+<pre class="highlight python"><code><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">print</span> <span class="n">args</span>
+
+<span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="c">#=&gt; (1, 2, 3)</span>
+
+<span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">print</span> <span class="n">kwargs</span>
+
+<span class="n">foo</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="c">#=&gt; {'y': 2, 'x': 1}</span>
+
+<span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">print</span> <span class="n">args</span>
+    <span class="k">print</span> <span class="n">kwargs</span>
+
+<span class="n">foo</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">foo</span> <span class="o">=</span> <span class="s">'bar'</span><span class="p">,</span> <span class="n">hoge</span> <span class="o">=</span> <span class="s">'fuga'</span><span class="p">)</span> <span class="c">#=&gt; (1, 2) \n {'foo': 'bar', 'hoge': 'fuga'}</span>
+</code></pre>
+
+<h3>デフォルト値の罠</h3>
+
+<p>引数のデフォルト値にリストや辞書などの可変性のオブジェクトを指定して、その変数を関数内で変更した場合、2回目以降に関数を呼び出したとき、変更した値が引き継がれます。</p>
+<pre class="highlight python"><code><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="p">[]):</span>
+    <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">print</span> <span class="n">x</span>
+
+<span class="n">foo</span><span class="p">()</span> <span class="c">#=&gt; [1]</span>
+<span class="n">foo</span><span class="p">()</span> <span class="c">#=&gt; [1, 1]</span>
+<span class="n">foo</span><span class="p">()</span> <span class="c">#=&gt; [1, 1, 1]</span>
+</code></pre>
+
+<p>xはデフォルトで空のリストを指定しますが、関数内でappendしているので、2回目以降呼び出したときデフォルト値が空ではなく前回呼び出したときの値になってます。</p>
+
+<p>これを回避するには以下の様に一度引数の値をチェックする必要があります。うまく使えば便利そうですけど、あまり直感的でないので正直あまり好きじゃない挙動です。</p>
+<pre class="highlight python"><code><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="p">[]):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">print</span> <span class="n">x</span>
+
+<span class="n">foo</span><span class="p">()</span> <span class="c">#=&gt; [1]</span>
+<span class="n">foo</span><span class="p">()</span> <span class="c">#=&gt; [1]</span>
+<span class="n">foo</span><span class="p">()</span> <span class="c">#=&gt; [1]</span>
+</code></pre>
+
+<p>classのメソッドで別インスタンスから呼び出しても同じなの注意が必要。</p>
+<pre class="highlight python"><code><span class="k">class</span> <span class="nc">Foo</span><span class="p">():</span>
+    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="p">[]):</span>
+        <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">y</span>
+
+<span class="n">foo1</span> <span class="o">=</span> <span class="n">Foo</span><span class="p">()</span>
+<span class="n">foo1</span><span class="o">.</span><span class="n">x</span><span class="p">()</span> <span class="c">#=&gt; [1]</span>
+
+<span class="n">foo2</span> <span class="o">=</span> <span class="n">Foo</span><span class="p">()</span>
+<span class="n">foo2</span><span class="o">.</span><span class="n">x</span><span class="p">()</span> <span class="c">#=&gt; [1, 1]</span>
+</code></pre>
+
+<h3>無名関数</h3>
+
+<p>無名関数はlambdaを使います。ボディ部分に指定した式が返り値になります。</p>
+<pre class="highlight python"><code><span class="n">foo</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span>
+<span class="k">print</span> <span class="n">foo</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="c">#=&gt; 10</span>
+</code></pre>
+
+<p>引数はdefと同じようにキーワード引数や可変長引数を指定可能です。</p>
+<pre class="highlight python"><code><span class="n">foo</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+<span class="k">print</span> <span class="n">foo</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span> <span class="c">#=&gt; 30</span>
+
+<span class="n">foo</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="s">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">foo</span><span class="p">(</span><span class="s">'foo'</span><span class="p">,</span> <span class="s">'bar'</span><span class="p">,</span> <span class="s">'baz'</span><span class="p">)</span> <span class="c">#=&gt; foo/bar/baz</span>
+</code></pre>
+
+<p>しかしPerlやJavaScriptと違って、lambdaは単一の式しか書けません。ifとかforとかprintみたいなステートメントが書けませんし、複数の式も書けません。普通の関数(def)のreturnに書くところだけ書けるというイメージです。</p>
+
+<h3>デコレータ</h3>
+
+<p>デコレータを使うと関数を関数でラップするコードを簡潔に書くことができるようになります。例えばスタティックメソッドを定義するstaticmethod関数はデコレータを使わないと以下のようになります。</p>
+<pre class="highlight python"><code><span class="k">class</span> <span class="nc">Foo</span><span class="p">():</span>
+    <span class="k">def</span> <span class="nf">x</span><span class="p">():</span>
+        <span class="o">...</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre>
+
+<p>これをデコレータを使うと以下のように書けます。</p>
+<pre class="highlight python"><code><span class="k">class</span> <span class="nc">Foo</span><span class="p">():</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">x</span><span class="p">():</span>
+        <span class="o">...</span>
+</code></pre>
+
+<p>こっちのほうが直感的だし可読性も上がります。これは簡単な例ですけど、自分でデコレータを定義して複雑な処理を実装することも可能です。</p>
+
+<h2>モジュール</h2>
+
+<h3>モジュールのインポート</h3>
+
+<p>モジュールのインポートにはimportを使います。.pyを省略したファイル名を指定します。</p>
+<pre class="highlight python"><code><span class="c"># foo.py</span>
+<span class="n">bar</span> <span class="o">=</span> <span class="s">'baz'</span>
+</code></pre>
+<pre class="highlight python"><code><span class="kn">import</span> <span class="nn">foo</span>
+<span class="k">print</span> <span class="n">foo</span><span class="o">.</span><span class="n">bar</span> <span class="c">#=&gt; baz</span>
+</code></pre>
+
+<p>ディレクトリの区切りはドットで表します。</p>
+<pre class="highlight python"><code><span class="c"># path/to/foo.py</span>
+<span class="n">bar</span> <span class="o">=</span> <span class="s">'baz'</span>
+</code></pre>
+<pre class="highlight python"><code><span class="kn">import</span> <span class="nn">path.to.foo</span>
+<span class="k">print</span> <span class="n">path</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">foo</span><span class="o">.</span><span class="n">bar</span> <span class="c">#=&gt; baz</span>
+</code></pre>
+
+<p>fromを使うと以下のようにfromで指定下モジュールからimportで指定した変数をインポートできます。</p>
+<pre class="highlight python"><code><span class="kn">from</span> <span class="nn">path.to.foo</span> <span class="kn">import</span> <span class="n">bar</span>
+<span class="k">print</span> <span class="n">bar</span> <span class="c">#=&gt; baz</span>
+</code></pre>
+
+<p>これは以下と同じです。</p>
+<pre class="highlight python"><code><span class="kn">import</span> <span class="nn">path.to.foo</span>
+<span class="n">bar</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">to</span><span class="o">.</span><span class="n">foo</span><span class="o">.</span><span class="n">bar</span>
+</code></pre>
+
+<p>また、asを使うと違う名前でimportすることができます。</p>
+<pre class="highlight python"><code><span class="kn">from</span> <span class="nn">path.to.foo</span> <span class="kn">import</span> <span class="n">bar</span> <span class="k">as</span> <span class="n">hoge</span>
+<span class="k">print</span> <span class="n">hoge</span> <span class="c">#=&gt; baz</span>
+</code></pre>
+
+<h3>__init__.py</h3>
+
+<p>モジュールを階層化する場合はディレクトリに__init__.pyおく必要があります。全ての階層のディレクトリに__init__.pyは必要で、例えばpath/to/foo.pyをimportするときはpath/__init__.py、/path/to/__init__.pyが必要です。__init__.pyの中身は空でもかまいません。</p>
+
+<p>もし__init__.pyに処理を書いたときはimportした際に上から順に実行されます。</p>
+<pre class="highlight python"><code><span class="c"># path/__init__.py</span>
+<span class="k">print</span> <span class="s">'path init'</span>
+</code></pre>
+<pre class="highlight python"><code><span class="c"># path/to/__init__.py</span>
+<span class="k">print</span> <span class="s">'to init'</span>
+</code></pre>
+<pre class="highlight python"><code><span class="c"># path/to/foo.py</span>
+<span class="k">print</span> <span class="s">'foo'</span>
+</code></pre>
+<pre class="highlight python"><code><span class="kn">import</span> <span class="nn">path.to.foo</span>
+<span class="c">#=&gt; path init</span>
+<span class="c">#=&gt; to init</span>
+<span class="c">#=&gt; foo</span>
+</code></pre>
+
+<p>__init__.pyがあればディレクトリ名でimport可能です。</p>
+<pre class="highlight python"><code><span class="c"># path/__init__.py</span>
+<span class="n">foo</span> <span class="o">=</span> <span class="s">'bar'</span>
+</code></pre>
+<pre class="highlight python"><code><span class="kn">import</span> <span class="nn">path</span>
+<span class="k">print</span> <span class="n">path</span><span class="o">.</span><span class="n">foo</span> <span class="c">#=&gt; bar</span>
+</code></pre>
+
+<h3>モジュールのサーチパス</h3>
+
+<p>モジュールのサーチパスを追加するには以下のような方法があります。まず、PYTHONPATHを指定する方法ですが、これは単に環境変数を設定するだけなので簡単です。</p>
+<pre class="highlight plaintext"><code>$ export PYTHONPATH=path/to/dir
+</code></pre>
+
+<p>次にsys.pathに追加する方法。サーチパスはsys.pathで管理しているのでこれに追加すればよいです。</p>
+<pre class="highlight python"><code><span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">'path/to/dir'</span><span class="p">)</span>    <span class="c"># サーチパスの最後に追加</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">pash</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">'path/to/dir'</span><span class="p">)</span> <span class="c"># サーチパスの先頭に追加</span>
+</code></pre>
+
+<p>また*.pthというファイルがサーチパス上に置いてあればそのファイルに書いてあるパスをサーチぱすに追加します。</p>
+
+<h3>動的インポート</h3>
+
+<p>モジュールを動的にインポートしたいとき以下のように書くとエラーになります。</p>
+<pre class="highlight python"><code><span class="n">module_name</span> <span class="o">=</span> <span class="s">'sys'</span>
+<span class="kn">import</span> <span class="nn">module_name</span> <span class="c"># =&gt; ImportError: No module named module_name</span>
+</code></pre>
+
+<p>まあ当たり前ですね。動的インポートには__import__を使います。</p>
+<pre class="highlight python"><code><span class="n">module_name</span> <span class="o">=</span> <span class="s">'sys'</span>
+<span class="n">sys</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">sys</span> <span class="c">#=&gt; &lt;module 'sys' (built-in)&gt;</span>
+</code></pre>
+
+<h2>クラス</h2>
+
+<h3>継承</h3>
+
+<p>継承はclass定義のとき()の中に親クラスを指定します。最初見たときclassのインスタンスの引数かと思って一瞬混乱しました。</p>
+<pre class="highlight python"><code><span class="k">class</span> <span class="nc">Foo</span><span class="p">(</span><span class="n">Bar</span><span class="p">):</span> <span class="k">pass</span>
+</code></pre>
+
+<p>多重継承する場合はカンマで区切ります。簡単。</p>
+<pre class="highlight python"><code><span class="k">class</span> <span class="nc">Foo</span><span class="p">(</span><span class="n">Bar</span><span class="p">,</span> <span class="n">Baz</span><span class="p">):</span> <span class="k">pass</span>
+</code></pre>
+
+<h3>親クラスがないときはobjectを継承する</h3>
+
+<p>継承するクラスを指定しなかった場合とobjectを継承した場合で微妙に挙動が違うらしく、何も継承しない場合はobjectを継承することが推奨されているようです。</p>
+
+<p>Python3からは継承を指定しない場合は標準でobjectを継承するようになるようです。</p>
+<pre class="highlight python"><code><span class="k">class</span> <span class="nc">C1</span><span class="p">():</span> <span class="k">pass</span>
+<span class="k">print</span> <span class="nb">dir</span><span class="p">(</span><span class="n">C1</span><span class="p">)</span> <span class="c">#=&gt; ['__doc__', '__module__']</span>
+
+<span class="k">class</span> <span class="nc">C2</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span> <span class="k">pass</span>
+<span class="k">print</span> <span class="nb">dir</span><span class="p">(</span><span class="n">C2</span><span class="p">)</span> <span class="c">#=&gt; ['__class__', '__delattr__', '__dict__', '__doc__', '__getattribute__', '__hash__', '__init__', '__module__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__str__', '__weakref__']</span>
+</code></pre>
+
+<h3>プライベート変数</h3>
+
+<p>アンスコ二つを先頭につけるとプライベートチックになります。ただし参照不可能になるわけではないので正確にはプライベートではありません。</p>
+
+<p>正確にはアンスコ二つをつけた属性やメソッドは_{classname}__{var}という形で参照できるようになります。</p>
+<pre class="highlight python"><code><span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">__foo</span> <span class="o">=</span> <span class="s">'bar'</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">C</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">c</span><span class="o">.</span><span class="n">_C__foo</span> <span class="c">#=&gt; bar</span>
+<span class="k">print</span> <span class="n">c</span><span class="o">.</span><span class="n">__foo</span>   <span class="c">#=&gt; AttributeError: 'C' object has no attribute '__foo'</span>
+</code></pre>
+
+<p>PerlとかJavaScriptでもプライベートな属性はないし、プライベートメソッドをテストするときやりやすいので個人的にはこっちのほうがいいです。</p>
+
+<h3>staticメソッド</h3>
+
+<p>関数のデコレータのときにもでてきましたが、状態に依存しない静的な関数をつくるときは@staticmethodを指定します。こうすると第一引数にselfをとりません。</p>
+<pre class="highlight python"><code><span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">foo</span><span class="p">():</span> <span class="k">print</span> <span class="s">'bar'</span>
+
+<span class="n">C</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span> <span class="c">#=&gt; bar</span>
+</code></pre>
+
+<h3>親クラスのメソッド呼び出し</h3>
+
+<p>親クラスのメソッドを呼び出すのはsuper関数を使います。あんまりいけてない感じもするけど。</p>
+<pre class="highlight python"><code><span class="k">class</span> <span class="nc">C1</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">'super'</span>
+
+<span class="k">class</span> <span class="nc">C2</span><span class="p">(</span><span class="n">C1</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">C2</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span>
+        <span class="k">print</span> <span class="s">'child'</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">C2</span><span class="p">()</span>
+<span class="n">c</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span>
+<span class="c">#=&gt; super</span>
+<span class="c">#=&gt; child</span>
+</code></pre>
+
+<p>以上、Python初めて勉強してみてのまとめでした。たまにいけてないと思うところもあるけど全体的にわかりやすくてすごく言語だなあと思いました。しばらくPython使ってみます。</p>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2010/09/26174716.html">iPhoneやiPadでHTMLのソースを見るのつくった</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2010/10/28182612.html">jquery.ui.slideDownStream というのを書いた</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

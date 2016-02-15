@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>第一回 ライブドア テクニカルセミナーにいってきました - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2009-03-02T00:00:00+09:00">2009年03月02日</time>
+
+<ul class="tags">
+    <li><a href="/tags/event.html">event</a></li>
+</ul>
+
+<h1>第一回 ライブドア テクニカルセミナーにいってきました</h1>
+
+<div class="body">
+
+<p>先週の金曜に開催された<a href="http://blog.livedoor.jp/techblog/archives/65077074.html">ライブドアテクニカルセミナー</a>にいってきたので簡単に内容まとめました。</p>
+
+<h2>プラクティカル Cicindela</h2>
+
+<h3>Cicindelaとは</h3>
+
+<ul>
+<li>ライブドアが開発したオープンソースのレコメンデーションエンジン</li>
+<li>複数の自由に組み合わせることで高いカスタマイズ性を実現</li>
+<li>レコメンデーションエンジンで重要なことは
+
+<ul>
+<li>レスポンス</li>
+<li>データの即時性</li>
+</ul></li>
+</ul>
+
+<h3>Cicindelaの高速化のしくみ</h3>
+
+<ul>
+<li>入力データを一時テーブルに保存</li>
+<li>バッチで中間集計テーブルへ</li>
+<li>一定のタイミングで実際使用するテーブルと中間集計テーブルを入れ替える</li>
+<li>バッチでやれることはバッチで、というのが高速化の秘訣</li>
+</ul>
+
+<h3>実際の利用例</h3>
+
+<ul>
+<li><p>ライブドアクリップ</p>
+
+<ul>
+<li>それぞれ異なるフィルタを用いて複数のレコメンドデータをつくる</li>
+<li>それを後でマージするという手法を用いている</li>
+<li>最新一時間のデータ、通常のレコメンド、タグidを仮想ユーザーidに読み替えるデータなど</li>
+<li>一般的でないアイテムにおすすめが偏るように重みづけとかしてる</li>
+</ul></li>
+<li><p>DLsite.com</p>
+
+<ul>
+<li>同人ダウンロード販売サイト</li>
+<li>男性向け商品を女性ユーザーにださないとか、一般ユーザーに成人向けをだせないなどの制約がある</li>
+<li>レイティングがある</li>
+<li>レコメンドデータ作成後に女性向けや成人むけなどの条件をフィルタリングしている</li>
+</ul></li>
+<li><p>youbride</p>
+
+<ul>
+<li>結婚情報サービス</li>
+<li>アクションがないユーザーを結びつけるという、ちょっと変わったレコメンデーションをしている</li>
+<li>同じ属性の同性が選んでいる異性と同じ属性の異性をおすすめするという手法</li>
+</ul></li>
+</ul>
+
+<h3>感想</h3>
+
+<ul>
+<li>かなり柔軟に色々なことができそうだという印象</li>
+<li>一回実際に使ってみよう</li>
+<li>ソースも読もう</li>
+<li>集合値プログラミングも勉強しよう</li>
+</ul>
+
+<h2>インサイド livedoor Blog</h2>
+
+<h3>2chまとめブログ無差別DOS攻撃のはなし</h3>
+
+<ul>
+<li>2chまとめブログに反対する2ちゃんねらから一斉アクセスされたことがあった</li>
+<li>一斉に同じアクセスがあるとエラーを返すような防御壁はってたので助かった</li>
+</ul>
+
+<h3>mod_ldblog_mapper2</h3>
+
+<ul>
+<li>url to userpath変換モジュール</li>
+<li>memcached/mainDBを参照した結果を環境変数にセットしてmod_rewrite等で処理する</li>
+</ul>
+
+<h3>静的ファイルキャッシュ</h3>
+
+<ul>
+<li>新着記事、新着コメントプラグインなどのプラグインをいちいちキャッシュすると、なにか更新するたびに再構築するひつようがあるので分離</li>
+<li>それらをmod_includeでSSIを使って読み込むことで再構築するデータを大幅削減</li>
+<li>再構築はじつはキャッシュファイルを削除してるだけ</li>
+</ul>
+
+<h3>新ブログ管理画面について</h3>
+
+<ul>
+<li>UIの文字コードをEUC-jpからUTF8にかえた</li>
+<li>ブログ保存データも新規ユーザーからUTF8</li>
+<li>URL変更した</li>
+<li>マルチブログ対応</li>
+<li>フロント側
+
+<ul>
+<li>jQuery+jQueryUI</li>
+<li>swfupload</li>
+</ul></li>
+</ul>
+
+<h3>文字コードについて</h3>
+
+<ul>
+<li>旧ブログはまだEUC、新規はUTF8なので大変</li>
+<li>blog単位でcharsetを切り替える</li>
+<li>手動でやるのは大変</li>
+<li>ORマッパとフレームワークの間に文字コード変換モジュールをかませて既存のコードをできるだけ変更しなくていいように</li>
+</ul>
+
+<h3>感想</h3>
+
+<ul>
+<li>ある程度どんな攻撃されるか予測して対策してるのはさすが</li>
+<li>意外とSSIとか使ってるんだな</li>
+<li>文字コード途中で変更とかホント思い切ったことするなー</li>
+<li>キャッシュの話は参考になった</li>
+</ul>
+
+<h2>ライブドアのネットワークとトラフィックパターン</h2>
+
+<h3>平日のトラフィックの特徴</h3>
+
+<ul>
+<li>仕事かえりの20〜24時がピーク</li>
+<li>仕事前の朝にちょっとピークが（出社前にメールチェックするから）</li>
+<li>昼休みにちょっと増える（ご飯食べながらネットしてる）</li>
+<li>夜ご飯時はちょっと減る（夜ご飯のときはネットしない）</li>
+</ul>
+
+<h3>休日のトラフィックの特徴</h3>
+
+<ul>
+<li>昼の12時くらいから増え始めて、そかから横ばい</li>
+<li>24~25時がピークでそこから徐々に減る</li>
+</ul>
+
+<h3>その他</h3>
+
+<ul>
+<li>P2Pのトラフィックががまじると上り/下りがほぼ同じになる</li>
+<li>帯域制限は「基本的に」かけてない</li>
+</ul>
+
+<h3>コンテンツダウンドーロ販売系のトラフィック</h3>
+
+<ul>
+<li>平日はこれといってピークがない</li>
+<li>休日は午前中からトラフィックが増え始める</li>
+<li>朝からダウンロードしてるユーザーが多い？</li>
+</ul>
+
+<h3>livedoor blogのトラフィック</h3>
+
+<ul>
+<li>お昼にピーク</li>
+<li>12時過ぎてからの減少率が少ない（夜更かしする若者が多い？）</li>
+</ul>
+
+<h3>livedoor ねとらじ</h3>
+
+<ul>
+<li>お昼のピークがない（逆にさがってる）</li>
+<li>就業時間後もさがってる</li>
+<li>ラジオつけぱなっしにしてるユーザーが多い？</li>
+</ul>
+
+<h3>googleの障害時（全サイトフィッシングサイトになったやつ）</h3>
+
+<ul>
+<li>サイトによってはPVさがったらしい</li>
+<li>ライブドアはさがってない。RSSとかで読む人がが多いから？</li>
+</ul>
+
+<h3>年越し</h3>
+
+<ul>
+<li>12/31日〜1/1日にかけての夜中のピークがない</li>
+<li>年明けのトラフィックがちょっと増えてた</li>
+<li>年越しは外にでかけて、あけおめエントリーを書くユーザーがいたから？</li>
+</ul>
+
+<h3>IPV6について</h3>
+
+<ul>
+<li>実験的に運用中</li>
+<li><p>IPV6対応サービス</p>
+
+<ul>
+<li>2ch IPv6板</li>
+<li>fixdap</li>
+</ul></li>
+<li><p>IPV6のトラフィック少なすぎ＞＜みんな使って！</p></li>
+<li><p>IPV6絶対くるよ！</p></li>
+</ul>
+
+<h3>感想</h3>
+
+<ul>
+<li>トラフィックからユーザーの動向を見るとおもろいー</li>
+<li>あまり見る機会のないグラフやデータだったから見てるだけで面白かった</li>
+<li>ユーザーの動向つかんで、どうサービスに生かすかというところの話も聞きたかった</li>
+</ul>
+
+<h2>配信の技術と法的問題</h2>
+
+<p>winny作成者の金子 勇氏による話</p>
+
+<h3>skeedcastとは</h3>
+
+<ul>
+<li><p>winny1とwinny2があって、</p>
+
+<ul>
+<li>ファイル共有ソフトがwinny1</li>
+<li>情報共有ソフトがwinny2</li>
+</ul></li>
+<li><p>winny2はもっと広い意味での情報共有。2chみたいな掲示板をP2Pで実現する</p></li>
+<li><p>winny1にwinny2の要素をくわえたものがskeedcast</p></li>
+<li><p>管理可能性を重視した商用向けP2P</p></li>
+<li><p>分散サーバ型とP2P型のハイブリッド</p></li>
+</ul>
+
+<h3>skeedcastの特徴</h3>
+
+<ul>
+<li><p>winnnyは</p>
+
+<ul>
+<li>pureP2P</li>
+<li>回線速度による緩やかな上下関係</li>
+</ul></li>
+<li><p>skeedcastは</p>
+
+<ul>
+<li>固定ノードで通常配信</li>
+<li>ユーザーノードを用いた再配信も可能</li>
+</ul></li>
+<li><p>ユーザーのノードを中継することが可能</p></li>
+<li><p>最初はサーバー側のみで配信、トラフィックが増えてくると、ユーザーノード配信で負荷分散できる</p></li>
+<li><p>セキュリティにはデジタル署名を使って対応</p></li>
+<li><p>ホワイトリストフィルタリング</p></li>
+<li><p>キャッシュのライフタイム管理</p></li>
+</ul>
+
+<h3>感想</h3>
+
+<ul>
+<li>内部の仕組みなどは話が難しくてついていけないところも</li>
+<li>ユーザーノードを使って負荷分散するというは、実現できたらホントすごい</li>
+<li>とりあえずこの人が逮捕されたのはおかしい＞＜</li>
+</ul>
+
+<h2>全体の感想</h2>
+
+<ul>
+<li>知らないこと多くて色々勉強になった</li>
+<li>もっとプログラムの話があるかと思ったけど、実際プログラムのコードは一行もでてこなかった</li>
+<li>懇親会で話した感じだと、サーバーエンジニアからRubyプログラマ、マーケティングの人とかもきてて、すごい幅広い客層だった</li>
+<li>カヤックでもこういうセミナーやれたらいいなー</li>
+</ul>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2009/02/08031540.html">surround.vimでHTML編集を効率化</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2009/03/22020147.html">コーディングが少し楽になる（かもしれない）meca.js</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

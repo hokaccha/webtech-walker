@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Macのvimでクリップボードにコピーするoperator - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2009-10-04T00:00:00+09:00">2009年10月04日</time>
+
+<ul class="tags">
+    <li><a href="/tags/vim.html">vim</a></li>
+    <li><a href="/tags/mac.html">Mac</a></li>
+</ul>
+
+<h1>Macのvimでクリップボードにコピーするoperator</h1>
+
+<div class="body">
+
+<p>下記の様に書けばクリップボードにコピーできるのですが、行単位じゃないとコピーできないし、オペレーターとして使えないのが若干不便です。</p>
+<pre class="highlight viml"><code>nnoremap <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;</span> <span class="p">&lt;</span>Space<span class="p">&gt;</span><span class="k">y</span> <span class="p">:.</span><span class="k">w</span> <span class="p">!</span>pbcopy<span class="p">&lt;</span>CR<span class="p">&gt;&lt;</span>CR<span class="p">&gt;</span>
+vnoremap <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;</span> <span class="p">&lt;</span>Space<span class="p">&gt;</span><span class="k">y</span> <span class="p">:</span><span class="k">w</span> <span class="p">!</span>pbcopy<span class="p">&lt;</span>CR<span class="p">&gt;&lt;</span>CR<span class="p">&gt;</span>
+nnoremap <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;</span> <span class="p">&lt;</span>Space<span class="p">&gt;</span><span class="k">p</span> <span class="p">:</span><span class="k">r</span> <span class="p">!</span>pbpaste<span class="p">&lt;</span>CR<span class="p">&gt;</span>
+vnoremap <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;</span> <span class="p">&lt;</span>Space<span class="p">&gt;</span><span class="k">p</span> <span class="p">:</span><span class="k">r</span> <span class="p">!</span>pbpaste<span class="p">&lt;</span>CR<span class="p">&gt;</span>
+</code></pre>
+
+<p>なのでクリップボードにコピーするためのオペレーターを定義しました。pbcopyを使うのでMac限定です。</p>
+<pre class="highlight viml"><code><span class="c">" Macでクリップボードにコピーするoperator</span>
+<span class="k">if</span> has<span class="p">(</span><span class="s1">'mac'</span><span class="p">)</span>
+    <span class="k">function</span><span class="p">!</span> Pbcopy<span class="p">(</span>type<span class="p">,</span> <span class="p">...)</span>
+        <span class="k">let</span> reg_save <span class="p">=</span> @@
+        <span class="k">if</span> <span class="nv">a:0</span>
+            <span class="k">silent</span> execute <span class="s2">"normal! `&lt;"</span> <span class="p">.</span> <span class="nv">a:type</span> <span class="p">.</span> <span class="s2">"`&gt;y"</span>
+        <span class="k">elseif</span> <span class="nv">a:type</span> <span class="p">==</span> <span class="s1">'line'</span>
+            <span class="k">silent</span> execute <span class="s2">"normal! '[V']y"</span>
+        <span class="k">elseif</span> <span class="nv">a:type</span> <span class="p">==</span> <span class="s1">'block'</span>
+            <span class="k">silent</span> execute <span class="s2">"normal! `[\&lt;C-V&gt;`]y"</span>
+        <span class="k">else</span>
+            <span class="k">silent</span> execute <span class="s2">"normal! `[v`]y"</span>
+        <span class="k">endif</span>
+        <span class="k">call</span> system<span class="p">(</span><span class="s1">'iconv -f utf-8 -t shift-jis | pbcopy'</span><span class="p">,</span> @@<span class="p">)</span>
+        <span class="k">let</span> @@ <span class="p">=</span> reg_save
+    <span class="k">endfunction</span>
+    nnoremap <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;</span> <span class="p">&lt;</span>Space<span class="p">&gt;</span><span class="k">y</span> <span class="p">:&lt;</span>C<span class="p">-</span><span class="k">u</span><span class="p">&gt;</span><span class="k">set</span> opfunc<span class="p">=</span>Pbcopy<span class="p">&lt;</span>CR<span class="p">&gt;</span><span class="k">g</span>@
+    nnoremap <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;</span> <span class="p">&lt;</span>Space<span class="p">&gt;</span>yy <span class="p">:&lt;</span>C<span class="p">-</span><span class="k">u</span><span class="p">&gt;</span><span class="k">set</span> opfunc<span class="p">=</span>Pbcopy<span class="p">&lt;</span>CR<span class="p">&gt;</span><span class="k">g</span>@<span class="k">g</span>@
+    vnoremap <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;</span> <span class="p">&lt;</span>Space<span class="p">&gt;</span><span class="k">y</span> <span class="p">:&lt;</span>C<span class="p">-</span><span class="k">u</span><span class="p">&gt;</span><span class="k">call</span> Pbcopy<span class="p">(</span>visualmode<span class="p">(),</span> <span class="m">1</span><span class="p">)&lt;</span>CR<span class="p">&gt;</span>
+    nnoremap <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;</span> <span class="p">&lt;</span>Space<span class="p">&gt;</span><span class="k">p</span> <span class="p">:&lt;</span>C<span class="p">-</span><span class="k">u</span><span class="p">&gt;</span><span class="k">r</span> <span class="p">!</span>pbpaste<span class="p">&lt;</span>CR<span class="p">&gt;</span>
+<span class="k">endif</span>
+</code></pre>
+
+<p>日本語はsjisじゃないとダメらしいのでsjisに変換してます。あと、最初からイントールされているscreen上ではpbcopy使えないのでscreenをパッチ当ててインストールしないとダメです。</p>
+
+<ins>追記: faceclip.vimを使おう！</ins>
+
+<p><a href="http://www.vim.org/scripts/script.php?script_id=2098">fakeclip - pseudo clipboard register for non-GUI version of Vim : vim online</a></p>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2009/10/03172414.html">vimでフォントの大きさをトグルする</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2009/10/06093250.html">zshから辞書を引く</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

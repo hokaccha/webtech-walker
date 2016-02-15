@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Backbone.Modelのattributesにオブジェクト入れるときの注意 - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2012-12-15T00:00:00+09:00">2012年12月15日</time>
+
+<ul class="tags">
+    <li><a href="/tags/javascript.html">JavaScript</a></li>
+    <li><a href="/tags/backbone-js.html">Backbone.js</a></li>
+</ul>
+
+<h1>Backbone.Modelのattributesにオブジェクト入れるときの注意</h1>
+
+<div class="body">
+
+<p><a href="http://www.adventar.org/calendars/15">Backbone.js Advent Calendar</a>の15日目です。軽めにいきます。</p>
+
+<p>Backbone.Modelの<code>attributes</code>にオブジェクトを設定するときの注意点など。<code>attributes</code>は<code>set</code>とかで設定される値をオブジェクトして持っているやつです。</p>
+
+<p>まず次のように<code>set</code>で<code>attributes</code>を設定します。</p>
+<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">MyModel</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">();</span>
+
+<span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyModel</span><span class="p">();</span>
+<span class="nx">m</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">'hoge'</span><span class="p">,</span> <span class="s1">'fuga'</span><span class="p">);</span>
+<span class="nx">m</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">,</span> <span class="p">{</span> <span class="na">bar</span><span class="p">:</span> <span class="s1">'baz'</span> <span class="p">});</span>
+</code></pre>
+
+<p>このように<code>hoge</code>には文字列、<code>foo</code>にはオブジェクトを設定しました。そして<code>toJSON</code>で<code>attributes</code>を取得して値を更新してみます。</p>
+<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">();</span>
+<span class="nx">attrs</span><span class="p">.</span><span class="nx">hoge</span> <span class="o">=</span> <span class="s1">'new fuga'</span><span class="p">;</span>
+<span class="nx">attrs</span><span class="p">.</span><span class="nx">foo</span><span class="p">.</span><span class="nx">bar</span> <span class="o">=</span> <span class="s1">'new baz'</span><span class="p">;</span>
+</code></pre>
+
+<p>そして<code>attributes</code>の中身を見てみると・・</p>
+<pre class="highlight javascript"><code><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">attributes</span><span class="p">);</span>
+<span class="c1">// =&gt; { hoge: 'fuga', foo: { bar: 'new baz' } }</span>
+</code></pre>
+
+<p><code>hoge</code>の値は変わってないのに<code>foo.bar</code>の値が変わってますね。どうしてこうなった。</p>
+
+<p>と、まあこういう問題があるわけです。</p>
+
+<p>では原因を見て行きましょう。まず、<code>toJSON</code>の実装は次のようになっています。</p>
+<pre class="highlight javascript"><code><span class="nx">toJSON</span><span class="err">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">_</span><span class="p">.</span><span class="nx">clone</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">attributes</span><span class="p">);</span>
+<span class="p">},</span>
+</code></pre>
+
+<p>このように<code>attributes</code>を<code>_.clone</code>してるだけです。<code>_.clone</code>してるということは参照ではなくてオブジェクトのコピーが返りそうな雰囲気です。コピーが返るということは返ってきた値を変更しても元のオブジェクトには影響しないはず・・。</p>
+
+<p>なんですが、実は<code>_.close</code>はネストしたオブジェクトに対応しておらず、ネストしている場合はそのまま参照がコピーされるのです。なんてこったい＼(^o^)／</p>
+
+<p>なので<code>hoge</code>の値は変更しても元の値は影響を受けておらず、<code>foo.bar</code>の値を変更したら元のオブジェクトにも影響がでてしまったというわけ。</p>
+
+<p>ちなみに<code>_.close</code>の実装は次のようになってて</p>
+<pre class="highlight javascript"><code><span class="nx">_</span><span class="p">.</span><span class="nx">clone</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">_</span><span class="p">.</span><span class="nx">isObject</span><span class="p">(</span><span class="nx">obj</span><span class="p">))</span> <span class="k">return</span> <span class="nx">obj</span><span class="p">;</span>
+  <span class="k">return</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">?</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">slice</span><span class="p">()</span> <span class="p">:</span> <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">({},</span> <span class="nx">obj</span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre>
+
+<p><code>_.extend({}, obj)</code>を返してるだけなので元凶は<code>_.extend</code>だったりします。<code>_.extend</code>は次のようにネストしたオブジェクトに対応してないのがわかります。</p>
+<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">foo</span><span class="p">:</span> <span class="p">{</span> <span class="na">bar</span><span class="p">:</span> <span class="s1">'baz'</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">b</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">foo</span><span class="p">:</span> <span class="p">{</span> <span class="na">hoge</span><span class="p">:</span> <span class="s1">'fuga'</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">);</span> <span class="c1">// { foo: { hoge: 'fuga' } }</span>
+</code></pre>
+
+<p>この問題を解決できるのは我らがjQuery大先生です。jQueryの<code>$.extend</code>は第一引数を<code>true</code>にすることでネストしたオブジェクトにも対応できます。</p>
+<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">foo</span><span class="p">:</span> <span class="p">{</span> <span class="na">bar</span><span class="p">:</span> <span class="s1">'baz'</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">b</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">foo</span><span class="p">:</span> <span class="p">{</span> <span class="na">hoge</span><span class="p">:</span> <span class="s1">'fuga'</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">);</span> <span class="c1">// { foo: { bar: 'baz', hoge: 'fuga' } }</span>
+</code></pre>
+
+<p>すばらしいですね。これを利用して次のように<code>toJSON</code>を上書きします。</p>
+<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">MyModel</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="na">toJSON</span><span class="p">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">$</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="kc">true</span><span class="p">,</span> <span class="p">{},</span> <span class="k">this</span><span class="p">.</span><span class="nx">attributes</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre>
+
+<p>これで大丈夫なはず。</p>
+<pre class="highlight javascript"><code><span class="kd">var</span> <span class="nx">m</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MyModel</span><span class="p">();</span>
+<span class="nx">m</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">'hoge'</span><span class="p">,</span> <span class="s1">'fuga'</span><span class="p">);</span>
+<span class="nx">m</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="s1">'foo'</span><span class="p">,</span> <span class="p">{</span> <span class="na">bar</span><span class="p">:</span> <span class="s1">'baz'</span> <span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">attrs</span> <span class="o">=</span> <span class="nx">m</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">();</span>
+<span class="nx">attrs</span><span class="p">.</span><span class="nx">hoge</span> <span class="o">=</span> <span class="s1">'new fuga'</span><span class="p">;</span>
+<span class="nx">attrs</span><span class="p">.</span><span class="nx">foo</span><span class="p">.</span><span class="nx">bar</span> <span class="o">=</span> <span class="s1">'new baz'</span><span class="p">;</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">attributes</span><span class="p">);</span>
+<span class="c1">// =&gt; { hoge: 'fuga', foo: { bar: 'baz' } }</span>
+</code></pre>
+
+<p>おっけーですねー。すばらしいですねー。jQueryまじイノベーティブです。</p>
+
+<p>以上、<del>jQuery</del><ins>Backbone.js</ins> Advent Calendarでした。</p>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2012/12/backbone_node_common.html">Backbone.jsでNode.jsとクライアントサイドのロジックをイケてる感じで共通化する</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2012/12/backbone_0.9.9.html">Backbone.js 0.9.9 の変更点</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

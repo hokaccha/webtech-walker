@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>irssiをインストールしてからやったことのまとめ - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2010-02-01T00:00:00+09:00">2010年02月01日</time>
+
+<ul class="tags">
+    <li><a href="/tags/irc.html">IRC</a></li>
+</ul>
+
+<h1>irssiをインストールしてからやったことのまとめ</h1>
+
+<div class="body">
+
+<p>IRCのクライアントをLimeChatからirssiに乗り換えたのでやったことをまとめときます。最初はtiarraも導入しようと思ったんですけどSSLの設定がわからなくてできなかったので断念しました。</p>
+
+<h2>インストールと起動</h2>
+
+<p>インストールはyumで一撃でした（CentOS 5.4）</p>
+<pre class="highlight plaintext"><code>$ yum install irssi
+</code></pre>
+
+<p>起動は</p>
+<pre class="highlight plaintext"><code>$ irssi
+</code></pre>
+
+<p>でOK。起動すると~/.irssi/configという設定ファイルができます。</p>
+
+<h2>サーバーとかチャンネルの追加</h2>
+
+<p>サーバーの追加は</p>
+<pre class="highlight plaintext"><code>/server add -auto -network freenode irc.freenode.net 6667
+</code></pre>
+
+<p>でチャンネルの追加は</p>
+<pre class="highlight plaintext"><code>/channel add -auto #チャンネル名 freenode
+</code></pre>
+
+<p>こんな感じ。チャンネルに入るときはサーバーにconnectしてjoinします。</p>
+<pre class="highlight plaintext"><code>/connect freenode
+/join #hoge
+</code></pre>
+
+<p>addするときに-autoとしとくと次から自動でconnect、joinしてくます。</p>
+
+<p>設定を保存するには</p>
+<pre class="highlight plaintext"><code>/save
+</code></pre>
+
+<p>とすればこの変更が設定ファイルに保存されます。irssiから設定せずに設定ファイルを書いて設定するには~/.irssi/configを書き換えて</p>
+<pre class="highlight plaintext"><code>/reload
+</code></pre>
+
+<p>とします。ちなみにtiaaraのほうでよくわからなかったsslの設定はサーバー追加するときに-sslをつければOKです。</p>
+<pre class="highlight plaintext"><code>/server add -ssl ...
+</code></pre>
+
+<h2>hilightの通知</h2>
+
+<p>呼ばれたら通知するように設定しました。まずhilightでキーワードを指定します。</p>
+<pre class="highlight plaintext"><code>/hilight キーワード
+</code></pre>
+
+<p>で、設定したキーワードで呼ばれたらim.kayac.comで通知するようにします。<a href="http://im.kayac.com/">im.kayac.com</a>のアカウントをつくったら以下のスクリプトを~/.irssi/scriptsに起きます。</p>
+
+<p><a title="hilight2im.pl at master from typester's irssi-plugins - GitHub" href="http://github.com/typester/irssi-plugins/blob/master/hilight2im.pl">hilight2im.pl at master from typester’s irssi-plugins - GitHub</a></p>
+
+<p>そしてirssiのほうで</p>
+<pre class="highlight plaintext"><code>/set im_kayac_com_username ユーザー名
+/run hilight2im.pl
+</code></pre>
+
+<p>とすればキーワードを含むメッセージを通知できます。</p>
+
+<h2>ログを残す</h2>
+
+<p>ログを残したいので以下の様に設定しました。</p>
+<pre class="highlight plaintext"><code>/set autolog_path ~/.irssi/irclogs/%Y/$tag/$0.%m-%d.log
+</code></pre>
+
+<p>これで~/.irssi/irclogs以下にログが保存されます。以下のエントリーを参考にしました。</p>
+
+<p><a title="A Guide to Efficiently Using Irssi and Screenを適当に和訳 - iDeaList::Writing" href="http://d.hatena.ne.jp/acotie/20080801/1217611718">A Guide to Efficiently Using Irssi and Screenを適当に和訳 -
+iDeaList::Writing</a></p>
+
+<h2>ignoreの設定</h2>
+
+<p>必要のない情報を出さないようにignoreの設定をします。~/.irssi/configに以下を追記します。</p>
+<pre class="highlight plaintext"><code>ignores = (
+  {
+    level = "CRAP SNOTES CTCPS JOINS PARTS QUITS MODES WALLOPS INVITES CLIENTNOTICES CLIENTCRAP CLIENTERRORS NICKS";
+  }
+);
+</code></pre>
+
+<p>以下のエントリーを参考にしてます。</p>
+
+<ul>
+<li><a title="クリスマスにむけて irssi をはじめました - TokuLog 改めB日記" href="http://d.hatena.ne.jp/tokuhirom/20081223/1229998338">クリスマスにむけて irssi をはじめました - TokuLog 改めB日記</a></li>
+<li><a title="Ignore channel join/part messages in irssi « Inside Out" href="http://arun.wordpress.com/2009/09/27/ignore-channel-joinpart-messages-in-irssi/">Ignore channel join/part messages in irssi « Inside Out</a></li>
+</ul>
+
+<h2>チャンネル一覧をだす</h2>
+
+<p><a href="http://anti.teamidiot.de/static/nei/*/Code/Irssi/adv_windowlist.pl">adv_windowlist.pl</a>をいれてチャンネル一覧を画面の下にだすようにしました。これもさっきのエントリーを参考に設定はこんなかんじ。</p>
+<pre class="highlight plaintext"><code>awl_maxlines = "2";
+awl_columns = "2";
+awl_automode = "sbar";
+awl_display_key = "[$N]$C";
+</code></pre>
+
+<h2>themeをかえる</h2>
+
+<p>デフォルトのテーマだと若干見づらいので適当にテーマを変更しました。テーマは以下にいっぱいあります。ひとまずoceanにしてみました。</p>
+
+<p><a title="Irssi - The client of the future" href="http://www.irssi.org/themes">Irssi - The client of the future</a></p>
+
+<p>テーマとってきたテーマを~/.irssiに置いて</p>
+<pre class="highlight plaintext"><code>/set theme ocean
+</code></pre>
+
+<p>で適用されます。</p>
+
+<h2>tig.rbをいれる</h2>
+
+<p>twitterのクライアントにcho45さんのtig.rbをいれました。最初TwitterIrcGatewayを使ってみたんですけど色々不便なところがあったのでこっちにしました。</p>
+
+<p>この辺も参考に。</p>
+
+<ul>
+<li><a title="tig.rbでtidを表示する - Webtech Walker" href="http://webtech-walker.com/archive/2010/01/29165626.html">tig.rbでtidを表示する - Webtech Walker</a></li>
+<li><a title="tig.rbのリストの有効/無効をnameで渡す - Webtech Walker" href="http://webtech-walker.com/archive/2010/01/29165709.html">tig.rbのリストの有効/無効をnameで渡す - Webtech Walker</a></li>
+</ul>
+
+<h2>Metaキーを押しやすくする</h2>
+
+<p>irssiはMetaキーをよく使うので押しやすくするためにOptionキーを右Cmdキーにしました。この辺はお好みで。</p>
+
+<p><a title="KeyRemap4MacBookでTerminalだけ右CmdをOptionにする - Webtech Walker" href="/archive/2010/01/29074456.html">KeyRemap4MacBookでTerminalだけ右CmdをOptionにする - Webtech
+Walker</a></p>
+
+<h2>その他Tips的なこと</h2>
+
+<h3>何はともあれhelpを読む</h3>
+
+<p>とりあえずわからなかったらhelpを読みましょう。</p>
+<pre class="highlight plaintext"><code>/help
+</code></pre>
+
+<p>でコマンドの一覧</p>
+<pre class="highlight plaintext"><code>/help コマンド名
+</code></pre>
+
+<p>でコマンドのhelpが表示されます。</p>
+
+<h3>joinしてるユーザーを表示する</h3>
+<pre class="highlight plaintext"><code>/names
+</code></pre>
+
+<p>とすれば、今自分がいるチャンネルにjoinしてるユーザーの一覧を表示できます。</p>
+
+<h3>スクリプトの自動起動</h3>
+
+<p>~/.irssi/scripts/autoload以下にプラグインを置いておくと起動時に自動でロードしてくれます。</p>
+
+<h3>キーボードショートカット</h3>
+
+<p>覚えとくと便利なショートカットはこんな感じ。</p>
+
+<ul>
+<li>Meta-[数字]でチャンネル移動（q,w,e…がそれぞれ11,12,13…というふうに19まで対応してる）</li>
+<li>Meta-aで未読へ移動</li>
+<li>Ctrl-pとCtrl-nで前後でチャンネル移動</li>
+<li>Meta-p、Meta-nでスクロール</li>
+<li>statusウインドウでCtrl-xで接続先サーバーの切り替え</li>
+</ul>
+
+<p>詳しくは</p>
+<pre class="highlight plaintext"><code>/bind
+</code></pre>
+
+<p>で一覧できて、</p>
+<pre class="highlight plaintext"><code>/bind キーバインド
+</code></pre>
+
+<p>でショートカットをカスタムできます。</p>
+
+<p>これでようやくまともなIRCライフが送れそうです！</p>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2010/01/28100748.html">sambaにmacから接続してsvnを使うときの注意点</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2010/02/15094126.html">javascriptのreplaceにfunctionを渡す</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>XHTMLのDTDの読み方のまとめ - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2007-11-14T00:00:00+09:00">2007年11月14日</time>
+
+<ul class="tags">
+    <li><a href="/tags/html.html">HTML</a></li>
+</ul>
+
+<h1>XHTMLのDTDの読み方のまとめ</h1>
+
+<div class="body">
+
+<p>XHTMLのDTDを読み方についていろいろ調べたので、ざっくりとですがメモとして残しておきます。</p>
+
+<h2>DTDって何？</h2>
+
+<p>まずDTDって何？という話から。以下、Wikipeiaからの引用です。</p>
+
+<blockquote>
+<p>Document Type Definition（文書型定義、DTD）とは、SGML や XML において、文書構造(文書型)を定義するためのスキーマ言語の一つである。 DTD では、SGML や XML の文書内に記述することができる要素やその発生順序、発生回数、要素がもつ属性、属性の型などを、記述することができる。</p>
+
+<p><cite><a href="http://ja.wikipedia.org/wiki/Document_Type_Definition">Document Type Definition - Wikipedia</a></cite></p>
+</blockquote>
+
+<p>噛み砕いていうと、XML（SGML）文章の説明書のようなものです。このXML文章では、このタグが使えますよ～。このタグにはこの属性が使えますよ～。とかをそれはもう、こと細かに書いてあります。</p>
+
+<p>XMLは言語を定義することができる言語です。XHTMLはXMLで定義された言語ですよね。何かを定義するからには、どう定義したのかを記す必要があります。その定義を記してあるのがDTDです。</p>
+
+<h2>XHTML1.0のDTD</h2>
+
+<p>XHTML1.0のDTDは下記の3種類があります。</p>
+
+<ul>
+<li>XHTML 1.0 Strict</li>
+<li>XHTML 1.0 Transitional</li>
+<li>XHTML 1.0 Frameset</li>
+</ul>
+
+<p>詳細は以下。</p>
+
+<p><a href="http://www.w3.org/TR/xhtml1/dtds.html">XHTML 1.0 - DTDs</a></p>
+
+<h2>DTDの基本</h2>
+
+<p>んでは、主題のDTDの読み方について。基本的にDTDに書いてあるのは以下の3つだけです。この3つがわかってれば大体読めると思います。DTDってそんな難しいものじゃないです。</p>
+
+<ul>
+<li>ENTINY（実体宣言）</li>
+<li>ELEMENT（要素）</li>
+<li>ATTLIST（属性）</li>
+</ul>
+
+<h2>ENTINY（実体宣言）</h2>
+
+<p>「<code>&amp;amp;</code>」で「&gt;」を表示するという定義も、この実体参照で宣言しますが、XHTMLのDTDを読むのに必要なのは主に「パラメータ実体」と呼ばれるものです。</p>
+
+<h3>パラメータ実体とは</h3>
+
+<p>パラメータ実体とは、DTDの文書内でよく使う要素などを別名で宣言することです。</p>
+<pre class="highlight plaintext"><code>&lt;!ENTITY % 実体名 "置換文字列"&gt;
+</code></pre>
+
+<p>このように宣言すると「%実体名」で「置換文字列」を参照することができます。</p>
+
+<h3>パラメーター実体の一例</h3>
+<pre class="highlight plaintext"><code>&lt;!ENTITY % heading "h1|h2|h3|h4|h5|h6"&gt;
+</code></pre>
+
+<p>このように定義することで「%heading;」と書くと、この文章中で「<code>h1|h2|h3|h4|h5|h6</code>」と同じ意味になります。パラメータ実体でグループ化することで、文章が煩雑になるのを防いだりします。</p>
+
+<h2>ELEMENT（要素）</h2>
+
+<p>XHTML内で使用できる要素を定義します。定義した要素内に含まれていい要素などもここで定義します。また、要素の定義において下記のような表記をします。正規表現とか知ってる人は理解が楽だと思います。</p>
+
+<h3>要素定義で使われる表記</h3>
+
+<dl>
+    <dt>(foo)+</dt>
+    <dd>要素fooが1回以上出現する</dd>
+    <dt>(foo)?</dt>
+    <dd>要素fooが現れないか、1回出現</dd>
+    <dt>(foo)*</dt>
+    <dd>要素fooが現れないか、任意回数出現</dd>
+    <dt>(foo | var)</dt>
+    <dd>要素fooもしくは要素varのいずれか一方</dd>
+    <dt>(foo , var)</dt>
+    <dd>要素foo及びvarがこの順序で出現</dd>
+    <dt>EMPTY</dt>
+    <dd>内容を持ってはならない</dd>
+    <dt>#PCDATA</dt>
+    <dd>文字列</dd>
+</dl>
+
+<h3>要素定義の例</h3>
+
+<p>まずは簡単な例から。下記はul要素の定義を記した部分です。</p>
+<pre class="highlight plaintext"><code>&lt;!ELEMENT ul (li)+&gt;
+</code></pre>
+
+<p>これを日本語にすると「ul要素の内容は、li要素のみで構成され、li要素が一回以上出現しないといけない」という意味になります。「+」は1回以上出現するという意味ですね。</p>
+
+<p>下記はpタグの定義を示したものです。</p>
+<pre class="highlight plaintext"><code>&lt;!ELEMENT p %Inline;&gt;
+</code></pre>
+
+<p>一見単純そうですが、実は結構入り組んだことになっています。%Inline;というはパラメータ実体で下記のように宣言されています。</p>
+<pre class="highlight plaintext"><code>&lt;!ENTITY % Inline "(#PCDATA | %inline; | %misc.inline;)*"&gt;
+</code></pre>
+
+<p>パラメータ実体の中にさらにパラメータ実体で表記されていますね。さらに「%inline;」を見るとまたパラメータ実体で書かれていて･･･ということになっています。これを全部パラメータ実体からもとの表記に戻してみたのが下記です。</p>
+<pre class="highlight plaintext"><code>&lt;!ELEMENT p (#PCDATA | a | br | span | bdo | map | object | img | tt | i | b | big | small | em | strong | dfn | code | q | samp | kbd | var | cite | abbr | acronym | sub | sup | input | select | textarea | label | button | ins | del | script)*&gt;
+</code></pre>
+
+<p>はい。こんな長くなります。これを日本語にすると、「p要素の内容は、文字列、a、br、span（以下略）要素のどれかが0個以上含まれる」という意味です。「*」なので0個以上含まれるです。XHTMLの書籍などを見ると「p要素にはインライン要素のみ含むことが可能」というように書いてあると思いますが、含まれていい要素というのは実際、このようにDTDに詳細に記載されているんですね。</p>
+
+<h2>ATTLIST（属性）</h2>
+
+<p>要素に付けることのできる属性を定義します。属性の定義の仕方は下記です。</p>
+<pre class="highlight plaintext"><code>&lt;!ATTLIST 要素名 属性名 データ型 省略可/不可の表記&gt;
+</code></pre>
+
+<p>要素名はulやpなどの要素名のことです。属性名はidやclassなどの属性名のことですね。データ型と省略可/不可の表記に関しては、XHTMLで使用されるものを以下に示します。</p>
+
+<h3>データ型</h3>
+
+<p>データ型は属性の値のデータ型を定義します。指定できるものは下記のようなものがあります。</p>
+
+<dl>
+    <dt>CDATA</dt>
+    <dd>任意の文字列。</dd>
+    <dt>ID</dt>
+    <dd>一意な識別子</dd>
+    <dt>IDREF</dt>
+    <dd>ほかの個所でID型の値として指定された名前を参照する</dd>
+    <dt>IDREFS</dt>
+    <dd>IDREFをリストして記述することを許す</dd>
+    <dt>NMTOKEN</dt>
+    <dd>名前として使用できる文字を記述するためのデータ型</dd>
+    <dt>候補オプション</dt>
+    <dd>パイプ区切りで属性値として指定できる値セットを定義する。例えば、(a|b|c)のように記述する</dd>
+</dl>
+
+<h3>省略可/不可の表記</h3>
+
+<p>省略可/不可の表記は読んで字の如くです。その属性が省略可か、不可かを定義します。また、省略した際のデフォルト値なども指定できます。</p>
+
+<dl>
+    <dt>#REQUIRED</dt>
+    <dd>省略不可</dd>
+    <dt>#IMPLIED</dt>
+    <dd>省略可</dd>
+    <dt>値</dt>
+    <dd>省略可。省略した場合は指定した値が適用される</dd>
+    <dt>#FIXED 値</dt>
+    <dd>省略不可で、必ず指定した値を指定しなければならない</dd>
+</dl>
+
+<h3>属性定義の例</h3>
+
+<p>属性を定義するときは、下記のように要素名を一つだけ書いて、属性名、データ型、省略可/不可の表記を連続して書きます。改行区切りで見やすく表記されています。</p>
+<pre class="highlight plaintext"><code>&lt;!ATTLIST button
+  %attrs;
+  %focus;
+  name        CDATA          #IMPLIED
+  value       CDATA          #IMPLIED
+  type        (button|submit|reset) "submit"
+  disabled    (disabled)     #IMPLIED
+  &gt;
+</code></pre>
+
+<h2>まとめ</h2>
+
+<p>一つに属性についてDTDを頼りに調べようと思うと、パラメーター実体ばかりで、展開するのが面倒です。でもまぁ、それさえやってしまえばDTDを読むのは全然難しくないと思います。</p>
+
+<p>「これってXHTMLの文法的にどうなんだっけ？」というときにはWebサイトや書籍で調べるのもいいですが、やはり正確な情報はDTDから得るべきであると思います。</p>
+
+<h2>参考</h2>
+
+<ul>
+<li><a href="http://www.atmarkit.co.jp/fxml/rensai/xmlwomanabou05/learning-xml05.html">DTDを読んでみよう</a></li>
+<li><a href="http://www.kanzaki.com/docs/html/read-dtd.html">ごくごく簡単なDTDの説明</a></li>
+</ul>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2007/11/02132407.html">table構造を明確にする属性</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2007/11/27033016.html">hasLayoutプロパティがtrueで発生するバグ</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

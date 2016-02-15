@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="content-style-type" content="text/css" />
+<title>hasLayoutプロパティがtrueで発生するバグのサンプルページ「IEでリストマーカーが壊れる」- Webtech Walker</title>
+<style type="text/css">
+
+body{font-family: "ＭＳ Ｐゴシック"}
+strong{color: #C00}
+h2 {font-size:120%;}
+h3 {padding: 10px;background: #EFEFEF;font-size: 120%;}
+
+#list2,
+#list2 ul,
+#list2 ol {
+	zoom: 1;
+}
+
+#list3 li {zoom:1}
+
+#list4 {
+	margin-left: 20px;
+}
+
+#list4,
+#list4 * {
+	zoom:1;
+}
+#list4 li {
+	list-style:none;
+	background: url("list.gif") no-repeat 0 3px;
+	padding-left: 15px;
+}
+
+</style>
+</head>
+<body>
+
+<h1>Webtech Walker</h1>
+
+<h2><a href="http://webtech-walker.com/archive/2007/11/27033016.html">hasLayoutプロパティがtrueで発生するバグ</a>のサンプルページ「IEでリストマーカーが壊れる」</h2>
+
+<p><strong>IE6かIE7</strong>で見るとバグを確認できると思います。</p>
+
+<h3>ノーマルのリスト</h3>
+<ul>
+	<li>list1</li>
+	<li>list2
+		<ul>
+			<li>list2-1</li>
+			<li>list2-2</li>
+		</ul>
+	</li>
+	<li>list3
+		<ol>
+			<li>list3-1</li>
+			<li>list3-2</li>
+		</ol>
+	</li>
+</ul>
+
+<h3>ulとolのhasLayoutプロパティがtrue。（zoom:1を指定）</h3>
+<ul id="list2">
+	<li>list1</li>
+	<li>list2
+		<ul>
+			<li>list2-1</li>
+			<li>list2-2</li>
+		</ul>
+	</li>
+	<li>list3
+		<ol>
+			<li>list3-1</li>
+			<li>list3-2</li>
+		</ol>
+	</li>
+</ul>
+
+<h3>liのhasLayoutプロパティがtrue。（zoom:1を指定）</h3>
+<ul id="list3">
+	<li>list1</li>
+	<li>list2
+		<ul>
+			<li>list2-1</li>
+			<li>list2-2</li>
+		</ul>
+	</li>
+	<li>list3
+		<ol>
+			<li>list3-1</li>
+			<li>list3-2</li>
+		</ol>
+	</li>
+</ul>
+
+<h3>ul、ol、liのhasLayoutプロパティがtrue。ただし「list-style:none」にして背景画像をリストマーカーの代替に使用。</h3>
+<ul id="list4">
+	<li>list1</li>
+	<li>list2
+		<ul>
+			<li>list2-1</li>
+			<li>list2-2</li>
+		</ul>
+	</li>
+	<li>list3
+		<ol>
+			<li>list3-1</li>
+			<li>list3-2</li>
+		</ol>
+	</li>
+</ul>
+
+</body>
+
+</html>

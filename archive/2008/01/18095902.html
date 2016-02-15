@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>CSS Nite in Ginza, Vol.21にいってきた - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+ 
+<article>
+
+<time datetime="2008-01-18T00:00:00+09:00">2008年01月18日</time>
+
+<ul class="tags">
+    <li><a href="/tags/event.html">event</a></li>
+    <li><a href="/tags/mobile.html">mobile</a></li>
+</ul>
+
+<h1>CSS Nite in Ginza, Vol.21にいってきた</h1>
+
+<div class="body">
+
+<p>テーマは携帯サイトの構築についてでした。忘れないうちにメモっときます。</p>
+
+<p><a href="http://cssnite.jp/ginza/vol21/">CSS Nite in Ginza, Vol.21に関するエントリー | CSS Nite公式サイト</a></p>
+
+<h2>「携帯サイトのコーディング事情～基本編」 ／宮永邦彦（アイデアマンズ株式会社）</h2>
+
+<p>携帯サイトの現状からコーディングのテクニックまでわかりやすく解説されていました。</p>
+
+<h3>携帯サイトの現状</h3>
+
+<ul>
+<li>携帯サイトは面倒だが他の人がやっていなからビジネスチャンス</li>
+<li>現在のインターネット利用状況はPC8000万人、携帯7000万人、両方使う人6000万人。携帯は無視できる数ではない</li>
+<li>主な利用者層は若年層、学生、女性など</li>
+<li>携帯サイトに求められること（大切なこと）
+
+<ul>
+<li>中毒性（mixiや株など）</li>
+<li>電車に乗ってる時間や待ち時間などの短時間で楽しめる（ニュース、小説など）</li>
+<li>緊急性を必要とするもの（乗り換え案内など）</li>
+<li>携帯サイトのコーディングの基本</li>
+</ul></li>
+</ul>
+
+<h3>基本的に文字コードはShift JIS</h3>
+
+<ul>
+<li>段組は使わないので簡単（画像の回り込み程度は使う）</li>
+<li>使用するタグは一部のもの（使うタグの一覧みたいのでてたけど書き取れず）</li>
+<li>XHTML+CSSの対応状況はY!&gt;EZweb&gt;&gt;&gt;&gt;&gt;&gt;&gt;i-mode（Y!は現softbank。業界ではヤフー携帯と呼ぶみたいですね）</li>
+<li>i-modeの状況
+
+<ul>
+<li>CSSの外部読み込み不可</li>
+<li>head内でstyleタグを用いての指定不可</li>
+<li>style属性を使用するしかない</li>
+<li>XHTMLとHTMLの互換性なし</li>
+<li>つまり構造と見た目の分離は不可能</li>
+<li>i-modeってIEと同じ匂いを感じる（僕の意見）</li>
+</ul></li>
+<li>EZはY!と比べて対応状況はやや劣るが全然使える範囲っぽい</li>
+<li>EZでおかしいところ</li>
+<li>ボールドがきかない</li>
+<li>余白がとれないことがある</li>
+<li>ボーダーの背景がおかしい</li>
+<li>i-modeも端末によってはボールドがきいたり、きかなかったりするので、ボールドやフォントに頼ったデザインにしないことが重要</li>
+<li>実際の製作では、i-modeのHTMLはCSSが適応されないでもみれる程度に、EZとY!のXHTMLはCSSできれいにデザインされるように、i-modeのXHTMLは時間があったら対応するようにするケースが多いとのこと。（よく意味がわからなかった）</li>
+<li>例でhrとかdisplay:noneを使ってCSS適応版と非適応版の見え方を使いわけるやり方が紹介されてたけど記憶がたしかでないため資料がでたら確認する</li>
+</ul>
+
+<h3>携帯サイトが面倒なわけ</h3>
+
+<ul>
+<li>3キャリア合わせて約600機種くらいあり、それぞれ仕様や性能が大きく異なる</li>
+<li>画面サイズや画像対応の問題。Y!の第二世代はgif非対応とか</li>
+<li>キャッシュサイズの問題。今は100KBくらいが目安だそうな</li>
+<li>絵文字の問題。以下絵文字の特徴
+
+<ul>
+<li>絵文字は画像より早いし軽い</li>
+<li>強力な表現方法</li>
+<li>キャリア毎の互換性がない</li>
+<li>最近はi-modeの絵文字をEZは自動変換してくれるらしい</li>
+</ul></li>
+</ul>
+
+<h3>解決案</h3>
+
+<ul>
+<li>古い機種を足きりする（一番早いし、楽）</li>
+<li>コンテンツゲートウェイを使う。これを間に噛ますと絵文字や画像をいい感じに変換してくれるらしい。高いので現時的ではないらしい</li>
+<li>携帯サイトASPを使う。自由度が低いらしい。<a href="http://lets-ktai.jp/">こういうの</a>かな？
+MTケータイキットを使う。今回のスピーカー、宮永さんのところが作ったMTのプラグインらしい。<a href="http://www.keitaikit.jp/">詳しくはWebで</a></li>
+</ul>
+
+<h3>質問</h3>
+
+<p>テストはどうしてるのかという質問。</p>
+
+<p>A.持っている実機は8台程度。それぞれのキャリアの主要機種で確認する。通常はFireFoxのUserAgentSwitcherを使ってテストする。</p>
+
+<h2>「携帯用サービスにおける実装とデザインの現実」／原 一浩、寺田 学、尾花衣美（空飛ぶ株式会社）</h2>
+
+<p>アクビィという携帯サイトのSNSを作成した際の話。実体験に基づく話しなのでリアルに問題点などがわかり面白かったです。</p>
+
+<h3>アクビィの説明</h3>
+
+<ul>
+<li>ターゲットは15才～25才の女性（女子大生）</li>
+<li>写メを送れて簡単にコメントできるSNS</li>
+</ul>
+
+<h3>製作の話</h3>
+
+<ul>
+<li>エクセルで画面遷移を設計</li>
+<li>ベトナムで開発した</li>
+<li>DoCoMoから絵文字をダウンロードして、FireFoxのUserAgentSwitcherを使用し、Web Developerで横幅を調整して携帯と同じような環境を作り出しテストする</li>
+<li>段組は使わない（画像を回り込ませる程度は使う）</li>
+<li>フォントやウェイト（ボールド）は変化させない</li>
+<li>画像より絵文字を主に使用する</li>
+<li>ファーストビューはQVGA基準で考える</li>
+<li>色はsRGBに限定</li>
+<li>使うタグや属性は限定される。fontタグやbgcolor属性なども使う。600機種に対応するための安全策。将来的にはCSSに対応させたい</li>
+</ul>
+
+<h3>バックエンドの話</h3>
+
+<ul>
+<li>キャリア判定はUserAgentで行う。PHPで実装</li>
+<li>PCからのアクセスはIP制限で行う。DoCoMoやauからIP増えますとかいうお知らせがあると大変</li>
+<li>DOCTYPEの問題などもあり、できればテンプレートは3キャリアわけるのが理想だが、現在は全部共通で使っている</li>
+<li>絵文字の問題とか。PHPのモジュールで変換する方法もあるらしい</li>
+<li>ログインに関して
+
+<ul>
+<li>クッキーが使えない（最近のは使える機種もある）</li>
+<li>GETパラメーターでSESSIONを引き回すしかない</li>
+<li>UIMを取得して実装する。i-modeは毎回確認がでるので対応が必要</li>
+<li>セキュリティとかの問題もある</li>
+</ul></li>
+</ul>
+
+<h3>UIとユーザーテストの話</h3>
+
+<ul>
+<li>コンセプト、UIはできるだけシンプルに
+
+<ul>
+<li>友達の承認はなし</li>
+<li>グループはデフォルトで非公開</li>
+<li>写メが送れる</li>
+</ul></li>
+<li>ユーザーテストは実際の大学生のヘビーユーザー、ライトユーザー、未使用者でテスト</li>
+<li>KPIはユーザー数、一人当たりのPVに設定</li>
+<li>今後の課題は反映のスピードなど</li>
+<li>アクセスキーの設定。キーボードショットカットと同じようなもの</li>
+</ul>
+
+<h3>質問</h3>
+
+<p>フォームで項目が多くなった場合、使いやすいUIにするにはどうすればよいかという質問</p>
+
+<p>A.現状では項目数を減らすことぐらしか対応策はない</p>
+
+<h2>感想</h2>
+
+<p>携帯サイトには以前から興味があったので、実際の製作の話しなどが聞けて面白かったです。セキュリティのところが結構駆け足の説明だったうえに非公開のところもあったので、もっと詳しく聞きたかったです。</p>
+
+
+<aside class="mod-ads">
+  <script async src="http://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <!-- WebtechWalker -->
+  <ins class="adsbygoogle"
+       style="display:inline-block;"
+       data-ad-client="ca-pub-9491328060421299"
+       data-ad-slot="1317969161"></ins>
+  <script>
+  (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</aside>
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2007/12/28215459.html">画像が左側で右にタイトルと本文があるときのマークアップ</a></li>
+  <li class="next"><span>Next Entry:</span><a href="/archive/2008/02/07141217.html">FirefoxのアドオンHtml Validatorについての覚え書き</a></li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = 'webtech-walker';
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>
