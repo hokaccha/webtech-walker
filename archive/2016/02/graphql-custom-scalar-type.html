@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>GraphQLでカスタムスカラー型を作る - Webtech Walker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:image" content="http://webtech-walker.com/img/common/icon.png">
+<link href="/css/app.css" rel="stylesheet" />
+<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+<link href="/atom.xml" rel="alternate" title="Webtech Walker" type="application/atom+xml">
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1474271-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</head>
+
+<body>
+
+<div class="mod-search"><div><div>
+<script>
+  (function() {
+    var cx = '009998432291159805000:ynkvdx8xlie';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search linkTarget="_self"></gcse:search>
+</div></div></div>
+
+<div class="mod-content">
+
+<header class="mod-header">
+<h1><a href="/"><img src="/img/mod-header/logo.png" alt="Webtech Walker"></a></h1>
+<!-- /header.mod-header --></header>
+
+<div class="mod-main">
+
+<div class="mod-entry">
+
+<article>
+
+<time datetime="2016-02-15T22:05:00+09:00">2016年02月15日</time>
+
+<ul class="tags">
+    <li><a href="/tags/graphql.html">GraphQL</a></li>
+</ul>
+
+<h1>GraphQLでカスタムスカラー型を作る</h1>
+
+<div class="body">
+
+<p>GraphQLの仕様というより<a href="https://github.com/graphql/graphql-js">graphql-js</a>の実装の話。</p>
+
+<p>GraphQLのビルトインのスカラー型はID、String、Int、Float、Booleanの5つだが、自分でスカラー型を作ることもできる。例えば日次を表すDateTime型とか。こんな感じ。</p>
+<pre class="highlight javascript"><code><span class="c1">// schema.js</span>
+<span class="kr">import</span> <span class="p">{</span>
+  <span class="nx">GraphQLScalarType</span><span class="p">,</span>
+  <span class="nx">GraphQLObjectType</span><span class="p">,</span>
+  <span class="nx">GraphQLSchema</span><span class="p">,</span>
+<span class="p">}</span> <span class="nx">from</span> <span class="s1">'graphql'</span><span class="p">;</span>
+
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">Kind</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">'graphql/language'</span><span class="p">;</span>
+
+<span class="kd">let</span> <span class="nx">parseDate</span> <span class="o">=</span> <span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kd">let</span> <span class="nx">d</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nx">str</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nb">Number</span><span class="p">.</span><span class="nb">isNaN</span><span class="p">(</span><span class="nx">d</span><span class="p">.</span><span class="nx">getTime</span><span class="p">())</span> <span class="p">?</span> <span class="kc">null</span> <span class="p">:</span> <span class="nx">d</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kd">let</span> <span class="nx">DateTimeType</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GraphQLScalarType</span><span class="p">({</span>
+  <span class="na">name</span><span class="p">:</span> <span class="s1">'DateTime'</span><span class="p">,</span>
+
+  <span class="na">serialize</span><span class="p">:</span> <span class="nx">value</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">value</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">();</span>
+  <span class="p">},</span>
+  <span class="na">parseValue</span><span class="p">:</span> <span class="nx">value</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">parseDate</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+  <span class="p">},</span>
+  <span class="na">parseLiteral</span><span class="p">:</span> <span class="nx">ast</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">ast</span><span class="p">.</span><span class="nx">kind</span> <span class="o">===</span> <span class="nx">Kind</span><span class="p">.</span><span class="nx">STRING</span> <span class="p">?</span> <span class="nx">parseDate</span><span class="p">(</span><span class="nx">ast</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span> <span class="p">:</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="p">},</span>
+<span class="p">});</span>
+</code></pre>
+
+<p>DateTime型みたいなのは、文字列で渡ってきた日付のデータをパースしてアプリケーション内部では<code>Date</code>として扱い、レスポンスのJSONにするときに<code>Date</code>を文字列に変換して返したい。<code>GraphQLScalarType</code>の引数に設定している関数はそのための変換処理を行うもの。</p>
+
+<p><code>parseValue</code>、<code>parseLiteral</code>がリクエストのクエリからデータを受け取ってアプリケーション内部で利用するデータに変換し、<code>serialize</code>はレスポンスを返す前に適切なデータに変換するための関数を定義する。</p>
+
+<p>このDateTime型を使って次のようなスキーマを定義する。</p>
+<pre class="highlight javascript"><code><span class="kd">let</span> <span class="nx">ExampleType</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GraphQLObjectType</span><span class="p">({</span>
+  <span class="na">name</span><span class="p">:</span> <span class="s1">'Example'</span><span class="p">,</span>
+  <span class="na">fields</span><span class="p">:</span> <span class="p">{</span> <span class="na">created</span><span class="p">:</span> <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="nx">DateTimeType</span> <span class="p">}</span> <span class="p">},</span>
+<span class="p">});</span>
+
+<span class="kd">let</span> <span class="nx">QueryType</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GraphQLObjectType</span><span class="p">({</span>
+  <span class="na">name</span><span class="p">:</span> <span class="s1">'Query'</span><span class="p">,</span>
+  <span class="na">fields</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">example</span><span class="p">:</span> <span class="p">{</span>
+      <span class="na">type</span><span class="p">:</span> <span class="nx">ExampleType</span><span class="p">,</span>
+      <span class="na">args</span><span class="p">:</span> <span class="p">{</span> <span class="na">date</span><span class="p">:</span> <span class="p">{</span> <span class="na">type</span><span class="p">:</span> <span class="nx">DateTimeType</span> <span class="p">}</span> <span class="p">},</span>
+      <span class="na">resolve</span><span class="p">:</span> <span class="p">(</span><span class="nx">_</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="c1">// Dateで渡ってくる</span>
+        <span class="nx">assert</span><span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">date</span> <span class="k">instanceof</span> <span class="nb">Date</span><span class="p">);</span>
+
+        <span class="c1">// Dateとして何か処理して</span>
+
+        <span class="c1">// Dateで返す</span>
+        <span class="k">return</span> <span class="p">{</span> <span class="na">created</span><span class="p">:</span> <span class="nx">args</span><span class="p">.</span><span class="nx">date</span> <span class="p">};</span>
+      <span class="p">},</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+
+<span class="kd">let</span> <span class="nx">schema</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GraphQLSchema</span><span class="p">({</span> <span class="na">query</span><span class="p">:</span> <span class="nx">QueryType</span> <span class="p">});</span>
+</code></pre>
+
+<p>入力データとして<code>date</code>を受け取って、<code>created</code>というフィールドで値をそのまま返すだけ。<code>date</code>と<code>created</code>はどっちもDateType型。このスキーマに対してこういうクエリを投げる。</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="err">example(date:</span><span class="w"> </span><span class="nt">"2015-01-01T00:00:00Z"</span><span class="err">)</span><span class="w"> </span><span class="err">{</span><span class="w"> </span><span class="err">created</span><span class="w"> </span><span class="err">}</span><span class="w">
+</span><span class="err">}</span><span class="w">
+</span></code></pre>
+
+<p>この場合はアプリケーションに値が渡される前に<code>parseLiteral</code>に<code>&quot;2015-01-01T00:00:00Z&quot;</code>という値が渡されて呼ばれる。また、このとき値だけでなく、GraphQLのASTデータが渡されて、クエリに指定されているデータ型なども一緒にチェックできる。</p>
+<pre class="highlight javascript"><code>  <span class="nx">parseLiteral</span><span class="err">:</span> <span class="nx">ast</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// ast.value === "2015-01-01T00:00:00Z"</span>
+    <span class="k">return</span> <span class="nx">ast</span><span class="p">.</span><span class="nx">kind</span> <span class="o">===</span> <span class="nx">Kind</span><span class="p">.</span><span class="nx">STRING</span> <span class="p">?</span> <span class="nx">parseDate</span><span class="p">(</span><span class="nx">ast</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span> <span class="p">:</span> <span class="kc">null</span><span class="p">;</span>
+  <span class="p">},</span>
+</code></pre>
+
+<p>ここで<code>null</code>を返すと不正な値ということでエラーになる。もしくはエラーにするのに<code>GraphQLError</code>のインスタンスを返してもいいみたいだけど内部のScalar型の定義が<code>null</code>を返しているのでそれに従っている。</p>
+
+<p><a href="https://github.com/graphql/graphql-js/blob/9234c6da0edbc4d2d2f3ff5d544a5980168d69ac/src/type/scalars.js#L102-L106">graphql-js/scalars.js at 9234c6da0edbc4d2d2f3ff5d544a5980168d69ac · graphql/graphql-js</a></p>
+
+<p><code>parseLiteral</code>はこのようにクエリ内に直接DateTime型の値が埋め込まれたときに呼ばれるのに対して、variablesでDateTime型の値が指定された場合に呼ばれるのが<code>parseValue</code>。例えばこういうクエリ。</p>
+<pre class="highlight plaintext"><code>query foo($d: DateTime) {
+  example(date: $d) { created }
+}
+</code></pre>
+
+<p>このクエリのvariablesがこういう感じだとする。</p>
+<pre class="highlight json"><code><span class="p">{</span><span class="w"> </span><span class="nt">"d"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2015-01-01T00:00:00Z"</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>variablesで渡された値はASTを検査する必要はないので<code>parseValue</code>には値のみが渡ってくる。</p>
+<pre class="highlight javascript"><code>  <span class="nx">parseValue</span><span class="err">:</span> <span class="nx">value</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="c1">// value === "2015-01-01T00:00:00Z"</span>
+    <span class="k">return</span> <span class="nx">parseDate</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+  <span class="p">},</span>
+</code></pre>
+
+<p><code>parseValue</code>や<code>parseLiteral</code>で返した値は<code>resolve</code>の引数に渡される。ここ。</p>
+<pre class="highlight javascript"><code>      <span class="nx">resolve</span><span class="err">:</span> <span class="p">(</span><span class="nx">_</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="c1">// Dateで渡ってくる</span>
+        <span class="nx">assert</span><span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">date</span> <span class="k">instanceof</span> <span class="nb">Date</span><span class="p">);</span>
+
+        <span class="c1">// Dateとして何か処理して</span>
+
+        <span class="c1">// Dateで返す</span>
+        <span class="k">return</span> <span class="p">{</span> <span class="na">created</span><span class="p">:</span> <span class="nx">args</span><span class="p">.</span><span class="nx">date</span> <span class="p">};</span>
+      <span class="p">},</span>
+</code></pre>
+
+<p>そしてこの<code>resolve</code>でDateTime型のデータを返した場合はそのデータが<code>serialize</code>に渡される。</p>
+<pre class="highlight javascript"><code>  <span class="nx">serialize</span><span class="err">:</span> <span class="nx">value</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">value</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">();</span>
+  <span class="p">},</span>
+</code></pre>
+
+<p>この<code>serialize</code>で返した値がレスポンスとして返される。</p>
+<pre class="highlight javascript"><code><span class="kd">let</span> <span class="nx">query</span> <span class="o">=</span> <span class="err">`</span>
+<span class="nx">query</span> <span class="nx">foo</span><span class="p">(</span><span class="nx">$d</span><span class="err">:</span> <span class="nx">DateTime</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">example</span><span class="p">(</span><span class="nx">date</span><span class="err">:</span> <span class="nx">$d</span><span class="p">)</span> <span class="p">{</span> <span class="nx">created</span> <span class="p">}</span>
+<span class="p">}</span>
+<span class="err">`</span><span class="p">;</span>
+<span class="kd">let</span> <span class="nx">variables</span> <span class="o">=</span> <span class="p">{</span> <span class="na">d</span><span class="p">:</span> <span class="s2">"2015-01-01T00:00:00Z"</span> <span class="p">};</span>
+
+<span class="nx">graphql</span><span class="p">(</span><span class="nx">schema</span><span class="p">,</span> <span class="nx">query</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">variables</span><span class="p">).</span><span class="nx">then</span><span class="p">(</span><span class="nx">result</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">result</span><span class="p">);</span>
+  <span class="c1">//=&gt; { data: { example: { created: '2015-01-01T00:00:00.000Z' } } }</span>
+<span class="p">});</span>
+</code></pre>
+
+<p>input/ouputともに文字列だけどアプリケーション内部（<code>resolve</code>内）ではDateで処理できるのがわかる。</p>
+
+<p>コード全文はこちらに。</p>
+
+<p><a href="https://github.com/hokaccha/graphql-examples/tree/master/examples/date_time_type">https://github.com/hokaccha/graphql-examples/tree/master/examples/date<em>time</em>type</a></p>
+
+
+</article>
+
+<div class="socials">
+  <div class="hatebu">
+    <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  </div>
+
+  <div class="twitter">
+    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en">ツイート</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  </div>
+
+  <div class="fb">
+    <div class="fb-like" data-send="false" data-layout="button_count" data-width="100" data-show-faces="false"></div>
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+  </div>
+
+  <div class="gplus">
+    <div class="g-plusone"></div>
+    <script type="text/javascript">
+      window.___gcfg = {lang: 'ja'};
+
+      (function() {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://apis.google.com/js/plusone.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+      })();
+    </script>
+  </div>
+</div>
+
+<ul class="paginate">
+  <li class="prev"><span>Prev Entry:</span><a href="/archive/2014/10/sprinkler.html">GoでEnd To End Testingフレームワーク書いた</a></li>
+</ul>
+
+</div>
+
+<!-- /div.mod-main --></div>
+
+<!-- /div.mod-content --></div>
+
+<footer class="mod-footer"><div>
+<ul class="icons">
+  <li><a href="https://twitter.com/hokaccha"><img src="/img/mod-footer/icon-twitter.png"></a></li>
+  <li><a href="http://www.facebook.com/hokaccha"><img src="/img/mod-footer/icon-fb.png"></a></li>
+  <li><a href="https://github.com/hokaccha"><img src="/img/mod-footer/icon-github.png"></a></li>
+  <li><a href="http://www.flickr.com/photos/hokaccha"><img src="/img/mod-footer/icon-flickr.png"></a></li>
+  <li><a href="/atom.xml"><img src="/img/mod-footer/icon-rss.png"></a></li>
+</ul>
+<div class="name">Created by Kazuhito Hokamura (k.hokamura@gmail.com)</div>
+<!-- /footer.mod-footer --></div></footer>
+</body>
+</html>

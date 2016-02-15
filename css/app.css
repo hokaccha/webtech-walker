@@ -407,26 +407,7 @@ body {
 .mod-entry .body {
   background: url(/img/common/bg-border2.png) no-repeat 0 bottom;
   padding-bottom: 20px;
-  margin-bottom: 10px;
-  /*
-      pre code {
-        display: block;
-        position: relative;
-  
-        &:after {
-          content: attr(class);
-          display: inline-block;
-          position: absolute;
-          top: -25px;
-          right: -10px;
-          font-size: 42px;
-          color: #E2E2E2;
-          text-transform: uppercase;
-          font-family: sans-serif;
-          font-weight: bold;
-        }
-      }
-  */ }
+  margin-bottom: 10px; }
   .mod-entry .body img {
     max-width: 100%;
     height: auto; }
@@ -485,7 +466,8 @@ body {
     padding: 0 2px;
     margin: 0 3px;
     border: 1px solid #CCC;
-    vertical-align: top; }
+    vertical-align: top;
+    line-height: 1.6; }
   .mod-entry .body table {
     margin: 15px 0;
     border-collapse: collapse; }
@@ -513,12 +495,7 @@ body {
     font-size: 13px;
     color: #666;
     display: block; }
-  .mod-entry .body .mod-ads {
-    margin: 20px 0 10px; }
-    .mod-entry .body .mod-ads .adsbygoogle {
-      width: 728px;
-      height: 90px; }
-.mod-entry .socials div {
+.mod-entry .socials > div {
   display: inline-block;
   vertical-align: top; }
 .mod-entry .paginate {
@@ -534,8 +511,6 @@ body {
       color: #999;
       font-style: italic;
       font-family: serif; }
-.mod-entry #disqus_thread {
-  margin: 40px 0 20px; }
 
 @media screen and (max-width: 720px) {
   .mod-entry time {
