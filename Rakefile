@@ -1,64 +1,27 @@
-REPOSITORY = 'hokaccha/webtech-walker'
-MASTER_REPOSITORY = if ENV['GH_TOKEN']
-    "https://$GH_TOKEN@github.com/#{REPOSITORY}"
-  else
-    "git@github.com:#{REPOSITORY}.git"
-  end
-PUBLISH_BRANCH = 'gh-pages'
-DEST_DIR = 'build'
+desc "Create new article with title"
+task :article do
+  title = ENV["title"] or raise "Error: title is reqiured!"
+  now = Time.now
+  filepath = "source/archive/#{now.strftime('%Y-%m-%d')}-#{title}.html.md"
+  body = <<~BODY
+    ---
+    title:
+    date: #{now.strftime('%Y-%m-%d %H:%M')} JST
+    tags:
+      -
+    ---
+  BODY
 
-def initialize_repository(repository, branch)
-  require 'fileutils'
-
-  if Dir["#{DEST_DIR}/.git"].empty?
-    FileUtils.rm_rf DEST_DIR
-    sh "git clone --quiet #{repository} #{DEST_DIR} 2> /dev/null"
-  end
-
-  Dir.chdir DEST_DIR do
-    sh "git checkout --orphan #{branch}"
-  end
+  File.write(filepath, body)
+  puts "created: #{filepath}"
 end
 
-def update_repository(branch)
-  Dir.chdir DEST_DIR do
-    sh 'git fetch origin'
-    sh "git reset --hard origin/#{branch}"
-    sh 'git clean -fd'
-  end
+desc "Deploy to GitHub Pages"
+task :deploy do
+  sh "bundle exec middleman deply"
 end
 
-def build
-  sh 'bundle exec middleman build'
-end
-
-def push_to_gh_pages(repository, branch)
-  sha1, _ = `git log -n 1 --oneline`.strip.split(' ')
-
-  Dir.chdir DEST_DIR do
-    sh 'git add -A'
-    sh "git commit -m 'Update with #{sha1}'"
-    sh "git push --quiet #{repository} #{branch} 2> /dev/null"
-  end
-end
-
-desc 'Setup origin repository for GitHub pages'
-task :setup do
-  initialize_repository MASTER_REPOSITORY, PUBLISH_BRANCH
-  update_repository PUBLISH_BRANCH
-end
-
-desc 'Clean built files'
-task :clean do
-  update_repository PUBLISH_BRANCH
-end
-
-desc 'Build sites'
-task :build => ['clean'] do
-  build
-end
-
-desc 'Publish website'
-task :publish do
-  push_to_gh_pages MASTER_REPOSITORY, PUBLISH_BRANCH
+desc "Start development server"
+task :server do
+  sh "bundle exec middleman"
 end
