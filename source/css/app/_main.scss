@@ -286,27 +286,8 @@ body {
       margin: 0 3px;
       border: 1px solid #CCC;
       vertical-align: top;
+      line-height: 1.6;
     }
-
-/*
-    pre code {
-      display: block;
-      position: relative;
-
-      &:after {
-        content: attr(class);
-        display: inline-block;
-        position: absolute;
-        top: -25px;
-        right: -10px;
-        font-size: 42px;
-        color: #E2E2E2;
-        text-transform: uppercase;
-        font-family: sans-serif;
-        font-weight: bold;
-      }
-    }
-*/
 
     table {
       margin: 15px 0;
@@ -354,21 +335,12 @@ body {
       color: #666;
       display: block;
     }
-
-    .mod-ads {
-      margin: 20px 0 10px;
-
-      .adsbygoogle {
-        width:728px;
-        height:90px
-      }
-    }
   }
 
   .socials {
   }
 
-  .socials div {
+  .socials > div {
     display: inline-block;
     vertical-align: top
   }
@@ -390,9 +362,5 @@ body {
         font-family: serif;
       }
     }
-  }
-
-  #disqus_thread {
-    margin: 40px 0 20px;
   }
 }
