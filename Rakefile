@@ -18,7 +18,7 @@ end
 
 desc "Deploy to GitHub Pages"
 task :deploy do
-  sh "bundle exec middleman deply"
+  sh "bundle exec middleman deploy"
 end
 
 desc "Start development server"
