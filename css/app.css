@@ -399,7 +399,18 @@ body {
   .mod-entry .tags li {
     display: inline-block;
     list-style: none;
-    margin-right: 5px; }
+    margin-right: 2px; }
+  .mod-entry .tags a {
+    display: inline-block;
+    border: 1px solid #CCC;
+    padding: 3px 8px;
+    background-color: #BBB;
+    color: #FFF;
+    text-decoration: none;
+    font-size: 12px;
+    border-radius: 5px; }
+  .mod-entry .tags a:hover {
+    opacity: 0.8; }
 .mod-entry h1 {
   font-size: 28px;
   color: #000;
