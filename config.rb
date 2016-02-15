@@ -15,6 +15,11 @@ activate :blog do |blog|
   blog.tag_template = "tag.html"
 end
 
+activate :deploy do |deploy|
+  deploy.deploy_method = :git
+  deploy.build_before = true
+end
+
 page '/atom.xml', layout: false
 
 set :layouts_dir, '_layouts'
