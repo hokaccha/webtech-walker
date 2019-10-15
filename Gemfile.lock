@@ -29,7 +29,7 @@ GEM
     fast_blank (1.0.0)
     fastimage (1.8.1)
       addressable (~> 2.3, >= 2.3.5)
-    ffi (1.9.10)
+    ffi (1.11.1)
     haml (4.0.7)
       tilt
     hamster (2.0.0)
